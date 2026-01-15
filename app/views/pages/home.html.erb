@@ -1,0 +1,106 @@
+<div class="relative isolate overflow-hidden">
+  <div class="mx-auto max-w-7xl pb-24 pt-10 sm:pb-32 lg:grid lg:grid-cols-2 lg:gap-x-8 lg:px-8 lg:py-40">
+    <div class="px-6 lg:px-0 lg:pt-4">
+      <div class="mx-auto max-w-2xl">
+        <div class="max-w-lg">
+          <h1 class="mt-10 text-4xl font-bold tracking-tight text-gray-900 sm:text-6xl">
+            Commodity Code Checker
+          </h1>
+          <p class="mt-6 text-lg leading-8 text-gray-600">
+            Track your international orders and get automated EU/UK commodity code suggestions.
+            Forward your tracking emails and let us handle the customs classification.
+          </p>
+          <div class="mt-10 flex items-center gap-x-6">
+            <% if user_signed_in? %>
+              <%= link_to "Go to Dashboard", dashboard_path, class: "rounded-md bg-indigo-600 px-3.5 py-2.5 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600" %>
+            <% else %>
+              <%= link_to "Get started", new_user_registration_path, class: "rounded-md bg-indigo-600 px-3.5 py-2.5 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600" %>
+              <%= link_to "Sign in", new_user_session_path, class: "text-sm font-semibold leading-6 text-gray-900" %>
+            <% end %>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="mt-20 sm:mt-24 md:mx-auto md:max-w-2xl lg:mx-0 lg:mt-0 lg:w-screen">
+      <div class="shadow-lg md:rounded-3xl">
+        <div class="bg-indigo-500 [clip-path:inset(0)] md:[clip-path:inset(0_round_theme(borderRadius.3xl))]">
+          <div class="relative px-6 pt-8 sm:pt-16 md:pl-16 md:pr-0">
+            <div class="mx-auto max-w-2xl md:mx-0 md:max-w-none">
+              <div class="overflow-hidden rounded-tl-xl bg-gray-900">
+                <div class="flex bg-gray-800/40 ring-1 ring-white/5">
+                  <div class="-mb-px flex text-sm font-medium leading-6 text-gray-400">
+                    <div class="border-b border-r border-b-white/20 border-r-white/10 bg-white/5 px-4 py-2 text-white">How it works</div>
+                  </div>
+                </div>
+                <div class="px-6 pb-14 pt-6 text-white">
+                  <p class="text-sm mb-4"><span class="text-indigo-400">1.</span> Forward tracking emails to your unique address</p>
+                  <p class="text-sm mb-4"><span class="text-indigo-400">2.</span> We extract order and delivery information</p>
+                  <p class="text-sm mb-4"><span class="text-indigo-400">3.</span> AI suggests the correct commodity code</p>
+                  <p class="text-sm"><span class="text-indigo-400">4.</span> Export for customs declarations</p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Features section -->
+<div class="bg-white py-24 sm:py-32">
+  <div class="mx-auto max-w-7xl px-6 lg:px-8">
+    <div class="mx-auto max-w-2xl lg:text-center">
+      <h2 class="text-base font-semibold leading-7 text-indigo-600">Simplify customs</h2>
+      <p class="mt-2 text-3xl font-bold tracking-tight text-gray-900 sm:text-4xl">Everything you need for import tracking</p>
+    </div>
+    <div class="mx-auto mt-16 max-w-2xl sm:mt-20 lg:mt-24 lg:max-w-4xl">
+      <dl class="grid max-w-xl grid-cols-1 gap-x-8 gap-y-10 lg:max-w-none lg:grid-cols-2 lg:gap-y-16">
+        <div class="relative pl-16">
+          <dt class="text-base font-semibold leading-7 text-gray-900">
+            <div class="absolute left-0 top-0 flex size-10 items-center justify-center rounded-lg bg-indigo-600">
+              <svg class="size-6 text-white" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M21.75 6.75v10.5a2.25 2.25 0 01-2.25 2.25h-15a2.25 2.25 0 01-2.25-2.25V6.75m19.5 0A2.25 2.25 0 0019.5 4.5h-15a2.25 2.25 0 00-2.25 2.25m19.5 0v.243a2.25 2.25 0 01-1.07 1.916l-7.5 4.615a2.25 2.25 0 01-2.36 0L3.32 8.91a2.25 2.25 0 01-1.07-1.916V6.75" />
+              </svg>
+            </div>
+            Email forwarding
+          </dt>
+          <dd class="mt-2 text-base leading-7 text-gray-600">Simply forward your tracking emails. We automatically extract tracking links and order details.</dd>
+        </div>
+        <div class="relative pl-16">
+          <dt class="text-base font-semibold leading-7 text-gray-900">
+            <div class="absolute left-0 top-0 flex size-10 items-center justify-center rounded-lg bg-indigo-600">
+              <svg class="size-6 text-white" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M9.813 15.904L9 18.75l-.813-2.846a4.5 4.5 0 00-3.09-3.09L2.25 12l2.846-.813a4.5 4.5 0 003.09-3.09L9 5.25l.813 2.846a4.5 4.5 0 003.09 3.09L15.75 12l-2.846.813a4.5 4.5 0 00-3.09 3.09z" />
+              </svg>
+            </div>
+            AI-powered classification
+          </dt>
+          <dd class="mt-2 text-base leading-7 text-gray-600">Our AI analyses product descriptions and suggests the most likely UK/EU commodity codes.</dd>
+        </div>
+        <div class="relative pl-16">
+          <dt class="text-base font-semibold leading-7 text-gray-900">
+            <div class="absolute left-0 top-0 flex size-10 items-center justify-center rounded-lg bg-indigo-600">
+              <svg class="size-6 text-white" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M8.25 18.75a1.5 1.5 0 01-3 0m3 0a1.5 1.5 0 00-3 0m3 0h6m-9 0H3.375a1.125 1.125 0 01-1.125-1.125V14.25m17.25 4.5a1.5 1.5 0 01-3 0m3 0a1.5 1.5 0 00-3 0m3 0h1.125c.621 0 1.129-.504 1.09-1.124a17.902 17.902 0 00-3.213-9.193 2.056 2.056 0 00-1.58-.86H14.25M16.5 18.75h-2.25m0-11.177v-.958c0-.568-.422-1.048-.987-1.106a48.554 48.554 0 00-10.026 0 1.106 1.106 0 00-.987 1.106v7.635m12-6.677v6.677m0 4.5v-4.5m0 0h-12" />
+              </svg>
+            </div>
+            Delivery tracking
+          </dt>
+          <dd class="mt-2 text-base leading-7 text-gray-600">Monitor delivery status across multiple carriers. Know when your orders will arrive.</dd>
+        </div>
+        <div class="relative pl-16">
+          <dt class="text-base font-semibold leading-7 text-gray-900">
+            <div class="absolute left-0 top-0 flex size-10 items-center justify-center rounded-lg bg-indigo-600">
+              <svg class="size-6 text-white" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M3 16.5v2.25A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75V16.5M16.5 12L12 16.5m0 0L7.5 12m4.5 4.5V3" />
+              </svg>
+            </div>
+            Export for customs
+          </dt>
+          <dd class="mt-2 text-base leading-7 text-gray-600">Export your orders with confirmed commodity codes as CSV for easy customs declaration.</dd>
+        </div>
+      </dl>
+    </div>
+  </div>
+</div>

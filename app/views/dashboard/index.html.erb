@@ -1,0 +1,109 @@
+<div class="md:flex md:items-center md:justify-between mb-8">
+  <div class="min-w-0 flex-1">
+    <h2 class="text-2xl font-bold leading-7 text-gray-900 sm:truncate sm:text-3xl sm:tracking-tight">
+      Dashboard
+    </h2>
+  </div>
+</div>
+
+<!-- Stats -->
+<div class="grid grid-cols-1 gap-5 sm:grid-cols-3 mb-8">
+  <div class="overflow-hidden rounded-lg bg-white px-4 py-5 shadow sm:p-6">
+    <dt class="truncate text-sm font-medium text-gray-500">Total Orders</dt>
+    <dd class="mt-1 text-3xl font-semibold tracking-tight text-gray-900"><%= current_user.orders.count %></dd>
+  </div>
+  <div class="overflow-hidden rounded-lg bg-white px-4 py-5 shadow sm:p-6">
+    <dt class="truncate text-sm font-medium text-gray-500">Pending Commodity Codes</dt>
+    <dd class="mt-1 text-3xl font-semibold tracking-tight text-indigo-600"><%= @pending_codes %></dd>
+  </div>
+  <div class="overflow-hidden rounded-lg bg-white px-4 py-5 shadow sm:p-6">
+    <dt class="truncate text-sm font-medium text-gray-500">In Transit</dt>
+    <dd class="mt-1 text-3xl font-semibold tracking-tight text-gray-900"><%= current_user.orders.where(status: :in_transit).count %></dd>
+  </div>
+</div>
+
+<!-- Email forwarding info -->
+<div class="rounded-lg bg-indigo-50 p-4 mb-8">
+  <div class="flex">
+    <div class="shrink-0">
+      <svg class="size-5 text-indigo-400" viewBox="0 0 20 20" fill="currentColor">
+        <path d="M3 4a2 2 0 00-2 2v1.161l8.441 4.221a1.25 1.25 0 001.118 0L19 7.162V6a2 2 0 00-2-2H3z" />
+        <path d="M19 8.839l-7.77 3.885a2.75 2.75 0 01-2.46 0L1 8.839V14a2 2 0 002 2h14a2 2 0 002-2V8.839z" />
+      </svg>
+    </div>
+    <div class="ml-3 flex-1">
+      <h3 class="text-sm font-medium text-indigo-800">Your forwarding email address</h3>
+      <div class="mt-2 text-sm text-indigo-700">
+        <p>Forward your tracking emails to:</p>
+        <code class="mt-1 block bg-white rounded px-2 py-1 font-mono text-indigo-900"><%= current_user.inbound_email_address %></code>
+      </div>
+      <div class="mt-3">
+        <%= link_to new_test_email_path, class: "inline-flex items-center rounded-md bg-indigo-600 px-2.5 py-1.5 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500" do %>
+          <svg class="-ml-0.5 mr-1.5 size-4" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M9.75 3.104v5.714a2.25 2.25 0 0 1-.659 1.591L5 14.5M9.75 3.104c-.251.023-.501.05-.75.082m.75-.082a24.301 24.301 0 0 1 4.5 0m0 0v5.714c0 .597.237 1.17.659 1.591L19.8 15.3M14.25 3.104c.251.023.501.05.75.082M19.8 15.3l-1.57.393A9.065 9.065 0 0 1 12 15a9.065 9.065 0 0 1-6.23.693L5 14.5m14.8.8 1.402 1.402c1.232 1.232.65 3.318-1.067 3.611A48.309 48.309 0 0 1 12 21c-2.773 0-5.491-.235-8.135-.687-1.718-.293-2.3-2.379-1.067-3.61L5 14.5" />
+          </svg>
+          Test Email Processing
+        <% end %>
+        <%= link_to new_order_path, class: "ml-2 inline-flex items-center rounded-md bg-white px-2.5 py-1.5 text-sm font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50" do %>
+          <svg class="-ml-0.5 mr-1.5 size-4 text-gray-400" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
+          </svg>
+          Add Order Manually
+        <% end %>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Recent Orders -->
+<div class="bg-white shadow rounded-lg">
+  <div class="px-4 py-5 sm:px-6 border-b border-gray-200">
+    <div class="flex items-center justify-between">
+      <h3 class="text-base font-semibold leading-6 text-gray-900">Recent Orders</h3>
+      <%= link_to "View all", orders_path, class: "text-sm font-medium text-indigo-600 hover:text-indigo-500" %>
+    </div>
+  </div>
+
+  <% if @orders.any? %>
+    <ul role="list" class="divide-y divide-gray-200">
+      <% @orders.each do |order| %>
+        <li class="px-4 py-4 sm:px-6">
+          <%= link_to order_path(order), class: "block hover:bg-gray-50 -mx-4 -my-4 px-4 py-4 sm:-mx-6 sm:px-6" do %>
+            <div class="flex items-center justify-between">
+              <div class="truncate">
+                <p class="truncate text-sm font-medium text-indigo-600"><%= order.retailer_name || "Unknown retailer" %></p>
+                <p class="text-sm text-gray-500"><%= order.order_reference || "No reference" %></p>
+              </div>
+              <div class="ml-2 flex shrink-0">
+                <% case order.status %>
+                <% when "pending" %>
+                  <span class="inline-flex items-center rounded-full bg-yellow-100 px-2.5 py-0.5 text-xs font-medium text-yellow-800">Pending</span>
+                <% when "in_transit" %>
+                  <span class="inline-flex items-center rounded-full bg-blue-100 px-2.5 py-0.5 text-xs font-medium text-blue-800">In Transit</span>
+                <% when "delivered" %>
+                  <span class="inline-flex items-center rounded-full bg-green-100 px-2.5 py-0.5 text-xs font-medium text-green-800">Delivered</span>
+                <% end %>
+              </div>
+            </div>
+            <div class="mt-2">
+              <p class="text-sm text-gray-500">
+                <%= pluralize(order.order_items.count, "item") %>
+                <% if order.estimated_delivery.present? %>
+                  &middot; Expected <%= order.estimated_delivery.strftime("%d %b %Y") %>
+                <% end %>
+              </p>
+            </div>
+          <% end %>
+        </li>
+      <% end %>
+    </ul>
+  <% else %>
+    <div class="px-4 py-12 sm:px-6 text-center">
+      <svg class="mx-auto size-12 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1" d="M20 13V6a2 2 0 00-2-2H6a2 2 0 00-2 2v7m16 0v5a2 2 0 01-2 2H6a2 2 0 01-2-2v-5m16 0h-2.586a1 1 0 00-.707.293l-2.414 2.414a1 1 0 01-.707.293h-3.172a1 1 0 01-.707-.293l-2.414-2.414A1 1 0 006.586 13H4" />
+      </svg>
+      <h3 class="mt-2 text-sm font-semibold text-gray-900">No orders yet</h3>
+      <p class="mt-1 text-sm text-gray-500">Forward your first tracking email to get started.</p>
+    </div>
+  <% end %>
+</div>

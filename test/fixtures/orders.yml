@@ -1,0 +1,17 @@
+# Read about fixtures at https://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+one:
+  user: one
+  source_email_id: 1
+  order_reference: MyString
+  retailer_name: MyString
+  status: 1
+  estimated_delivery: 2026-01-15
+
+two:
+  user: two
+  source_email_id: 1
+  order_reference: MyString
+  retailer_name: MyString
+  status: 1
+  estimated_delivery: 2026-01-15

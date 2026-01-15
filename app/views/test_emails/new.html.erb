@@ -1,0 +1,61 @@
+<div class="max-w-2xl mx-auto">
+  <div class="md:flex md:items-center md:justify-between mb-8">
+    <div class="min-w-0 flex-1">
+      <h2 class="text-2xl font-bold leading-7 text-gray-900 sm:truncate sm:text-3xl sm:tracking-tight">
+        Test Email Processing
+      </h2>
+      <p class="mt-1 text-sm text-gray-500">
+        Simulate forwarding a tracking email to test the parsing system.
+      </p>
+    </div>
+  </div>
+
+  <div class="bg-white shadow rounded-lg">
+    <%= form_with url: test_emails_path, method: :post, class: "p-6 space-y-6" do |f| %>
+      <div>
+        <%= f.label :from_address, "From Address", class: "block text-sm font-medium leading-6 text-gray-900" %>
+        <div class="mt-2">
+          <%= f.email_field :from_address, value: "shipping@amazon.co.uk", class: "block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6 px-3" %>
+        </div>
+        <p class="mt-1 text-sm text-gray-500">The sender's email address (helps identify retailer)</p>
+      </div>
+
+      <div>
+        <%= f.label :subject, "Subject", class: "block text-sm font-medium leading-6 text-gray-900" %>
+        <div class="mt-2">
+          <%= f.text_field :subject, value: "Your Amazon order has shipped!", class: "block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6 px-3" %>
+        </div>
+      </div>
+
+      <div>
+        <%= f.label :body_text, "Email Body", class: "block text-sm font-medium leading-6 text-gray-900" %>
+        <div class="mt-2">
+          <%= f.text_area :body_text, rows: 12, class: "block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6 px-3", placeholder: "Paste the email content here..." %>
+        </div>
+        <p class="mt-1 text-sm text-gray-500">Include tracking URLs and order details</p>
+      </div>
+
+      <div class="bg-gray-50 -mx-6 -mb-6 px-6 py-4 rounded-b-lg">
+        <div class="flex items-center justify-between">
+          <%= link_to "Cancel", dashboard_path, class: "text-sm font-semibold text-gray-900 hover:text-gray-700" %>
+          <%= f.submit "Process Email", class: "rounded-md bg-indigo-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600 cursor-pointer" %>
+        </div>
+      </div>
+    <% end %>
+  </div>
+
+  <!-- Example emails -->
+  <div class="mt-8 bg-yellow-50 rounded-lg p-4">
+    <h3 class="text-sm font-medium text-yellow-800 mb-2">Example test email:</h3>
+    <pre class="text-xs text-yellow-700 whitespace-pre-wrap bg-yellow-100 p-3 rounded">Your order #ABC-123456 has shipped!
+
+Track your package:
+https://track.amazon.co.uk/tracking/ABC123456789
+
+Items in this shipment:
+- Wireless Bluetooth Headphones
+- USB-C Charging Cable
+
+Estimated delivery: January 20, 2026</pre>
+  </div>
+</div>

@@ -1,0 +1,19 @@
+# Read about fixtures at https://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+one:
+  order: one
+  carrier: MyString
+  tracking_url: MyString
+  status: MyString
+  location: MyString
+  event_timestamp: 2026-01-15 21:25:43
+  raw_data: 
+
+two:
+  order: two
+  carrier: MyString
+  tracking_url: MyString
+  status: MyString
+  location: MyString
+  event_timestamp: 2026-01-15 21:25:43
+  raw_data: 

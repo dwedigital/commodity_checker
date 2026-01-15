@@ -1,0 +1,16 @@
+<%- require 'csv' -%>
+<%= CSV.generate do |csv|
+  csv << ["Order Reference", "Retailer", "Item Description", "Quantity", "Commodity Code", "Confirmed At"]
+  @orders.each do |order|
+    order.order_items.where.not(confirmed_commodity_code: nil).each do |item|
+      csv << [
+        order.order_reference,
+        order.retailer_name,
+        item.description,
+        item.quantity || 1,
+        item.confirmed_commodity_code,
+        order.updated_at.strftime("%Y-%m-%d")
+      ]
+    end
+  end
+end %>

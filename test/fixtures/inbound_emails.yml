@@ -1,0 +1,17 @@
+# Read about fixtures at https://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+one:
+  user: one
+  subject: MyString
+  from_address: MyString
+  body_text: MyText
+  processed_at: 2026-01-15 21:25:45
+  processing_status: 1
+
+two:
+  user: two
+  subject: MyString
+  from_address: MyString
+  body_text: MyText
+  processed_at: 2026-01-15 21:25:45
+  processing_status: 1
