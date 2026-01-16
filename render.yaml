@@ -3,7 +3,6 @@
 
 databases:
   - name: commodity-checker-db
-    plan: standard
     databaseName: commodity_checker_production
     user: commodity_checker
 
