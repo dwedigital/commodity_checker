@@ -14,6 +14,8 @@ cloudflare:
   region: auto
   bucket: <%= ENV["CLOUDFLARE_R2_BUCKET"] %>
   endpoint: <%= ENV["CLOUDFLARE_R2_ENDPOINT"] %>
+  request_checksum_calculation: when_required
+  response_checksum_validation: when_required
 
 # Use bin/rails credentials:edit to set the AWS secrets (as aws:access_key_id|secret_access_key)
 # amazon:
