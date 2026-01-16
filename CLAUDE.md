@@ -127,23 +127,86 @@ users (Devise auth + inbound_email_token)
 
 5. **User email tokens**: Each user has a unique token like `track-abc123@domain`. The token is hex, generated on user creation.
 
-## Git Branching Strategy
+## Git Branching & Deployment Strategy
 
-**IMPORTANT**: This app is deployed to production from the `main` branch.
+**IMPORTANT**: This app uses a staging → production deployment workflow.
 
-- **All new development** should be done on the `develop` branch
-- **Never commit directly to `main`** - it auto-deploys to Render
-- When features are ready, merge `develop` → `main` via pull request
+### Branches
+- `develop` → Auto-deploys to **staging** (`commodity-checker-staging.onrender.com`)
+- `main` → Auto-deploys to **production** (`commodity-checker.onrender.com`)
+
+### Workflow
+1. All new development happens on `develop`
+2. Push to `develop` → staging auto-deploys
+3. Test on staging environment
+4. When verified, create PR from `develop` → `main`
+5. Merge PR → production auto-deploys
 
 ```bash
 # Start new work
 git checkout develop
 
-# When ready to deploy
-git checkout main
-git merge develop
-git push
+# Push to staging for testing
+git push origin develop
+
+# When ready to deploy to production
+# Create PR on GitHub: develop → main
+# After review, merge the PR
 ```
+
+### Never
+- Commit directly to `main`
+- Force push to `main`
+- Deploy untested code to production
+
+## Database Migrations - MUST BE BACKWARDS COMPATIBLE
+
+**CRITICAL**: Migrations run BEFORE new code deploys. This means:
+1. Migration runs on database
+2. Old code briefly runs with new schema
+3. New code starts
+
+### Safe Migration Patterns ✅
+```ruby
+# Adding columns (with or without defaults)
+add_column :products, :new_field, :string
+add_column :products, :status, :integer, default: 0
+
+# Relaxing constraints (NOT NULL → nullable)
+change_column_null :products, :url, true
+
+# Adding indexes
+add_index :products, :new_field
+
+# Adding new tables
+create_table :new_things do |t|
+  # ...
+end
+```
+
+### Dangerous Migration Patterns ❌
+```ruby
+# Removing columns - old code may still reference them!
+remove_column :products, :old_field  # ❌ DANGEROUS
+
+# Renaming columns - old code uses old name!
+rename_column :products, :old_name, :new_name  # ❌ DANGEROUS
+
+# Adding NOT NULL without default - existing rows fail!
+add_column :products, :required_field, :string, null: false  # ❌ DANGEROUS
+
+# Changing column types - may lose data!
+change_column :products, :count, :string  # ❌ DANGEROUS
+```
+
+### Safe Column Removal (2-step process)
+1. **Release 1**: Deploy code that stops using the column
+2. **Release 2**: Remove the column in migration
+
+### Safe Column Rename (3-step process)
+1. **Release 1**: Add new column, write to both old and new
+2. **Release 2**: Migrate data, read from new, stop writing to old
+3. **Release 3**: Remove old column
 
 ## Running the App
 
