@@ -127,6 +127,24 @@ users (Devise auth + inbound_email_token)
 
 5. **User email tokens**: Each user has a unique token like `track-abc123@domain`. The token is hex, generated on user creation.
 
+## Git Branching Strategy
+
+**IMPORTANT**: This app is deployed to production from the `main` branch.
+
+- **All new development** should be done on the `develop` branch
+- **Never commit directly to `main`** - it auto-deploys to Render
+- When features are ready, merge `develop` → `main` via pull request
+
+```bash
+# Start new work
+git checkout develop
+
+# When ready to deploy
+git checkout main
+git merge develop
+git push
+```
+
 ## Running the App
 
 ```bash
