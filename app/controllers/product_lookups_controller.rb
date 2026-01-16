@@ -5,6 +5,7 @@ class ProductLookupsController < ApplicationController
   def index
     @product_lookups = current_user.product_lookups
                                    .includes(:order_item)
+                                   .with_attached_product_image
                                    .order(created_at: :desc)
   end
 
@@ -89,6 +90,31 @@ class ProductLookupsController < ApplicationController
     @product_lookup.update!(order_item: order_item)
 
     redirect_to @order, notice: "Product added to order."
+  end
+
+  def create_from_photo
+    unless user_signed_in?
+      redirect_to new_user_session_path, alert: "Please sign in to use photo lookup."
+      return
+    end
+
+    @product_lookup = current_user.product_lookups.build(
+      lookup_type: :photo,
+      scrape_status: :pending
+    )
+
+    if params[:product_lookup]&.dig(:product_image).present?
+      @product_lookup.product_image.attach(params[:product_lookup][:product_image])
+    end
+
+    if @product_lookup.save
+      # Queue background image analysis
+      AnalyzeProductImageJob.perform_later(@product_lookup.id)
+
+      redirect_to @product_lookup, notice: "Analyzing product image... This may take a moment."
+    else
+      render :new, status: :unprocessable_entity
+    end
   end
 
   private

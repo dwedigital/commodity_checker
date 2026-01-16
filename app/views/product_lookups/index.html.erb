@@ -35,14 +35,27 @@
           <tr>
             <td class="whitespace-nowrap py-4 pl-4 pr-3 text-sm sm:pl-6">
               <div class="flex items-center">
-                <% if lookup.image_url.present? %>
+                <% if lookup.photo? && lookup.product_image.attached? %>
+                  <div class="shrink-0 size-10 mr-3">
+                    <%= image_tag lookup.product_image.variant(resize_to_limit: [80, 80]), class: "size-10 rounded object-contain bg-gray-100", alt: "" %>
+                  </div>
+                <% elsif lookup.image_url.present? %>
                   <div class="shrink-0 size-10 mr-3">
                     <img class="size-10 rounded object-contain bg-gray-100" src="<%= lookup.image_url %>" alt="">
                   </div>
                 <% end %>
                 <div class="max-w-xs">
-                  <div class="font-medium text-gray-900 truncate"><%= lookup.title.presence || "Untitled" %></div>
-                  <div class="text-gray-500 truncate text-xs"><%= truncate(lookup.url, length: 50) %></div>
+                  <div class="font-medium text-gray-900 truncate">
+                    <%= lookup.title.presence || "Untitled" %>
+                    <% if lookup.photo? %>
+                      <span class="ml-1 inline-flex items-center rounded bg-yellow-100 px-1 py-0.5 text-xs font-medium text-yellow-700">Photo</span>
+                    <% end %>
+                  </div>
+                  <% if lookup.url? && lookup.url.present? %>
+                    <div class="text-gray-500 truncate text-xs"><%= truncate(lookup.url, length: 50) %></div>
+                  <% elsif lookup.photo? %>
+                    <div class="text-gray-500 truncate text-xs">Photo lookup</div>
+                  <% end %>
                 </div>
               </div>
             </td>

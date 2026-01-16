@@ -76,4 +76,8 @@ Rails.application.configure do
 
   # Action Mailbox - use local relay for development
   config.action_mailbox.ingress = :relay
+
+  # Allow ngrok tunnels for mobile testing
+  config.hosts << /.*\.ngrok\.app/
+  config.hosts << /.*\.ngrok-free\.app/
 end

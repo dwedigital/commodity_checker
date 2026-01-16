@@ -20,6 +20,9 @@ Rails.application.routes.draw do
 
   # Product URL lookups
   resources :product_lookups, only: [ :new, :create, :show, :index ] do
+    collection do
+      post :create_from_photo
+    end
     member do
       post :confirm_commodity_code
       post :add_to_order

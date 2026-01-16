@@ -8,7 +8,13 @@
             <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
             <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
           </svg>
-          <h3 class="mt-4 text-sm font-semibold text-gray-900">Fetching product details...</h3>
+          <h3 class="mt-4 text-sm font-semibold text-gray-900">
+            <% if product_lookup.photo? %>
+              Analyzing product image...
+            <% else %>
+              Fetching product details...
+            <% end %>
+          </h3>
           <p class="mt-2 text-sm text-gray-500">This may take a few seconds</p>
         </div>
       </div>
@@ -16,8 +22,17 @@
   <% else %>
     <!-- Product Details Card -->
     <div class="bg-white shadow rounded-lg overflow-hidden">
-      <div class="px-4 py-5 sm:px-6 border-b border-gray-200">
+      <div class="px-4 py-5 sm:px-6 border-b border-gray-200 flex items-center justify-between">
         <h3 class="text-base font-semibold leading-6 text-gray-900">Product Details</h3>
+        <% if product_lookup.photo? %>
+          <span class="inline-flex items-center rounded-full bg-yellow-100 px-2.5 py-0.5 text-xs font-medium text-yellow-800">
+            <svg class="mr-1 size-3" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M6.827 6.175A2.31 2.31 0 0 1 5.186 7.23c-.38.054-.757.112-1.134.175C2.999 7.58 2.25 8.507 2.25 9.574V18a2.25 2.25 0 0 0 2.25 2.25h15A2.25 2.25 0 0 0 21.75 18V9.574c0-1.067-.75-1.994-1.802-2.169a47.865 47.865 0 0 0-1.134-.175 2.31 2.31 0 0 1-1.64-1.055l-.822-1.316a2.192 2.192 0 0 0-1.736-1.039 48.774 48.774 0 0 0-5.232 0 2.192 2.192 0 0 0-1.736 1.039l-.821 1.316Z" />
+              <path stroke-linecap="round" stroke-linejoin="round" d="M16.5 12.75a4.5 4.5 0 1 1-9 0 4.5 4.5 0 0 1 9 0ZM18.75 10.5h.008v.008h-.008V10.5Z" />
+            </svg>
+            Photo Lookup (Beta)
+          </span>
+        <% end %>
       </div>
 
       <div class="px-4 py-5 sm:px-6">
@@ -54,7 +69,11 @@
         <% end %>
 
         <div class="flex gap-6">
-          <% if product_lookup.image_url.present? %>
+          <% if product_lookup.photo? && product_lookup.product_image.attached? %>
+            <div class="shrink-0">
+              <%= image_tag product_lookup.product_image.variant(resize_to_limit: [200, 200]), alt: product_lookup.title || "Product photo", class: "size-32 object-contain rounded-lg bg-gray-100" %>
+            </div>
+          <% elsif product_lookup.image_url.present? %>
             <div class="shrink-0">
               <img src="<%= product_lookup.image_url %>" alt="<%= product_lookup.title %>" class="size-32 object-contain rounded-lg bg-gray-100">
             </div>
@@ -109,14 +128,16 @@
           </div>
         <% end %>
 
-        <div class="mt-4 pt-4 border-t border-gray-200">
-          <a href="<%= product_lookup.url %>" target="_blank" rel="noopener" class="inline-flex items-center text-sm text-indigo-600 hover:text-indigo-500">
-            <svg class="mr-1 size-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
-            </svg>
-            View original product page
-          </a>
-        </div>
+        <% if product_lookup.url? && product_lookup.url.present? %>
+          <div class="mt-4 pt-4 border-t border-gray-200">
+            <a href="<%= product_lookup.url %>" target="_blank" rel="noopener" class="inline-flex items-center text-sm text-indigo-600 hover:text-indigo-500">
+              <svg class="mr-1 size-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
+              </svg>
+              View original product page
+            </a>
+          </div>
+        <% end %>
       </div>
     </div>
 

@@ -2,14 +2,22 @@ class ProductLookup < ApplicationRecord
   belongs_to :user
   belongs_to :order_item, optional: true
 
-  enum :scrape_status, { pending: 0, completed: 1, failed: 2, partial: 3 }
+  has_one_attached :product_image
 
-  validates :url, presence: true
-  validate :url_format
+  enum :scrape_status, { pending: 0, completed: 1, failed: 2, partial: 3 }
+  enum :lookup_type, { url: 0, photo: 1 }
+
+  validates :url, presence: true, if: :url?
+  validate :url_format, if: :url?
+  validates :product_image, presence: true, if: :photo?
 
   def display_description
-    parts = [title, description, brand, category, material].compact.reject(&:blank?)
-    parts.any? ? parts.join(". ") : url
+    if photo? && image_description.present?
+      image_description
+    else
+      parts = [title, description, brand, category, material].compact.reject(&:blank?)
+      parts.any? ? parts.join(". ") : url
+    end
   end
 
   def commodity_code_confirmed?
