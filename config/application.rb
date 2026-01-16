@@ -26,5 +26,8 @@ module CommodityChecker
 
     # Inbound email domain for forwarding tracking emails
     config.inbound_email_domain = ENV.fetch("INBOUND_EMAIL_DOMAIN", "inbound.example.com")
+
+    # Use MiniMagick (ImageMagick) for image processing instead of vips
+    config.active_storage.variant_processor = :mini_magick
   end
 end
