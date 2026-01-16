@@ -3,7 +3,7 @@
 
 databases:
   - name: commodity-checker-db
-    plan: basic  # $7/month, 1GB storage
+    plan: standard
     databaseName: commodity_checker_production
     user: commodity_checker
 
@@ -12,7 +12,7 @@ services:
   - type: web
     name: commodity-checker
     runtime: ruby
-    plan: starter  # $7/month
+    plan: starter # $7/month
     buildCommand: |
       bundle install &&
       bin/rails assets:precompile &&
@@ -31,21 +31,21 @@ services:
           name: commodity-checker-db
           property: connectionString
       - key: RAILS_MASTER_KEY
-        sync: false  # Set manually in Render dashboard
+        sync: false # Set manually in Render dashboard
       - key: ANTHROPIC_API_KEY
-        sync: false  # Set manually in Render dashboard
+        sync: false # Set manually in Render dashboard
       - key: SCRAPINGBEE_API_KEY
-        sync: false  # Set manually in Render dashboard
+        sync: false # Set manually in Render dashboard
       - key: INBOUND_EMAIL_DOMAIN
-        sync: false  # Set manually in Render dashboard
+        sync: false # Set manually in Render dashboard
       - key: MAILGUN_INGRESS_SIGNING_KEY
-        sync: false  # Set manually in Render dashboard
+        sync: false # Set manually in Render dashboard
 
   # Background worker for Solid Queue jobs
   - type: worker
     name: commodity-checker-worker
     runtime: ruby
-    plan: starter  # $7/month
+    plan: starter # $7/month
     buildCommand: bundle install
     startCommand: bin/rails solid_queue:start
     envVars:
