@@ -27,6 +27,8 @@ Rails.application.configure do
 
   # Store uploaded files in Cloudflare R2 (see config/storage.yml for options).
   config.active_storage.service = :cloudflare
+  # Proxy files through Rails instead of redirecting to R2 (R2 endpoint isn't public)
+  config.active_storage.resolve_model_to_route = :rails_storage_proxy
 
   # Set default URL options for URL generation outside of request context (e.g., Turbo Streams from jobs)
   # APP_HOST must be set in environment (e.g., commodity-checker.onrender.com or commodity-checker-staging.onrender.com)
