@@ -18,7 +18,7 @@
       </h1>
       <p class="mt-6 text-lg leading-8 text-gray-600">
         Importing goods to the UK or Channel Islands? Get instant HS code suggestions powered by AI.
-        Just paste a product link and we'll analyse it for you.
+        Paste a product link or <span class="font-medium text-indigo-600">snap a photo</span> of any product.
       </p>
     </div>
 
@@ -194,10 +194,9 @@
         <!-- Step 1 -->
         <div class="relative bg-white rounded-2xl p-8 shadow-sm ring-1 ring-gray-200">
           <div class="flex size-12 items-center justify-center rounded-xl bg-indigo-600 text-white font-bold text-lg">1</div>
-          <h3 class="mt-6 text-lg font-semibold text-gray-900">Paste a product link</h3>
-          <p class="mt-2 text-gray-600">Copy any product URL from Amazon, eBay, or your favourite retailer.</p>
-          <!-- IMAGE PLACEHOLDER: Generate with Gemini using prompt:
-               "Simple flat icon of a browser window with a URL being pasted, indigo and white colors, minimal" -->
+          <h3 class="mt-6 text-lg font-semibold text-gray-900">Paste a link or snap a photo</h3>
+          <p class="mt-2 text-gray-600">Copy any product URL, or use your camera to photograph a physical product.</p>
+          <p class="mt-2 text-xs text-indigo-600 font-medium">Photo lookup requires free account</p>
         </div>
 
         <!-- Step 2 -->
@@ -260,6 +259,12 @@
             <svg class="h-6 w-5 flex-none" viewBox="0 0 20 20" fill="currentColor">
               <path d="M6.28 5.22a.75.75 0 00-1.06 1.06L8.94 10l-3.72 3.72a.75.75 0 101.06 1.06L10 11.06l3.72 3.72a.75.75 0 101.06-1.06L11.06 10l3.72-3.72a.75.75 0 00-1.06-1.06L10 8.94 6.28 5.22z" />
             </svg>
+            <span>No photo lookup</span>
+          </li>
+          <li class="flex gap-x-3 text-gray-400">
+            <svg class="h-6 w-5 flex-none" viewBox="0 0 20 20" fill="currentColor">
+              <path d="M6.28 5.22a.75.75 0 00-1.06 1.06L8.94 10l-3.72 3.72a.75.75 0 101.06 1.06L10 11.06l3.72 3.72a.75.75 0 101.06-1.06L11.06 10l3.72-3.72a.75.75 0 00-1.06-1.06L10 8.94 6.28 5.22z" />
+            </svg>
             <span>Results not saved</span>
           </li>
           <li class="flex gap-x-3 text-gray-400">
@@ -297,6 +302,12 @@
               <path fill-rule="evenodd" d="M16.704 4.153a.75.75 0 01.143 1.052l-8 10.5a.75.75 0 01-1.127.075l-4.5-4.5a.75.75 0 011.06-1.06l3.894 3.893 7.48-9.817a.75.75 0 011.05-.143z" clip-rule="evenodd" />
             </svg>
             Unlimited commodity lookups
+          </li>
+          <li class="flex gap-x-3">
+            <svg class="h-6 w-5 flex-none text-indigo-600" viewBox="0 0 20 20" fill="currentColor">
+              <path fill-rule="evenodd" d="M16.704 4.153a.75.75 0 01.143 1.052l-8 10.5a.75.75 0 01-1.127.075l-4.5-4.5a.75.75 0 011.06-1.06l3.894 3.893 7.48-9.817a.75.75 0 011.05-.143z" clip-rule="evenodd" />
+            </svg>
+            <span><strong>Photo lookup</strong> - snap products with camera</span>
           </li>
           <li class="flex gap-x-3">
             <svg class="h-6 w-5 flex-none text-indigo-600" viewBox="0 0 20 20" fill="currentColor">
@@ -343,8 +354,30 @@
 
     <div class="mx-auto mt-16 max-w-5xl">
       <div class="grid grid-cols-1 gap-8 sm:grid-cols-2 lg:grid-cols-3">
-        <!-- Feature 1 -->
+        <!-- Feature 1 - Photo Lookup -->
+        <div class="relative bg-white rounded-2xl p-6 shadow-sm ring-2 ring-indigo-600">
+          <div class="absolute -top-3 left-4">
+            <span class="inline-flex items-center rounded-full bg-yellow-100 px-2.5 py-0.5 text-xs font-medium text-yellow-800">
+              Beta
+            </span>
+          </div>
+          <div class="flex size-12 items-center justify-center rounded-xl bg-indigo-100">
+            <svg class="size-6 text-indigo-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6.827 6.175A2.31 2.31 0 0 1 5.186 7.23c-.38.054-.757.112-1.134.175C2.999 7.58 2.25 8.507 2.25 9.574V18a2.25 2.25 0 0 0 2.25 2.25h15A2.25 2.25 0 0 0 21.75 18V9.574c0-1.067-.75-1.994-1.802-2.169a47.865 47.865 0 0 0-1.134-.175 2.31 2.31 0 0 1-1.64-1.055l-.822-1.316a2.192 2.192 0 0 0-1.736-1.039 48.774 48.774 0 0 0-5.232 0 2.192 2.192 0 0 0-1.736 1.039l-.821 1.316Z" />
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16.5 12.75a4.5 4.5 0 1 1-9 0 4.5 4.5 0 0 1 9 0Z" />
+            </svg>
+          </div>
+          <h3 class="mt-4 text-base font-semibold text-gray-900">Photo Lookup</h3>
+          <p class="mt-2 text-sm text-gray-600">Snap a photo of any physical product with your phone or webcam. Our AI vision identifies it and suggests the commodity code.</p>
+        </div>
+
+        <!-- Feature 2 - Email Forwarding -->
         <div class="relative bg-white rounded-2xl p-6 shadow-sm ring-1 ring-gray-200">
+          <div class="absolute -top-3 left-4">
+            <span class="inline-flex items-center rounded-full bg-yellow-100 px-2.5 py-0.5 text-xs font-medium text-yellow-800">
+              Beta
+            </span>
+          </div>
           <div class="flex size-12 items-center justify-center rounded-xl bg-indigo-100">
             <svg class="size-6 text-indigo-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
@@ -354,7 +387,7 @@
           <p class="mt-2 text-sm text-gray-600">Forward order confirmations to your unique email address. We extract products and tracking automatically.</p>
         </div>
 
-        <!-- Feature 2 -->
+        <!-- Feature 3 -->
         <div class="relative bg-white rounded-2xl p-6 shadow-sm ring-1 ring-gray-200">
           <div class="flex size-12 items-center justify-center rounded-xl bg-indigo-100">
             <svg class="size-6 text-indigo-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">

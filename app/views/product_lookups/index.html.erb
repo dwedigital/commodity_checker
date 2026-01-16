@@ -17,6 +17,7 @@
 
 <% if @product_lookups.any? %>
   <div class="bg-white shadow rounded-lg overflow-hidden">
+    <div class="overflow-x-auto">
     <table class="min-w-full divide-y divide-gray-200">
       <thead class="bg-gray-50">
         <tr>
@@ -46,7 +47,9 @@
                 <% end %>
                 <div class="max-w-xs">
                   <div class="font-medium text-gray-900 truncate">
-                    <%= lookup.title.presence || "Untitled" %>
+                    <%= link_to lookup, class: "hover:text-indigo-600" do %>
+                      <%= lookup.title.presence || "Untitled" %>
+                    <% end %>
                     <% if lookup.photo? %>
                       <span class="ml-1 inline-flex items-center rounded bg-yellow-100 px-1 py-0.5 text-xs font-medium text-yellow-700">Photo</span>
                     <% end %>
@@ -97,6 +100,7 @@
         <% end %>
       </tbody>
     </table>
+    </div>
   </div>
 <% else %>
   <div class="text-center bg-white rounded-lg shadow px-4 py-12">
