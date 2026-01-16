@@ -30,7 +30,7 @@ services:
     buildCommand: |
       bundle install &&
       bin/rails assets:precompile &&
-      bin/rails db:migrate
+      bin/rails db:prepare
     startCommand: bin/rails server -b 0.0.0.0
     healthCheckPath: /up
     envVars:
@@ -94,7 +94,7 @@ services:
     buildCommand: |
       bundle install &&
       bin/rails assets:precompile &&
-      bin/rails db:migrate
+      bin/rails db:prepare
     startCommand: bin/rails server -b 0.0.0.0
     healthCheckPath: /up
     envVars:
