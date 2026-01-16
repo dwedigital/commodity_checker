@@ -87,10 +87,18 @@ class AnalyzeProductImageJob < ApplicationJob
   end
 
   def broadcast_update(lookup)
+    # Update the main content
     Turbo::StreamsChannel.broadcast_replace_to(
       "product_lookup_#{lookup.id}",
       target: "product_lookup_#{lookup.id}",
       partial: "product_lookups/product_lookup",
+      locals: { product_lookup: lookup }
+    )
+    # Update the status badge in the header
+    Turbo::StreamsChannel.broadcast_replace_to(
+      "product_lookup_#{lookup.id}",
+      target: "product_lookup_status_#{lookup.id}",
+      partial: "product_lookups/status_badge",
       locals: { product_lookup: lookup }
     )
   rescue => e
