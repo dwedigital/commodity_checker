@@ -28,6 +28,13 @@ Rails.application.configure do
   # Store uploaded files on the local file system (see config/storage.yml for options).
   config.active_storage.service = :local
 
+  # Set default URL options for URL generation outside of request context (e.g., Turbo Streams from jobs)
+  # APP_HOST must be set in environment (e.g., commodity-checker.onrender.com or commodity-checker-staging.onrender.com)
+  if ENV["APP_HOST"].present?
+    config.action_controller.default_url_options = { host: ENV["APP_HOST"] }
+    Rails.application.routes.default_url_options = { host: ENV["APP_HOST"] }
+  end
+
   # Assume all access to the app is happening through a SSL-terminating reverse proxy.
   config.assume_ssl = true
 
@@ -62,7 +69,7 @@ Rails.application.configure do
   # config.action_mailer.raise_delivery_errors = false
 
   # Set host to be used by links generated in mailer templates.
-  config.action_mailer.default_url_options = { host: "example.com" }
+  config.action_mailer.default_url_options = { host: ENV.fetch("APP_HOST", "localhost") }
 
   # Specify outgoing SMTP server. Remember to add smtp/* credentials via rails credentials:edit.
   # config.action_mailer.smtp_settings = {
