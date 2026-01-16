@@ -272,22 +272,73 @@ bin/rails runner "
 "
 ```
 
+## ScrapingBee Fallback (Added 2026-01-16)
+
+The scraper now uses ScrapingBee as a fallback for protected websites that block direct HTTP requests.
+
+### How It Works
+
+1. **Try direct fetch first** - Fast and free, works for most sites
+2. **Detect failures** - HTTP 403, 401, 503, timeouts, connection failures
+3. **Fallback to ScrapingBee** - Only if API key is configured and error is recoverable
+4. **Return result** - Includes `fetched_via` field showing `:direct` or `:scrapingbee`
+
+### Configuration
+
+Add to `.env`:
+```bash
+SCRAPINGBEE_API_KEY=your-api-key-here
+```
+
+### ScrapingBee Settings
+
+```ruby
+params = {
+  api_key: api_key,
+  url: url,
+  render_js: "true",       # Handle JavaScript SPAs
+  premium_proxy: "true",   # Better success rate
+  country_code: "gb"       # UK proxy for UK content
+}
+```
+
+### Supported Protected Sites
+
+Now works with:
+- **Lululemon** - Previously returned 403
+- **ProDirect Sport** - Previously timed out
+- Other Cloudflare/bot-protected sites
+
+### Cost Optimization
+
+- Direct fetch is always attempted first (free)
+- ScrapingBee only used for failures (pay-per-request)
+- Premium proxy + JS rendering uses ~25 credits per request
+
+### Bug Fix
+
+Also fixed image URL handling where JSON-LD `image` field could be an array:
+```ruby
+image = json_ld_data&.dig("image")
+image = image.first if image.is_a?(Array)
+image = image["url"] if image.is_a?(Hash) && image["url"]
+```
+
 ## Limitations & Future Improvements
 
 ### Current Limitations
 
-- **JavaScript-heavy sites**: Sites like Amazon often require JavaScript rendering. The scraper uses HTTP-only requests, so some data may be missing.
 - **Rate limiting**: No explicit rate limiting implemented yet. Relies on Solid Queue job processing.
 - **URL matching**: Product URLs in emails are matched to order items sequentially, not by content similarity.
+- **ScrapingBee costs**: Premium proxy + JS rendering uses credits; monitor usage
 
 ### Potential Future Improvements
 
-1. **Headless browser**: Add Ferrum/Cuprite for JS-heavy sites
-2. **Image analysis**: Use Claude's vision to analyze product images for better classification
-3. **Browser extension**: Quick lookups while browsing
-4. **Bulk import**: CSV upload of multiple product URLs
-5. **Caching**: Cache scrape results for same URL within a timeframe
-6. **Smarter URL-to-item matching**: Use text similarity to match product URLs to the correct order items
+1. **Image analysis**: Use Claude's vision to analyze product images for better classification
+2. **Browser extension**: Quick lookups while browsing
+3. **Bulk import**: CSV upload of multiple product URLs
+4. **Caching**: Cache scrape results for same URL within a timeframe
+5. **Smarter URL-to-item matching**: Use text similarity to match product URLs to the correct order items
 
 ## Files Summary
 

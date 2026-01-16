@@ -14,8 +14,21 @@ class ProductScraperService
     "superdrug" => /superdrug\.com/i,
     "aliexpress" => /aliexpress\.com/i,
     "etsy" => /etsy\.com/i,
-    "wayfair" => /wayfair\.(com|co\.uk)/i
+    "wayfair" => /wayfair\.(com|co\.uk)/i,
+    "lululemon" => /lululemon\.com/i,
+    "prodirect" => /prodirectsport\.com/i
   }.freeze
+
+  # Errors that should trigger ScrapingBee fallback
+  FALLBACK_ERRORS = [
+    "HTTP 403",
+    "HTTP 401",
+    "HTTP 503",
+    "Request timed out",
+    "Connection failed"
+  ].freeze
+
+  SCRAPINGBEE_API_URL = "https://app.scrapingbee.com/api/v1/".freeze
 
   def initialize
     @conn = Faraday.new do |f|
@@ -27,13 +40,27 @@ class ProductScraperService
       f.response :follow_redirects, limit: 5
       f.adapter Faraday.default_adapter
     end
+
+    @scrapingbee_conn = Faraday.new do |f|
+      f.options.timeout = 60  # ScrapingBee can take longer
+      f.options.open_timeout = 30
+      f.adapter Faraday.default_adapter
+    end
   end
 
   def scrape(url)
     return error_result("URL is blank") if url.blank?
 
     retailer = detect_retailer(url)
+
+    # Try direct fetch first
     response = fetch_page(url)
+
+    # If direct fetch failed with a recoverable error, try ScrapingBee
+    if response[:error] && should_use_fallback?(response[:error])
+      Rails.logger.info("ProductScraperService: Direct fetch failed (#{response[:error]}), trying ScrapingBee for #{url}")
+      response = fetch_via_scrapingbee(url)
+    end
 
     return error_result("Failed to fetch page: #{response[:error]}") if response[:error]
 
@@ -42,6 +69,7 @@ class ProductScraperService
     result[:retailer_name] = retailer
     result[:url] = url
     result[:scraped_at] = Time.current
+    result[:fetched_via] = response[:fetched_via] || :direct
 
     # Determine scrape status based on quality
     result[:status] = determine_status(result)
@@ -64,7 +92,7 @@ class ProductScraperService
     response = @conn.get(url)
 
     if response.success?
-      { body: response.body, status: response.status }
+      { body: response.body, status: response.status, fetched_via: :direct }
     else
       { error: "HTTP #{response.status}" }
     end
@@ -74,6 +102,53 @@ class ProductScraperService
     { error: "Connection failed: #{e.message}" }
   rescue Faraday::Error => e
     { error: e.message }
+  end
+
+  def fetch_via_scrapingbee(url)
+    api_key = ENV["SCRAPINGBEE_API_KEY"]
+
+    unless api_key.present?
+      Rails.logger.warn("ProductScraperService: SCRAPINGBEE_API_KEY not configured, cannot use fallback")
+      return { error: "ScrapingBee not configured" }
+    end
+
+    params = {
+      api_key: api_key,
+      url: url,
+      render_js: "true",           # Render JavaScript for SPAs
+      premium_proxy: "true",       # Use premium proxies for better success rate
+      country_code: "gb"           # UK proxy for UK-specific content
+    }
+
+    response = @scrapingbee_conn.get(SCRAPINGBEE_API_URL, params)
+
+    if response.success?
+      Rails.logger.info("ProductScraperService: ScrapingBee succeeded for #{url}")
+      { body: response.body, status: response.status, fetched_via: :scrapingbee }
+    else
+      # ScrapingBee returns error details in the response body
+      error_msg = "ScrapingBee HTTP #{response.status}"
+      begin
+        error_data = JSON.parse(response.body)
+        error_msg = "ScrapingBee: #{error_data['message']}" if error_data["message"]
+      rescue JSON::ParserError
+        # Use default error message
+      end
+      Rails.logger.error("ProductScraperService: ScrapingBee failed for #{url}: #{error_msg}")
+      { error: error_msg }
+    end
+  rescue Faraday::TimeoutError
+    Rails.logger.error("ProductScraperService: ScrapingBee timed out for #{url}")
+    { error: "ScrapingBee request timed out" }
+  rescue Faraday::Error => e
+    Rails.logger.error("ProductScraperService: ScrapingBee error for #{url}: #{e.message}")
+    { error: "ScrapingBee error: #{e.message}" }
+  end
+
+  def should_use_fallback?(error)
+    return false unless ENV["SCRAPINGBEE_API_KEY"].present?
+
+    FALLBACK_ERRORS.any? { |fallback_error| error.to_s.include?(fallback_error) }
   end
 
   def extract_product_data(html, url)
@@ -122,13 +197,11 @@ class ProductScraperService
     # Material (often in description or specific fields)
     result[:material] = clean_text(extract_material(json_ld_data, html))
 
-    # Image
-    result[:image_url] = json_ld_data&.dig("image") ||
-                         og_data[:image] ||
-                         extract_product_image(html)
-
-    # Clean up image URL
-    result[:image_url] = normalize_image_url(result[:image_url], url) if result[:image_url]
+    # Image - handle both string and array formats
+    image = json_ld_data&.dig("image") || og_data[:image] || extract_product_image(html)
+    image = image.first if image.is_a?(Array)
+    image = image["url"] if image.is_a?(Hash) && image["url"]
+    result[:image_url] = normalize_image_url(image, url) if image.present?
 
     result
   end

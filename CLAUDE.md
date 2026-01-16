@@ -66,6 +66,7 @@ Product Description → TariffLookupService (UK API) → LlmCommoditySuggester (
 | `app/services/tariff_lookup_service.rb` | UK Trade Tariff API client |
 | `app/services/llm_commodity_suggester.rb` | Claude AI integration for code suggestions |
 | `app/services/tracking_scraper_service.rb` | Scrapes carrier tracking pages |
+| `app/services/product_scraper_service.rb` | Scrapes product pages for descriptions (with ScrapingBee fallback) |
 | `app/mailboxes/tracking_mailbox.rb` | Routes inbound emails to users |
 | `app/jobs/process_inbound_email_job.rb` | Main email processing orchestration |
 
@@ -148,6 +149,7 @@ bin/rails console
 ANTHROPIC_API_KEY          # Required for commodity suggestions
 INBOUND_EMAIL_DOMAIN       # e.g., inbound.yourdomain.com
 MAILGUN_INGRESS_SIGNING_KEY # For webhook verification
+SCRAPINGBEE_API_KEY        # Optional, for scraping protected websites (Cloudflare, etc.)
 ```
 
 ## Future Improvements (Not Yet Implemented)

@@ -1,92 +1,174 @@
-<div class="relative isolate overflow-hidden">
-  <div class="mx-auto max-w-7xl pb-24 pt-10 sm:pb-32 lg:grid lg:grid-cols-2 lg:gap-x-8 lg:px-8 lg:py-24">
-    <div class="px-6 lg:px-0 lg:pt-4">
-      <div class="mx-auto max-w-2xl">
-        <div class="max-w-lg">
-          <h1 class="text-4xl font-bold tracking-tight text-gray-900 sm:text-5xl">
-            Find the right<br>commodity code
-          </h1>
-          <p class="mt-4 text-lg leading-8 text-gray-600">
-            Paste any product link and get an instant UK/EU commodity code suggestion for customs declarations.
-          </p>
+<!-- Hero Section -->
+<div class="relative isolate overflow-hidden bg-gradient-to-b from-indigo-50/50">
+  <!-- Background decoration -->
+  <div class="absolute inset-x-0 -top-40 -z-10 transform-gpu overflow-hidden blur-3xl sm:-top-80" aria-hidden="true">
+    <div class="relative left-[calc(50%-11rem)] aspect-[1155/678] w-[36.125rem] -translate-x-1/2 rotate-[30deg] bg-gradient-to-tr from-indigo-200 to-purple-200 opacity-30 sm:left-[calc(50%-30rem)] sm:w-[72.1875rem]"></div>
+  </div>
 
-          <!-- Quick Lookup with Limit Tracking -->
-          <div class="mt-8" data-controller="lookup-limit" data-lookup-limit-authenticated-value="<%= user_signed_in? %>">
-            <!-- Form (hidden when limit reached) -->
-            <div data-lookup-limit-target="form">
-              <%= form_with url: home_lookup_path, method: :post, data: { turbo_frame: "lookup_result", action: "submit->lookup-limit#submit" }, class: "space-y-4" do |f| %>
-                <div>
-                  <label for="url" class="sr-only">Product URL</label>
-                  <div class="relative">
-                    <div class="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-4">
-                      <svg class="size-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101m-.758-4.899a4 4 0 005.656 0l4-4a4 4 0 00-5.656-5.656l-1.1 1.1" />
-                      </svg>
-                    </div>
-                    <%= f.url_field :url, placeholder: "https://www.amazon.co.uk/dp/B08N5WRWNW", class: "block w-full rounded-xl border-0 py-4 pl-12 pr-4 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6", autofocus: true %>
-                  </div>
-                  <div class="mt-2 flex items-center justify-between">
-                    <p class="text-sm text-gray-500">Works with Amazon, eBay, ASOS, John Lewis, and most retailers</p>
-                    <% unless user_signed_in? %>
-                      <p class="text-xs text-gray-400" data-remaining-wrapper>
-                        <span data-lookup-limit-target="remaining">3</span> free lookups left
-                      </p>
-                    <% end %>
-                  </div>
-                </div>
-                <%= f.submit "Get Commodity Code", data: { turbo_submits_with: "Looking up..." }, class: "w-full rounded-xl bg-indigo-600 px-4 py-3 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600 cursor-pointer transition-colors disabled:opacity-50 disabled:cursor-not-allowed" %>
-              <% end %>
-            </div>
+  <div class="mx-auto max-w-7xl px-6 py-16 sm:py-24 lg:px-8">
+    <div class="mx-auto max-w-2xl text-center">
+      <div class="mb-8 flex justify-center">
+        <div class="relative rounded-full px-4 py-1.5 text-sm leading-6 text-gray-600 ring-1 ring-gray-900/10 hover:ring-gray-900/20">
+          <span class="font-semibold text-indigo-600">3 free lookups</span> - no account needed
+        </div>
+      </div>
+      <h1 class="text-4xl font-bold tracking-tight text-gray-900 sm:text-6xl">
+        Stop guessing<br>
+        <span class="text-indigo-600">commodity codes</span>
+      </h1>
+      <p class="mt-6 text-lg leading-8 text-gray-600">
+        Importing goods to the UK or Channel Islands? Get instant HS code suggestions powered by AI.
+        Just paste a product link and we'll analyse it for you.
+      </p>
+    </div>
 
-            <!-- Limit Reached State (hidden by default) -->
-            <div class="hidden" data-lookup-limit-target="limitReached">
-              <div class="rounded-xl bg-gradient-to-br from-indigo-50 to-purple-50 p-6 text-center ring-1 ring-indigo-100">
-                <div class="mx-auto flex size-12 items-center justify-center rounded-full bg-indigo-100">
-                  <svg class="size-6 text-indigo-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
-                  </svg>
-                </div>
-                <h3 class="mt-4 text-lg font-semibold text-gray-900">Free lookups used</h3>
-                <p class="mt-2 text-sm text-gray-600">You've used your 3 free lookups. Sign up for unlimited access and save your results.</p>
-                <div class="mt-6 flex flex-col gap-3 sm:flex-row sm:justify-center">
-                  <%= link_to "Sign up free", new_user_registration_path, class: "rounded-xl bg-indigo-600 px-6 py-3 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 transition-colors" %>
-                  <%= link_to "Sign in", new_user_session_path, class: "rounded-xl bg-white px-6 py-3 text-sm font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50 transition-colors" %>
-                </div>
+    <!-- Quick Lookup Form -->
+    <div class="mx-auto mt-10 max-w-xl" data-controller="lookup-limit" data-lookup-limit-authenticated-value="<%= user_signed_in? %>">
+      <!-- Form (hidden when limit reached) -->
+      <div data-lookup-limit-target="form">
+        <%= form_with url: home_lookup_path, method: :post, data: { turbo_frame: "lookup_result", action: "submit->lookup-limit#submit" }, class: "space-y-4" do |f| %>
+          <div class="flex gap-3">
+            <div class="relative flex-1">
+              <div class="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-4">
+                <svg class="size-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101m-.758-4.899a4 4 0 005.656 0l4-4a4 4 0 00-5.656-5.656l-1.1 1.1" />
+                </svg>
               </div>
+              <%= f.url_field :url, placeholder: "Paste any product URL...", class: "block w-full rounded-xl border-0 py-4 pl-12 pr-4 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6", autofocus: true %>
             </div>
-
-            <!-- Result Frame -->
-            <%= turbo_frame_tag "lookup_result", class: "block" do %>
+            <%= f.submit "Get Code", data: { turbo_submits_with: "..." }, class: "rounded-xl bg-indigo-600 px-6 py-4 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600 cursor-pointer transition-colors" %>
+          </div>
+          <div class="flex items-center justify-between text-sm">
+            <p class="text-gray-500">Amazon, eBay, ASOS, John Lewis & 100+ retailers</p>
+            <% unless user_signed_in? %>
+              <p class="text-gray-400" data-remaining-wrapper>
+                <span class="font-medium text-indigo-600" data-lookup-limit-target="remaining">3</span> free <span data-lookup-limit-target="lookupText">lookups</span> left
+              </p>
             <% end %>
           </div>
+        <% end %>
+      </div>
 
-          <% if user_signed_in? %>
-            <div class="mt-6 text-center">
-              <%= link_to "Go to Dashboard", dashboard_path, class: "text-sm font-semibold text-indigo-600 hover:text-indigo-500" %>
-            </div>
-          <% end %>
+      <!-- Limit Reached State -->
+      <div class="hidden" data-lookup-limit-target="limitReached">
+        <div class="rounded-2xl bg-gradient-to-br from-indigo-500 to-purple-600 p-8 text-center text-white shadow-xl">
+          <div class="mx-auto flex size-16 items-center justify-center rounded-full bg-white/20">
+            <svg class="size-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z" />
+            </svg>
+          </div>
+          <h3 class="mt-4 text-xl font-bold">You're on a roll!</h3>
+          <p class="mt-2 text-indigo-100">Create a free account for unlimited lookups, saved history, and more.</p>
+          <div class="mt-6 flex flex-col gap-3 sm:flex-row sm:justify-center">
+            <%= link_to "Create free account", new_user_registration_path, class: "rounded-xl bg-white px-6 py-3 text-sm font-semibold text-indigo-600 shadow-sm hover:bg-indigo-50 transition-colors" %>
+            <%= link_to "Sign in", new_user_session_path, class: "rounded-xl bg-white/10 px-6 py-3 text-sm font-semibold text-white hover:bg-white/20 transition-colors" %>
+          </div>
+        </div>
+      </div>
+
+      <!-- Result Frame -->
+      <%= turbo_frame_tag "lookup_result", class: "block" do %>
+      <% end %>
+
+      <% if user_signed_in? %>
+        <div class="mt-6 text-center">
+          <%= link_to "Go to Dashboard", dashboard_path, class: "text-sm font-semibold text-indigo-600 hover:text-indigo-500" %>
+        </div>
+      <% end %>
+    </div>
+
+    <!-- Trust indicators -->
+    <div class="mx-auto mt-12 max-w-2xl">
+      <p class="text-center text-sm text-gray-500 mb-4">Powered by official data sources</p>
+      <div class="flex flex-wrap items-center justify-center gap-x-8 gap-y-4 text-gray-400">
+        <div class="flex items-center gap-2">
+          <svg class="size-5" fill="currentColor" viewBox="0 0 20 20">
+            <path fill-rule="evenodd" d="M16.403 12.652a3 3 0 000-5.304 3 3 0 00-3.75-3.751 3 3 0 00-5.305 0 3 3 0 00-3.751 3.75 3 3 0 000 5.305 3 3 0 003.75 3.751 3 3 0 005.305 0 3 3 0 003.751-3.75zm-2.546-4.46a.75.75 0 00-1.214-.883l-3.483 4.79-1.88-1.88a.75.75 0 10-1.06 1.061l2.5 2.5a.75.75 0 001.137-.089l4-5.5z" clip-rule="evenodd" />
+          </svg>
+          <span class="text-sm">UK's HMRC Trade Tariff API</span>
+        </div>
+        <div class="flex items-center gap-2">
+          <svg class="size-5" fill="currentColor" viewBox="0 0 20 20">
+            <path fill-rule="evenodd" d="M16.403 12.652a3 3 0 000-5.304 3 3 0 00-3.75-3.751 3 3 0 00-5.305 0 3 3 0 00-3.751 3.75 3 3 0 000 5.305 3 3 0 003.75 3.751 3 3 0 005.305 0 3 3 0 003.751-3.75zm-2.546-4.46a.75.75 0 00-1.214-.883l-3.483 4.79-1.88-1.88a.75.75 0 10-1.06 1.061l2.5 2.5a.75.75 0 001.137-.089l4-5.5z" clip-rule="evenodd" />
+          </svg>
+          <span class="text-sm">Claude AI Analysis</span>
+        </div>
+        <div class="flex items-center gap-2">
+          <svg class="size-5" fill="currentColor" viewBox="0 0 20 20">
+            <path fill-rule="evenodd" d="M16.403 12.652a3 3 0 000-5.304 3 3 0 00-3.75-3.751 3 3 0 00-5.305 0 3 3 0 00-3.751 3.75 3 3 0 000 5.305 3 3 0 003.75 3.751 3 3 0 005.305 0 3 3 0 003.751-3.75zm-2.546-4.46a.75.75 0 00-1.214-.883l-3.483 4.79-1.88-1.88a.75.75 0 10-1.06 1.061l2.5 2.5a.75.75 0 001.137-.089l4-5.5z" clip-rule="evenodd" />
+          </svg>
+          <span class="text-sm">10-digit HS Codes</span>
         </div>
       </div>
     </div>
-    <div class="mt-16 sm:mt-24 md:mx-auto md:max-w-2xl lg:mx-0 lg:mt-0 lg:w-screen">
-      <div class="shadow-lg md:rounded-3xl">
-        <div class="bg-indigo-500 [clip-path:inset(0)] md:[clip-path:inset(0_round_theme(borderRadius.3xl))]">
-          <div class="relative px-6 pt-8 sm:pt-16 md:pl-16 md:pr-0">
-            <div class="mx-auto max-w-2xl md:mx-0 md:max-w-none">
-              <div class="overflow-hidden rounded-tl-xl bg-gray-900">
-                <div class="flex bg-gray-800/40 ring-1 ring-white/5">
-                  <div class="-mb-px flex text-sm font-medium leading-6 text-gray-400">
-                    <div class="border-b border-r border-b-white/20 border-r-white/10 bg-white/5 px-4 py-2 text-white">How it works</div>
-                  </div>
-                </div>
-                <div class="px-6 pb-14 pt-6 text-white">
-                  <p class="text-sm mb-4"><span class="text-indigo-400">1.</span> Paste a product link or forward tracking emails</p>
-                  <p class="text-sm mb-4"><span class="text-indigo-400">2.</span> We extract product and order details</p>
-                  <p class="text-sm mb-4"><span class="text-indigo-400">3.</span> AI suggests the correct commodity code</p>
-                  <p class="text-sm"><span class="text-indigo-400">4.</span> Sign up to save and track orders</p>
+  </div>
+</div>
+
+<!-- Problem / Solution Section -->
+<div class="bg-white py-24">
+  <div class="mx-auto max-w-7xl px-6 lg:px-8">
+    <div class="mx-auto max-w-2xl lg:max-w-none">
+      <div class="grid grid-cols-1 gap-12 lg:grid-cols-2 lg:gap-16 items-center">
+        <!-- Problem -->
+        <div>
+          <h2 class="text-3xl font-bold tracking-tight text-gray-900 sm:text-4xl">
+            Customs declarations shouldn't be this hard
+          </h2>
+          <p class="mt-6 text-lg leading-8 text-gray-600">
+            Every import needs the right commodity code. Get it wrong and you face delays, fines, or paying too much duty.
+            The UK & Channel Islands tariff has <span class="font-semibold">over 15,000 codes</span> - finding the right one takes expertise.
+          </p>
+          <dl class="mt-8 space-y-4">
+            <div class="flex gap-4">
+              <div class="flex-shrink-0">
+                <div class="flex size-10 items-center justify-center rounded-lg bg-red-100">
+                  <svg class="size-6 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                  </svg>
                 </div>
               </div>
+              <div>
+                <dt class="font-semibold text-gray-900">Wrong code = wrong duty rate</dt>
+                <dd class="mt-1 text-gray-600">Underpay and HMRC will bill you later. Overpay and you've wasted money.</dd>
+              </div>
             </div>
+            <div class="flex gap-4">
+              <div class="flex-shrink-0">
+                <div class="flex size-10 items-center justify-center rounded-lg bg-red-100">
+                  <svg class="size-6 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+                  </svg>
+                </div>
+              </div>
+              <div>
+                <dt class="font-semibold text-gray-900">Hours of research</dt>
+                <dd class="mt-1 text-gray-600">Navigating the tariff manually is slow and confusing, especially for unusual items.</dd>
+              </div>
+            </div>
+            <div class="flex gap-4">
+              <div class="flex-shrink-0">
+                <div class="flex size-10 items-center justify-center rounded-lg bg-red-100">
+                  <svg class="size-6 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M18.364 18.364A9 9 0 005.636 5.636m12.728 12.728A9 9 0 015.636 5.636m12.728 12.728L5.636 5.636" />
+                  </svg>
+                </div>
+              </div>
+              <div>
+                <dt class="font-semibold text-gray-900">Shipment delays</dt>
+                <dd class="mt-1 text-gray-600">Goods held at customs while paperwork is corrected costs time and money.</dd>
+              </div>
+            </div>
+          </dl>
+        </div>
+
+        <!-- Solution - Image placeholder -->
+        <div class="relative">
+          <div class="aspect-square rounded-2xl bg-gradient-to-br from-indigo-100 to-purple-100 p-8 flex items-center justify-center">
+            <!-- IMAGE PLACEHOLDER: Generate with Gemini using prompt:
+                 "Flat illustration of a stressed person surrounded by piles of customs forms and documents,
+                 muted colors, modern minimalist style, no text" -->
+                 <%= image_tag "/images/paperwork.png", class: "w-full h-full object-cover rounded-2xl" %>
+
           </div>
         </div>
       </div>
@@ -94,60 +176,296 @@
   </div>
 </div>
 
-<!-- Features section -->
-<div class="bg-white py-24 sm:py-32">
+<!-- How It Works -->
+<div class="bg-gray-50 py-24">
   <div class="mx-auto max-w-7xl px-6 lg:px-8">
-    <div class="mx-auto max-w-2xl lg:text-center">
-      <h2 class="text-base font-semibold leading-7 text-indigo-600">Simplify customs</h2>
-      <p class="mt-2 text-3xl font-bold tracking-tight text-gray-900 sm:text-4xl">Everything you need for import tracking</p>
+    <div class="mx-auto max-w-2xl text-center">
+      <h2 class="text-base font-semibold leading-7 text-indigo-600">Simple process</h2>
+      <p class="mt-2 text-3xl font-bold tracking-tight text-gray-900 sm:text-4xl">
+        Get your commodity code in seconds
+      </p>
+      <p class="mt-6 text-lg leading-8 text-gray-600">
+        No customs expertise required. Our AI does the heavy lifting.
+      </p>
     </div>
-    <div class="mx-auto mt-16 max-w-2xl sm:mt-20 lg:mt-24 lg:max-w-4xl">
-      <dl class="grid max-w-xl grid-cols-1 gap-x-8 gap-y-10 lg:max-w-none lg:grid-cols-2 lg:gap-y-16">
-        <div class="relative pl-16">
-          <dt class="text-base font-semibold leading-7 text-gray-900">
-            <div class="absolute left-0 top-0 flex size-10 items-center justify-center rounded-lg bg-indigo-600">
-              <svg class="size-6 text-white" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
-                <path stroke-linecap="round" stroke-linejoin="round" d="M21.75 6.75v10.5a2.25 2.25 0 01-2.25 2.25h-15a2.25 2.25 0 01-2.25-2.25V6.75m19.5 0A2.25 2.25 0 0019.5 4.5h-15a2.25 2.25 0 00-2.25 2.25m19.5 0v.243a2.25 2.25 0 01-1.07 1.916l-7.5 4.615a2.25 2.25 0 01-2.36 0L3.32 8.91a2.25 2.25 0 01-1.07-1.916V6.75" />
-              </svg>
-            </div>
-            Email forwarding
-          </dt>
-          <dd class="mt-2 text-base leading-7 text-gray-600">Simply forward your tracking emails. We automatically extract tracking links and order details.</dd>
+
+    <div class="mx-auto mt-16 max-w-5xl">
+      <div class="grid grid-cols-1 gap-8 md:grid-cols-3">
+        <!-- Step 1 -->
+        <div class="relative bg-white rounded-2xl p-8 shadow-sm ring-1 ring-gray-200">
+          <div class="flex size-12 items-center justify-center rounded-xl bg-indigo-600 text-white font-bold text-lg">1</div>
+          <h3 class="mt-6 text-lg font-semibold text-gray-900">Paste a product link</h3>
+          <p class="mt-2 text-gray-600">Copy any product URL from Amazon, eBay, or your favourite retailer.</p>
+          <!-- IMAGE PLACEHOLDER: Generate with Gemini using prompt:
+               "Simple flat icon of a browser window with a URL being pasted, indigo and white colors, minimal" -->
         </div>
-        <div class="relative pl-16">
-          <dt class="text-base font-semibold leading-7 text-gray-900">
-            <div class="absolute left-0 top-0 flex size-10 items-center justify-center rounded-lg bg-indigo-600">
-              <svg class="size-6 text-white" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
-                <path stroke-linecap="round" stroke-linejoin="round" d="M9.813 15.904L9 18.75l-.813-2.846a4.5 4.5 0 00-3.09-3.09L2.25 12l2.846-.813a4.5 4.5 0 003.09-3.09L9 5.25l.813 2.846a4.5 4.5 0 003.09 3.09L15.75 12l-2.846.813a4.5 4.5 0 00-3.09 3.09z" />
-              </svg>
-            </div>
-            AI-powered classification
-          </dt>
-          <dd class="mt-2 text-base leading-7 text-gray-600">Our AI analyses product descriptions and suggests the most likely UK/EU commodity codes.</dd>
+
+        <!-- Step 2 -->
+        <div class="relative bg-white rounded-2xl p-8 shadow-sm ring-1 ring-gray-200">
+          <div class="flex size-12 items-center justify-center rounded-xl bg-indigo-600 text-white font-bold text-lg">2</div>
+          <h3 class="mt-6 text-lg font-semibold text-gray-900">AI analyses the product</h3>
+          <p class="mt-2 text-gray-600">We extract details and match against the official UK tariff database.</p>
         </div>
-        <div class="relative pl-16">
-          <dt class="text-base font-semibold leading-7 text-gray-900">
-            <div class="absolute left-0 top-0 flex size-10 items-center justify-center rounded-lg bg-indigo-600">
-              <svg class="size-6 text-white" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
-                <path stroke-linecap="round" stroke-linejoin="round" d="M8.25 18.75a1.5 1.5 0 01-3 0m3 0a1.5 1.5 0 00-3 0m3 0h6m-9 0H3.375a1.125 1.125 0 01-1.125-1.125V14.25m17.25 4.5a1.5 1.5 0 01-3 0m3 0a1.5 1.5 0 00-3 0m3 0h1.125c.621 0 1.129-.504 1.09-1.124a17.902 17.902 0 00-3.213-9.193 2.056 2.056 0 00-1.58-.86H14.25M16.5 18.75h-2.25m0-11.177v-.958c0-.568-.422-1.048-.987-1.106a48.554 48.554 0 00-10.026 0 1.106 1.106 0 00-.987 1.106v7.635m12-6.677v6.677m0 4.5v-4.5m0 0h-12" />
-              </svg>
-            </div>
-            Delivery tracking
-          </dt>
-          <dd class="mt-2 text-base leading-7 text-gray-600">Monitor delivery status across multiple carriers. Know when your orders will arrive.</dd>
+
+        <!-- Step 3 -->
+        <div class="relative bg-white rounded-2xl p-8 shadow-sm ring-1 ring-gray-200">
+          <div class="flex size-12 items-center justify-center rounded-xl bg-indigo-600 text-white font-bold text-lg">3</div>
+          <h3 class="mt-6 text-lg font-semibold text-gray-900">Get your HS code</h3>
+          <p class="mt-2 text-gray-600">Receive a suggested 10-digit commodity code with confidence rating and explanation.</p>
         </div>
-        <div class="relative pl-16">
-          <dt class="text-base font-semibold leading-7 text-gray-900">
-            <div class="absolute left-0 top-0 flex size-10 items-center justify-center rounded-lg bg-indigo-600">
-              <svg class="size-6 text-white" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
-                <path stroke-linecap="round" stroke-linejoin="round" d="M3 16.5v2.25A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75V16.5M16.5 12L12 16.5m0 0L7.5 12m4.5 4.5V3" />
-              </svg>
-            </div>
-            Export for customs
-          </dt>
-          <dd class="mt-2 text-base leading-7 text-gray-600">Export your orders with confirmed commodity codes as CSV for easy customs declaration.</dd>
-        </div>
-      </dl>
+      </div>
     </div>
   </div>
 </div>
+
+<!-- Free vs Account Comparison -->
+<div class="bg-white py-24">
+  <div class="mx-auto max-w-7xl px-6 lg:px-8">
+    <div class="mx-auto max-w-2xl text-center">
+      <h2 class="text-base font-semibold leading-7 text-indigo-600">Choose your plan</h2>
+      <p class="mt-2 text-3xl font-bold tracking-tight text-gray-900 sm:text-4xl">
+        Start free, upgrade when you need more
+      </p>
+    </div>
+
+    <div class="mx-auto mt-16 grid max-w-lg grid-cols-1 gap-8 lg:max-w-4xl lg:grid-cols-2">
+      <!-- Free Tier -->
+      <div class="rounded-3xl p-8 ring-1 ring-gray-200 bg-white">
+        <h3 class="text-lg font-semibold leading-8 text-gray-900">Free Lookups</h3>
+        <p class="mt-4 text-sm leading-6 text-gray-600">Perfect for occasional imports or trying out the service.</p>
+        <p class="mt-6 flex items-baseline gap-x-1">
+          <span class="text-4xl font-bold tracking-tight text-gray-900">3</span>
+          <span class="text-sm font-semibold leading-6 text-gray-600">lookups / per week</span>
+        </p>
+        <ul role="list" class="mt-8 space-y-3 text-sm leading-6 text-gray-600">
+          <li class="flex gap-x-3">
+            <svg class="h-6 w-5 flex-none text-indigo-600" viewBox="0 0 20 20" fill="currentColor">
+              <path fill-rule="evenodd" d="M16.704 4.153a.75.75 0 01.143 1.052l-8 10.5a.75.75 0 01-1.127.075l-4.5-4.5a.75.75 0 011.06-1.06l3.894 3.893 7.48-9.817a.75.75 0 011.05-.143z" clip-rule="evenodd" />
+            </svg>
+            Instant commodity code suggestions
+          </li>
+          <li class="flex gap-x-3">
+            <svg class="h-6 w-5 flex-none text-indigo-600" viewBox="0 0 20 20" fill="currentColor">
+              <path fill-rule="evenodd" d="M16.704 4.153a.75.75 0 01.143 1.052l-8 10.5a.75.75 0 01-1.127.075l-4.5-4.5a.75.75 0 011.06-1.06l3.894 3.893 7.48-9.817a.75.75 0 011.05-.143z" clip-rule="evenodd" />
+            </svg>
+            AI-powered analysis
+          </li>
+          <li class="flex gap-x-3">
+            <svg class="h-6 w-5 flex-none text-indigo-600" viewBox="0 0 20 20" fill="currentColor">
+              <path fill-rule="evenodd" d="M16.704 4.153a.75.75 0 01.143 1.052l-8 10.5a.75.75 0 01-1.127.075l-4.5-4.5a.75.75 0 011.06-1.06l3.894 3.893 7.48-9.817a.75.75 0 011.05-.143z" clip-rule="evenodd" />
+            </svg>
+            Confidence scores & reasoning
+          </li>
+          <li class="flex gap-x-3 text-gray-400">
+            <svg class="h-6 w-5 flex-none" viewBox="0 0 20 20" fill="currentColor">
+              <path d="M6.28 5.22a.75.75 0 00-1.06 1.06L8.94 10l-3.72 3.72a.75.75 0 101.06 1.06L10 11.06l3.72 3.72a.75.75 0 101.06-1.06L11.06 10l3.72-3.72a.75.75 0 00-1.06-1.06L10 8.94 6.28 5.22z" />
+            </svg>
+            <span>Results not saved</span>
+          </li>
+          <li class="flex gap-x-3 text-gray-400">
+            <svg class="h-6 w-5 flex-none" viewBox="0 0 20 20" fill="currentColor">
+              <path d="M6.28 5.22a.75.75 0 00-1.06 1.06L8.94 10l-3.72 3.72a.75.75 0 101.06 1.06L10 11.06l3.72 3.72a.75.75 0 101.06-1.06L11.06 10l3.72-3.72a.75.75 0 00-1.06-1.06L10 8.94 6.28 5.22z" />
+            </svg>
+            <span>No order tracking</span>
+          </li>
+        </ul>
+        <p class="mt-8 text-center text-sm text-gray-500">No account required</p>
+      </div>
+
+      <!-- Account Tier -->
+      <div class="rounded-3xl p-8 ring-2 ring-indigo-600 bg-white relative">
+        <div class="absolute -top-4 left-1/2 -translate-x-1/2">
+          <span class="inline-flex items-center rounded-full bg-indigo-600 px-4 py-1 text-xs font-medium text-white">
+            Recommended
+          </span>
+        </div>
+        <h3 class="text-lg font-semibold leading-8 text-indigo-600">Free Account</h3>
+        <p class="mt-4 text-sm leading-6 text-gray-600">For regular importers who want to track and manage orders.</p>
+        <p class="mt-6 flex items-baseline gap-x-1">
+          <span class="text-4xl font-bold tracking-tight text-gray-900">Unlimited</span>
+          <span class="text-sm font-semibold leading-6 text-gray-600">lookups</span>
+        </p>
+        <ul role="list" class="mt-8 space-y-3 text-sm leading-6 text-gray-600">
+          <li class="flex gap-x-3">
+            <svg class="h-6 w-5 flex-none text-indigo-600" viewBox="0 0 20 20" fill="currentColor">
+              <path fill-rule="evenodd" d="M16.704 4.153a.75.75 0 01.143 1.052l-8 10.5a.75.75 0 01-1.127.075l-4.5-4.5a.75.75 0 011.06-1.06l3.894 3.893 7.48-9.817a.75.75 0 011.05-.143z" clip-rule="evenodd" />
+            </svg>
+            <strong>Everything in Free, plus:</strong>
+          </li>
+          <li class="flex gap-x-3">
+            <svg class="h-6 w-5 flex-none text-indigo-600" viewBox="0 0 20 20" fill="currentColor">
+              <path fill-rule="evenodd" d="M16.704 4.153a.75.75 0 01.143 1.052l-8 10.5a.75.75 0 01-1.127.075l-4.5-4.5a.75.75 0 011.06-1.06l3.894 3.893 7.48-9.817a.75.75 0 011.05-.143z" clip-rule="evenodd" />
+            </svg>
+            Unlimited commodity lookups
+          </li>
+          <li class="flex gap-x-3">
+            <svg class="h-6 w-5 flex-none text-indigo-600" viewBox="0 0 20 20" fill="currentColor">
+              <path fill-rule="evenodd" d="M16.704 4.153a.75.75 0 01.143 1.052l-8 10.5a.75.75 0 01-1.127.075l-4.5-4.5a.75.75 0 011.06-1.06l3.894 3.893 7.48-9.817a.75.75 0 011.05-.143z" clip-rule="evenodd" />
+            </svg>
+            Save & search lookup history
+          </li>
+          <li class="flex gap-x-3">
+            <svg class="h-6 w-5 flex-none text-indigo-600" viewBox="0 0 20 20" fill="currentColor">
+              <path fill-rule="evenodd" d="M16.704 4.153a.75.75 0 01.143 1.052l-8 10.5a.75.75 0 01-1.127.075l-4.5-4.5a.75.75 0 011.06-1.06l3.894 3.893 7.48-9.817a.75.75 0 011.05-.143z" clip-rule="evenodd" />
+            </svg>
+            Email forwarding for orders
+          </li>
+          <li class="flex gap-x-3">
+            <svg class="h-6 w-5 flex-none text-indigo-600" viewBox="0 0 20 20" fill="currentColor">
+              <path fill-rule="evenodd" d="M16.704 4.153a.75.75 0 01.143 1.052l-8 10.5a.75.75 0 01-1.127.075l-4.5-4.5a.75.75 0 011.06-1.06l3.894 3.893 7.48-9.817a.75.75 0 011.05-.143z" clip-rule="evenodd" />
+            </svg>
+            Delivery tracking dashboard
+          </li>
+          <li class="flex gap-x-3">
+            <svg class="h-6 w-5 flex-none text-indigo-600" viewBox="0 0 20 20" fill="currentColor">
+              <path fill-rule="evenodd" d="M16.704 4.153a.75.75 0 01.143 1.052l-8 10.5a.75.75 0 01-1.127.075l-4.5-4.5a.75.75 0 011.06-1.06l3.894 3.893 7.48-9.817a.75.75 0 011.05-.143z" clip-rule="evenodd" />
+            </svg>
+            CSV export for customs
+          </li>
+        </ul>
+        <%= link_to new_user_registration_path, class: "mt-8 block rounded-xl bg-indigo-600 px-4 py-3 text-center text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 transition-colors" do %>
+          Create free account
+        <% end %>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Features Grid -->
+<div class="bg-gray-50 py-24">
+  <div class="mx-auto max-w-7xl px-6 lg:px-8">
+    <div class="mx-auto max-w-2xl text-center">
+      <h2 class="text-base font-semibold leading-7 text-indigo-600">Account features</h2>
+      <p class="mt-2 text-3xl font-bold tracking-tight text-gray-900 sm:text-4xl">
+        Everything you need for import management
+      </p>
+    </div>
+
+    <div class="mx-auto mt-16 max-w-5xl">
+      <div class="grid grid-cols-1 gap-8 sm:grid-cols-2 lg:grid-cols-3">
+        <!-- Feature 1 -->
+        <div class="relative bg-white rounded-2xl p-6 shadow-sm ring-1 ring-gray-200">
+          <div class="flex size-12 items-center justify-center rounded-xl bg-indigo-100">
+            <svg class="size-6 text-indigo-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
+            </svg>
+          </div>
+          <h3 class="mt-4 text-base font-semibold text-gray-900">Email Forwarding</h3>
+          <p class="mt-2 text-sm text-gray-600">Forward order confirmations to your unique email address. We extract products and tracking automatically.</p>
+        </div>
+
+        <!-- Feature 2 -->
+        <div class="relative bg-white rounded-2xl p-6 shadow-sm ring-1 ring-gray-200">
+          <div class="flex size-12 items-center justify-center rounded-xl bg-indigo-100">
+            <svg class="size-6 text-indigo-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01" />
+            </svg>
+          </div>
+          <h3 class="mt-4 text-base font-semibold text-gray-900">Order Dashboard</h3>
+          <p class="mt-2 text-sm text-gray-600">See all your orders in one place. Track status, view commodity codes, and manage confirmations.</p>
+        </div>
+
+        <!-- Feature 3 -->
+        <div class="relative bg-white rounded-2xl p-6 shadow-sm ring-1 ring-gray-200">
+          <div class="flex size-12 items-center justify-center rounded-xl bg-indigo-100">
+            <svg class="size-6 text-indigo-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+            </svg>
+          </div>
+          <h3 class="mt-4 text-base font-semibold text-gray-900">AI Explanations</h3>
+          <p class="mt-2 text-sm text-gray-600">Understand why a code was suggested. Our AI explains its reasoning so you can verify the classification.</p>
+        </div>
+
+        <!-- Feature 4 -->
+        <div class="relative bg-white rounded-2xl p-6 shadow-sm ring-1 ring-gray-200">
+          <div class="flex size-12 items-center justify-center rounded-xl bg-indigo-100">
+            <svg class="size-6 text-indigo-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8.25 18.75a1.5 1.5 0 01-3 0m3 0a1.5 1.5 0 00-3 0m3 0h6m-9 0H3.375a1.125 1.125 0 01-1.125-1.125V14.25m17.25 4.5a1.5 1.5 0 01-3 0m3 0a1.5 1.5 0 00-3 0m3 0h1.125c.621 0 1.129-.504 1.09-1.124a17.902 17.902 0 00-3.213-9.193 2.056 2.056 0 00-1.58-.86H14.25m-2.25 0V3" />
+            </svg>
+          </div>
+          <h3 class="mt-4 text-base font-semibold text-gray-900">Delivery Tracking</h3>
+          <p class="mt-2 text-sm text-gray-600">Monitor shipments across Royal Mail, DHL, UPS, FedEx, DPD, and more from one dashboard.</p>
+        </div>
+
+        <!-- Feature 5 -->
+        <div class="relative bg-white rounded-2xl p-6 shadow-sm ring-1 ring-gray-200">
+          <div class="flex size-12 items-center justify-center rounded-xl bg-indigo-100">
+            <svg class="size-6 text-indigo-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+            </svg>
+          </div>
+          <h3 class="mt-4 text-base font-semibold text-gray-900">CSV Export</h3>
+          <p class="mt-2 text-sm text-gray-600">Export your orders with confirmed commodity codes ready for customs declarations or your import records.</p>
+        </div>
+
+        <!-- Feature 6 -->
+        <div class="relative bg-white rounded-2xl p-6 shadow-sm ring-1 ring-gray-200">
+          <div class="flex size-12 items-center justify-center rounded-xl bg-indigo-100">
+            <svg class="size-6 text-indigo-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
+            </svg>
+          </div>
+          <h3 class="mt-4 text-base font-semibold text-gray-900">Official Data</h3>
+          <p class="mt-2 text-sm text-gray-600">All suggestions are validated against the official UK Trade Tariff API for accuracy you can trust.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Final CTA -->
+<div class="bg-indigo-600">
+  <div class="mx-auto max-w-7xl px-6 py-24 lg:px-8">
+    <div class="mx-auto max-w-2xl text-center">
+      <h2 class="text-3xl font-bold tracking-tight text-white sm:text-4xl">
+        Ready to simplify your imports?
+      </h2>
+      <p class="mx-auto mt-6 max-w-xl text-lg leading-8 text-indigo-100">
+        Join importers who save hours on customs classification. Start with 3 free lookups, no account needed.
+      </p>
+      <div class="mt-10 flex flex-col items-center justify-center gap-4 sm:flex-row sm:gap-6">
+        <%= link_to "#", onclick: "window.scrollTo({top: 0, behavior: 'smooth'}); return false;", class: "rounded-xl bg-white px-6 py-3.5 text-sm font-semibold text-indigo-600 shadow-sm hover:bg-indigo-50 transition-colors" do %>
+          Try it free now
+        <% end %>
+        <%= link_to new_user_registration_path, class: "rounded-xl bg-indigo-500 px-6 py-3.5 text-sm font-semibold text-white shadow-sm ring-1 ring-inset ring-indigo-400 hover:bg-indigo-400 transition-colors" do %>
+          Create free account
+        <% end %>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!--
+================================================================================
+IMAGE GENERATION PROMPTS FOR GEMINI
+================================================================================
+
+Use these prompts with Google Gemini to generate compelling imagery:
+
+1. HERO BACKGROUND (optional abstract pattern):
+   "Abstract geometric pattern with soft indigo and purple gradients,
+   flowing lines suggesting movement and connection, modern minimalist style,
+   suitable for website hero background, no text"
+
+2. PROBLEM SECTION ILLUSTRATION:
+   "Flat illustration of a person looking confused at a computer screen
+   showing spreadsheets and customs forms, papers scattered around desk,
+   muted colors with indigo accents, modern minimalist style, no text"
+
+3. SOLUTION/SUCCESS ILLUSTRATION:
+   "Flat illustration of a happy person at computer with checkmarks and
+   a shipping box, clean organized desk, bright indigo and white colors,
+   modern minimalist style, celebrating success, no text"
+
+4. HOW IT WORKS - STEP ICONS:
+   a) "Simple flat icon of a URL link being copied, indigo on white, minimal"
+   b) "Simple flat icon of AI brain analyzing data, indigo on white, minimal"
+   c) "Simple flat icon of a document with checkmark, indigo on white, minimal"
+
+5. FEATURE ICONS (if custom icons needed):
+   "Set of 6 simple flat icons for: email, clipboard/dashboard, lightbulb/AI,
+   delivery truck, download/export, shield/security - consistent indigo color
+   on white background, minimal line style"
+
+================================================================================
+-->

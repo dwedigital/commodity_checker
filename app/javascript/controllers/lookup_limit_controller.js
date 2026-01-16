@@ -3,10 +3,10 @@ import { Controller } from "@hotwired/stimulus"
 // Manages free lookup limits for unauthenticated users
 // Stores count in localStorage with 72-hour expiration
 export default class extends Controller {
-  static targets = ["form", "limitReached", "remaining"]
+  static targets = ["form", "limitReached", "remaining", "lookupText"]
   static values = {
     limit: { type: Number, default: 3 },
-    expiryHours: { type: Number, default: 72 },
+    expiryHours: { type: Number, default: 168 }, // 1 week
     authenticated: { type: Boolean, default: false }
   }
 
@@ -82,6 +82,11 @@ export default class extends Controller {
     if (this.hasRemainingTarget) {
       this.remainingTarget.textContent = remaining
       this.remainingTarget.closest('[data-remaining-wrapper]')?.classList.toggle('hidden', remaining === 0)
+    }
+
+    // Update singular/plural text
+    if (this.hasLookupTextTarget) {
+      this.lookupTextTarget.textContent = remaining === 1 ? 'lookup' : 'lookups'
     }
 
     // Show/hide form vs limit reached

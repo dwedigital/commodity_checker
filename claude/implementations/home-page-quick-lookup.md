@@ -4,6 +4,52 @@
 
 Added an inline product URL lookup feature to the home page hero section, allowing visitors to instantly get commodity code suggestions without signing up. Includes a limit of 3 free lookups per 72-hour period for unauthenticated users.
 
+## Landing Page Redesign (v2)
+
+The home page was redesigned with more impactful content including:
+
+### Page Sections
+
+1. **Hero Section**
+   - Attention-grabbing headline: "Stop guessing commodity codes"
+   - Badge highlighting "3 free lookups - no account needed"
+   - Centered lookup form with inline button
+   - Trust indicators (UK Trade Tariff API, Claude AI, 10-digit codes)
+
+2. **Problem Section**
+   - Explains pain points: wrong duty rates, hours of research, shipment delays
+   - Visual hierarchy with red warning icons
+   - Image placeholder for Gemini-generated illustration
+
+3. **How It Works**
+   - 3-step process cards
+   - Numbered badges with clear descriptions
+   - Clean white card design
+
+4. **Free vs Account Comparison**
+   - Side-by-side pricing-style cards
+   - Free tier: 3 lookups / 72 hours with limitations listed
+   - Account tier: Unlimited lookups with full feature list
+   - "Recommended" badge on account tier
+
+5. **Features Grid**
+   - 6 feature cards for account holders
+   - Email forwarding, Order dashboard, AI explanations
+   - Delivery tracking, CSV export, Official data validation
+
+6. **Final CTA**
+   - Indigo background section
+   - "Try it free now" (scrolls to top) and "Create free account" buttons
+
+### Image Placeholders
+
+Gemini prompts included in HTML comments for generating:
+- Hero background abstract pattern
+- Problem section illustration (confused person with paperwork)
+- Solution illustration (happy person with checkmarks)
+- How it works step icons
+- Feature icons (if custom needed)
+
 ## User Flow
 
 1. User visits home page
