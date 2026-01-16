@@ -129,35 +129,74 @@ users (Devise auth + inbound_email_token)
 
 ## Git Branching & Deployment Strategy
 
-**IMPORTANT**: This app uses a staging → production deployment workflow.
+**IMPORTANT**: This app uses a feature branch → develop → production workflow.
 
 ### Branches
+- `feature/*`, `bugfix/*`, `hotfix/*` → Feature branches for development
 - `develop` → Auto-deploys to **staging** (`commodity-checker-staging.onrender.com`)
 - `main` → Auto-deploys to **production** (`commodity-checker.onrender.com`)
 
-### Workflow
-1. All new development happens on `develop`
-2. Push to `develop` → staging auto-deploys
-3. Test on staging environment
-4. When verified, create PR from `develop` → `main`
-5. Merge PR → production auto-deploys
+### Branch Naming (Gitflow)
+Use these prefixes for branch names:
+- `feature/description` - New features (e.g., `feature/add-csv-export`)
+- `bugfix/description` - Bug fixes (e.g., `bugfix/fix-image-urls`)
+- `hotfix/description` - Urgent production fixes (e.g., `hotfix/fix-login-crash`)
 
+### Workflow for All Changes
+1. **Create feature branch** from `develop`:
+   ```bash
+   git checkout develop
+   git pull origin develop
+   git checkout -b feature/my-new-feature
+   ```
+
+2. **Make changes** and commit to your feature branch:
+   ```bash
+   git add .
+   git commit -m "Description of changes"
+   ```
+
+3. **Test locally** - Verify changes work as expected
+
+4. **Push branch** to remote:
+   ```bash
+   git push -u origin feature/my-new-feature
+   ```
+
+5. **Create PR** to `develop` and merge after confirmation:
+   ```bash
+   gh pr create --base develop --title "Feature: My new feature"
+   gh pr merge --merge
+   ```
+
+6. **Test on staging** - Verify on `commodity-checker-staging.onrender.com`
+
+7. **Deploy to production** - Create PR from `develop` → `main`:
+   ```bash
+   gh pr create --base main --head develop --title "Release: Description"
+   gh pr merge --merge
+   ```
+
+### Hotfix Workflow (Urgent Production Fixes)
+For critical bugs in production:
 ```bash
-# Start new work
+git checkout main
+git pull origin main
+git checkout -b hotfix/fix-critical-bug
+# Make fix, commit, push
+gh pr create --base main --title "Hotfix: Fix critical bug"
+gh pr merge --merge
+# Also merge to develop
 git checkout develop
-
-# Push to staging for testing
+git merge main
 git push origin develop
-
-# When ready to deploy to production
-# Create PR on GitHub: develop → main
-# After review, merge the PR
 ```
 
 ### Never
-- Commit directly to `main`
+- Commit directly to `main` or `develop`
 - Force push to `main`
 - Deploy untested code to production
+- Merge to `main` without testing on staging first
 
 ## Database Migrations - MUST BE BACKWARDS COMPATIBLE
 
