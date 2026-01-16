@@ -87,6 +87,9 @@ class AnalyzeProductImageJob < ApplicationJob
   end
 
   def broadcast_update(lookup)
+    # Pre-process image variant so URL works immediately in broadcast
+    preprocess_image_variant(lookup)
+
     # Update the main content
     Turbo::StreamsChannel.broadcast_replace_to(
       "product_lookup_#{lookup.id}",
@@ -103,5 +106,15 @@ class AnalyzeProductImageJob < ApplicationJob
     )
   rescue => e
     Rails.logger.warn("Failed to broadcast update for photo lookup #{lookup.id}: #{e.message}")
+  end
+
+  def preprocess_image_variant(lookup)
+    return unless lookup.photo? && lookup.product_image.attached?
+
+    # Process the variant that's used in the view (resize_to_limit: [200, 200])
+    # This ensures the variant exists before broadcasting
+    lookup.product_image.variant(resize_to_limit: [200, 200]).processed
+  rescue => e
+    Rails.logger.warn("Failed to preprocess image variant for lookup #{lookup.id}: #{e.message}")
   end
 end
