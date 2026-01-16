@@ -3,7 +3,7 @@
 
 databases:
   - name: commodity-checker-db
-    plan: starter  # $7/month, 1GB storage
+    plan: basic  # $7/month, 1GB storage
     databaseName: commodity_checker_production
     user: commodity_checker
 
