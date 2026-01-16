@@ -82,6 +82,8 @@ services:
   # =============================================================================
   # STAGING (deploys from develop branch)
   # =============================================================================
+  # Note: No dedicated worker for staging - jobs run inline to save costs.
+  # Set SOLID_QUEUE_IN_PUMA=true in environment to run jobs in web process.
 
   # Staging web application
   - type: web
@@ -102,6 +104,8 @@ services:
         value: "true"
       - key: RAILS_SERVE_STATIC_FILES
         value: "true"
+      - key: SOLID_QUEUE_IN_PUMA
+        value: "true"
       - key: DATABASE_URL
         fromDatabase:
           name: commodity-checker-staging-db
@@ -115,28 +119,4 @@ services:
       - key: INBOUND_EMAIL_DOMAIN
         sync: false # Set to staging-specific domain if needed
       - key: MAILGUN_INGRESS_SIGNING_KEY
-        sync: false
-
-  # Staging background worker for Solid Queue jobs
-  - type: worker
-    name: commodity-checker-staging-worker
-    runtime: ruby
-    plan: starter
-    branch: develop
-    buildCommand: bundle install
-    startCommand: bin/rails solid_queue:start
-    envVars:
-      - key: RAILS_ENV
-        value: production
-      - key: RAILS_LOG_TO_STDOUT
-        value: "true"
-      - key: DATABASE_URL
-        fromDatabase:
-          name: commodity-checker-staging-db
-          property: connectionString
-      - key: RAILS_MASTER_KEY
-        sync: false
-      - key: ANTHROPIC_API_KEY
-        sync: false
-      - key: SCRAPINGBEE_API_KEY
         sync: false
