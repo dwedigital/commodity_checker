@@ -16,15 +16,32 @@ Background jobs using Solid Queue (Rails 8 default).
 
 **Flow:**
 1. Find InboundEmail record
-2. Parse with EmailParserService
-3. Use OrderMatcherService to find existing order
-4. Create new order OR merge into existing
-5. Queue SuggestCommodityCodesJob and UpdateTrackingJob
+2. **AI Classification** - `EmailClassifierService` determines email type
+3. **Regex Parsing** - `EmailParserService` extracts tracking URLs, images
+4. **Merge data** - Combine AI classification with regex extraction
+5. **Process by type:**
+   - `order_confirmation` with products → Create order, extract images, suggest codes
+   - `shipping_notification` → Match to existing order, add tracking
+   - `delivery_confirmation` → Update tracking status
+   - Others → Log and skip
 
 **Key behaviors:**
 - Marks email as `processing` → `completed` or `failed`
-- Creates placeholder item if no products found
+- **Links email to order** via `order_id` (by order reference)
+- Extracts product images from email HTML
+- Falls back to Tavily web search if no product URLs in email
 - Avoids duplicate items/tracking when merging
+
+**Image handling:**
+1. Extract images from email HTML (preferred)
+2. Filter out logos, icons, tracking pixels
+3. Assign to order items by position
+4. Fall back to Tavily search for images if none in email
+
+**Email-to-order linking:**
+- All emails with matching order reference are linked via `order_id`
+- `Order.inbound_emails` returns all related emails
+- `source_email` still tracks which email created the order
 
 ## SuggestCommodityCodesJob
 

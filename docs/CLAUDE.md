@@ -6,7 +6,7 @@ This directory contains setup guides and documentation.
 
 | File | Purpose |
 |------|---------|
-| `MAILGUN_SETUP.md` | Complete Mailgun configuration guide |
+| `RESEND_SETUP.md` | Complete Resend inbound email configuration guide |
 
 ## Documentation Conventions
 

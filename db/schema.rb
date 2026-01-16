@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2026_01_16_171528) do
+ActiveRecord::Schema[8.0].define(version: 2026_01_16_233624) do
   create_table "action_mailbox_inbound_emails", force: :cascade do |t|
     t.integer "status", default: 0, null: false
     t.string "message_id", null: false
@@ -48,6 +48,19 @@ ActiveRecord::Schema[8.0].define(version: 2026_01_16_171528) do
     t.index ["blob_id", "variation_digest"], name: "index_active_storage_variant_records_uniqueness", unique: true
   end
 
+  create_table "guest_lookups", force: :cascade do |t|
+    t.string "guest_token", null: false
+    t.string "lookup_type", null: false
+    t.text "url"
+    t.string "ip_address"
+    t.string "user_agent"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["created_at"], name: "index_guest_lookups_on_created_at"
+    t.index ["guest_token", "created_at"], name: "index_guest_lookups_on_guest_token_and_created_at"
+    t.index ["guest_token"], name: "index_guest_lookups_on_guest_token"
+  end
+
   create_table "inbound_emails", force: :cascade do |t|
     t.integer "user_id", null: false
     t.string "subject"
@@ -57,6 +70,9 @@ ActiveRecord::Schema[8.0].define(version: 2026_01_16_171528) do
     t.integer "processing_status"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.text "body_html"
+    t.integer "order_id"
+    t.index ["order_id"], name: "index_inbound_emails_on_order_id"
     t.index ["user_id"], name: "index_inbound_emails_on_user_id"
   end
 
@@ -73,6 +89,7 @@ ActiveRecord::Schema[8.0].define(version: 2026_01_16_171528) do
     t.string "product_url"
     t.text "scraped_description"
     t.integer "product_lookup_id"
+    t.string "image_url"
     t.index ["order_id"], name: "index_order_items_on_order_id"
     t.index ["product_lookup_id"], name: "index_order_items_on_product_lookup_id"
   end
@@ -149,6 +166,7 @@ ActiveRecord::Schema[8.0].define(version: 2026_01_16_171528) do
 
   add_foreign_key "active_storage_attachments", "active_storage_blobs", column: "blob_id"
   add_foreign_key "active_storage_variant_records", "active_storage_blobs", column: "blob_id"
+  add_foreign_key "inbound_emails", "orders"
   add_foreign_key "inbound_emails", "users"
   add_foreign_key "order_items", "orders"
   add_foreign_key "order_items", "product_lookups"

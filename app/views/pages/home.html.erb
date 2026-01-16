@@ -23,10 +23,14 @@
     </div>
 
     <!-- Quick Lookup Form -->
-    <div class="mx-auto mt-10 max-w-xl" data-controller="lookup-limit" data-lookup-limit-authenticated-value="<%= user_signed_in? %>">
+    <div class="mx-auto mt-10 max-w-xl"
+         data-controller="lookup-limit"
+         data-lookup-limit-authenticated-value="<%= user_signed_in? %>"
+         data-lookup-limit-remaining-value="<%= @guest_lookups_remaining || 3 %>"
+         data-lookup-limit-limit-reached-value="<%= (@guest_lookups_remaining || 3) <= 0 %>">
       <!-- Form (hidden when limit reached) -->
       <div data-lookup-limit-target="form">
-        <%= form_with url: home_lookup_path, method: :post, data: { turbo_frame: "lookup_result", action: "submit->lookup-limit#submit" }, class: "space-y-4" do |f| %>
+        <%= form_with url: home_lookup_path, method: :post, data: { turbo_frame: "lookup_result" }, class: "space-y-4" do |f| %>
           <div class="flex gap-3">
             <div class="relative flex-1">
               <div class="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-4">
@@ -42,7 +46,7 @@
             <p class="text-gray-500">Amazon, eBay, ASOS, John Lewis & 100+ retailers</p>
             <% unless user_signed_in? %>
               <p class="text-gray-400" data-remaining-wrapper>
-                <span class="font-medium text-indigo-600" data-lookup-limit-target="remaining">3</span> free <span data-lookup-limit-target="lookupText">lookups</span> left
+                <span class="font-medium text-indigo-600" data-lookup-limit-target="remaining"><%= @guest_lookups_remaining || 3 %></span> free <span data-lookup-limit-target="lookupText"><%= (@guest_lookups_remaining || 3) == 1 ? 'lookup' : 'lookups' %></span> left
               </p>
             <% end %>
           </div>

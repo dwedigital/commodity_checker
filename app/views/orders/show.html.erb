@@ -40,11 +40,19 @@
       <ul role="list" class="divide-y divide-gray-200">
         <% @order.order_items.each do |item| %>
           <li class="px-4 py-4 sm:px-6">
-            <div class="flex items-start justify-between">
+            <div class="flex items-start gap-4">
+              <% if item.image_url.present? %>
+                <div class="shrink-0">
+                  <img src="<%= item.image_url %>" alt="<%= item.description %>" class="size-16 rounded-md object-cover bg-gray-100" loading="lazy">
+                </div>
+              <% end %>
               <div class="flex-1 min-w-0">
                 <p class="text-sm font-medium text-gray-900"><%= item.description %></p>
                 <% if item.quantity && item.quantity > 1 %>
                   <p class="text-sm text-gray-500">Quantity: <%= item.quantity %></p>
+                <% end %>
+                <% if item.product_url.present? %>
+                  <a href="<%= item.product_url %>" target="_blank" rel="noopener" class="text-xs text-indigo-600 hover:text-indigo-500">View product page</a>
                 <% end %>
               </div>
             </div>

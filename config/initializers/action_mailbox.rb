@@ -1,12 +1,13 @@
-# Action Mailbox Configuration
+# Action Mailbox Configuration for Resend
 
-# Mailgun signing key for webhook verification
+# Resend API key for fetching full email content
 # Set via environment variable or Rails credentials
-Rails.application.config.action_mailbox.mailgun_signing_key = \
-  ENV["MAILGUN_INGRESS_SIGNING_KEY"] || \
-  Rails.application.credentials.dig(:mailgun, :signing_key)
+Rails.application.config.action_mailbox.resend_api_key = \
+  ENV["RESEND_API_KEY"] || \
+  Rails.application.credentials.dig(:resend, :api_key)
 
-# API key for Mailgun (if needed for additional features)
-Rails.application.config.action_mailbox.mailgun_api_key = \
-  ENV["MAILGUN_API_KEY"] || \
-  Rails.application.credentials.dig(:mailgun, :api_key)
+# Resend webhook signing secret for verification (via Svix)
+# Set via environment variable or Rails credentials
+Rails.application.config.action_mailbox.resend_webhook_secret = \
+  ENV["RESEND_WEBHOOK_SECRET"] || \
+  Rails.application.credentials.dig(:resend, :webhook_secret)
