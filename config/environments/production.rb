@@ -1,9 +1,8 @@
 require "active_support/core_ext/integer/time"
 
 Rails.application.configure do
-  # Prepare the ingress controller used to receive mail
-  # Use Mailgun for inbound emails in production
-  config.action_mailbox.ingress = :mailgun
+  # Inbound emails handled by Resend via actionmailbox-resend gem
+  # The gem provides its own ingress at /rails/action_mailbox/resend/inbound_emails
 
   # Settings specified here will take precedence over those in config/application.rb.
 

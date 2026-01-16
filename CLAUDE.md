@@ -41,7 +41,7 @@ Do this automatically at the end of implementing a feature - do not wait to be a
 
 ### Email Processing Flow
 ```
-Email → Mailgun → Action Mailbox → TrackingMailbox → ProcessInboundEmailJob
+Email → Resend → Action Mailbox → TrackingMailbox → ProcessInboundEmailJob
                                                             ↓
                                         OrderMatcherService (find or create order)
                                                             ↓
@@ -111,7 +111,7 @@ users (Devise auth + inbound_email_token)
 
 ## Testing Without External Services
 
-1. **Without Mailgun**: Use `/test_emails/new` to paste email content
+1. **Without Resend**: Use `/test_emails/new` to paste email content
 2. **Without Claude API**: Remove API key, suggestions will return nil
 3. **Without Tariff API**: Service returns empty array on failure
 
@@ -266,9 +266,11 @@ bin/rails console
 ## Environment Variables
 
 ```
-ANTHROPIC_API_KEY          # Required for commodity suggestions
+ANTHROPIC_API_KEY          # Required for commodity suggestions and email classification
 INBOUND_EMAIL_DOMAIN       # e.g., inbound.yourdomain.com
-MAILGUN_INGRESS_SIGNING_KEY # For webhook verification
+RESEND_API_KEY             # For inbound email processing
+RESEND_WEBHOOK_SECRET      # For webhook verification
+TAVILY_API_KEY             # For AI web search (product info from emails without URLs)
 SCRAPINGBEE_API_KEY        # Optional, for scraping protected websites (Cloudflare, etc.)
 ```
 

@@ -30,6 +30,7 @@ class TrackingMailbox < ApplicationMailbox
       subject: mail.subject || "(No subject)",
       from_address: mail.from&.first || "unknown",
       body_text: extract_body_text,
+      body_html: extract_body_html,
       processing_status: :received
     )
   end
@@ -53,6 +54,18 @@ class TrackingMailbox < ApplicationMailbox
   rescue => e
     Rails.logger.error("Failed to extract email body: #{e.message}")
     ""
+  end
+
+  def extract_body_html
+    if mail.multipart?
+      html_part = mail.html_part
+      html_part&.decoded
+    elsif mail.content_type&.include?("text/html")
+      mail.body.decoded
+    end
+  rescue => e
+    Rails.logger.error("Failed to extract HTML body: #{e.message}")
+    nil
   end
 
   def strip_html(html)

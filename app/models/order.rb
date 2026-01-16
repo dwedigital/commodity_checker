@@ -4,6 +4,7 @@ class Order < ApplicationRecord
 
   has_many :order_items, dependent: :destroy
   has_many :tracking_events, dependent: :destroy
+  has_many :inbound_emails, dependent: :nullify
 
   enum :status, { pending: 0, in_transit: 1, delivered: 2 }, default: :pending
 
