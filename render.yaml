@@ -31,7 +31,24 @@ services:
       bundle install &&
       bin/rails assets:precompile &&
       bin/rails db:prepare &&
-      bin/rails runner "unless ActiveRecord::Base.connection.table_exists?('solid_queue_jobs'); puts 'Loading Solid Queue schema...'; require 'active_record/tasks/database_tasks'; ActiveRecord::Tasks::DatabaseTasks.load_schema(ActiveRecord::Base.configurations.configs_for(env_name: Rails.env, name: 'queue'), :ruby, 'db/queue_schema.rb'); puts 'Done.'; else; puts 'Solid Queue tables exist.'; end"
+      bin/rails runner "
+        require 'active_record/tasks/database_tasks'
+        schemas = {
+          'queue' => ['solid_queue_jobs', 'db/queue_schema.rb'],
+          'cable' => ['solid_cable_messages', 'db/cable_schema.rb'],
+          'cache' => ['solid_cache_entries', 'db/cache_schema.rb']
+        }
+        schemas.each do |db_name, (table, schema_file)|
+          unless ActiveRecord::Base.connection.table_exists?(table)
+            puts \"Loading #{db_name} schema...\"
+            config = ActiveRecord::Base.configurations.configs_for(env_name: Rails.env, name: db_name)
+            ActiveRecord::Tasks::DatabaseTasks.load_schema(config, :ruby, schema_file)
+            puts 'Done.'
+          else
+            puts \"#{db_name} tables exist.\"
+          end
+        end
+      "
     startCommand: bin/rails server -b 0.0.0.0
     healthCheckPath: /up
     envVars:
@@ -79,7 +96,24 @@ services:
       bundle install &&
       bin/rails assets:precompile &&
       bin/rails db:prepare &&
-      bin/rails runner "unless ActiveRecord::Base.connection.table_exists?('solid_queue_jobs'); puts 'Loading Solid Queue schema...'; require 'active_record/tasks/database_tasks'; ActiveRecord::Tasks::DatabaseTasks.load_schema(ActiveRecord::Base.configurations.configs_for(env_name: Rails.env, name: 'queue'), :ruby, 'db/queue_schema.rb'); puts 'Done.'; else; puts 'Solid Queue tables exist.'; end"
+      bin/rails runner "
+        require 'active_record/tasks/database_tasks'
+        schemas = {
+          'queue' => ['solid_queue_jobs', 'db/queue_schema.rb'],
+          'cable' => ['solid_cable_messages', 'db/cable_schema.rb'],
+          'cache' => ['solid_cache_entries', 'db/cache_schema.rb']
+        }
+        schemas.each do |db_name, (table, schema_file)|
+          unless ActiveRecord::Base.connection.table_exists?(table)
+            puts \"Loading #{db_name} schema...\"
+            config = ActiveRecord::Base.configurations.configs_for(env_name: Rails.env, name: db_name)
+            ActiveRecord::Tasks::DatabaseTasks.load_schema(config, :ruby, schema_file)
+            puts 'Done.'
+          else
+            puts \"#{db_name} tables exist.\"
+          end
+        end
+      "
     startCommand: bin/rails server -b 0.0.0.0
     healthCheckPath: /up
     envVars:
