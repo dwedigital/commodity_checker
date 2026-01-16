@@ -1,0 +1,199 @@
+<div class="max-w-3xl mx-auto">
+  <div class="md:flex md:items-center md:justify-between mb-8">
+    <div class="min-w-0 flex-1">
+      <h2 class="text-2xl font-bold leading-7 text-gray-900 sm:truncate sm:text-3xl sm:tracking-tight">
+        <%= @scrape_result[:title].presence || "Product Lookup" %>
+      </h2>
+      <% if @scrape_result[:retailer_name].present? %>
+        <p class="mt-1 text-sm text-gray-500"><%= @scrape_result[:retailer_name].titleize %></p>
+      <% end %>
+    </div>
+    <div class="mt-4 flex md:ml-4 md:mt-0">
+      <% case @scrape_result[:status] %>
+      <% when :completed %>
+        <span class="inline-flex items-center rounded-full bg-green-100 px-3 py-1 text-sm font-medium text-green-800">Complete</span>
+      <% when :partial %>
+        <span class="inline-flex items-center rounded-full bg-yellow-100 px-3 py-1 text-sm font-medium text-yellow-800">Partial Data</span>
+      <% when :failed %>
+        <span class="inline-flex items-center rounded-full bg-red-100 px-3 py-1 text-sm font-medium text-red-800">Failed</span>
+      <% end %>
+    </div>
+  </div>
+
+  <div class="space-y-6">
+    <!-- Guest notice -->
+    <div class="rounded-md bg-blue-50 p-4">
+      <div class="flex">
+        <div class="shrink-0">
+          <svg class="size-5 text-blue-400" viewBox="0 0 20 20" fill="currentColor">
+            <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a.75.75 0 000 1.5h.253a.25.25 0 01.244.304l-.459 2.066A1.75 1.75 0 0010.747 15H11a.75.75 0 000-1.5h-.253a.25.25 0 01-.244-.304l.459-2.066A1.75 1.75 0 009.253 9H9z" clip-rule="evenodd" />
+          </svg>
+        </div>
+        <div class="ml-3 flex-1 md:flex md:justify-between">
+          <p class="text-sm text-blue-700">This is a quick lookup. Results are not saved.</p>
+          <p class="mt-3 text-sm md:ml-6 md:mt-0">
+            <%= link_to "Sign in to save lookups", new_user_session_path, class: "whitespace-nowrap font-medium text-blue-700 hover:text-blue-600" %>
+          </p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Product Details Card -->
+    <div class="bg-white shadow rounded-lg overflow-hidden">
+      <div class="px-4 py-5 sm:px-6 border-b border-gray-200">
+        <h3 class="text-base font-semibold leading-6 text-gray-900">Product Details</h3>
+      </div>
+
+      <div class="px-4 py-5 sm:px-6">
+        <% if @scrape_result[:status] == :failed && @scrape_result[:error].present? %>
+          <div class="rounded-md bg-red-50 p-4 mb-4">
+            <div class="flex">
+              <div class="shrink-0">
+                <svg class="size-5 text-red-400" viewBox="0 0 20 20" fill="currentColor">
+                  <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.28 7.22a.75.75 0 00-1.06 1.06L8.94 10l-1.72 1.72a.75.75 0 101.06 1.06L10 11.06l1.72 1.72a.75.75 0 101.06-1.06L11.06 10l1.72-1.72a.75.75 0 00-1.06-1.06L10 8.94 8.28 7.22z" clip-rule="evenodd" />
+                </svg>
+              </div>
+              <div class="ml-3">
+                <h3 class="text-sm font-medium text-red-800">Could not fetch product details</h3>
+                <p class="mt-1 text-sm text-red-700"><%= @scrape_result[:error] %></p>
+              </div>
+            </div>
+          </div>
+        <% end %>
+
+        <% if @scrape_result[:status] == :partial %>
+          <div class="rounded-md bg-yellow-50 p-4 mb-4">
+            <div class="flex">
+              <div class="shrink-0">
+                <svg class="size-5 text-yellow-400" viewBox="0 0 20 20" fill="currentColor">
+                  <path fill-rule="evenodd" d="M8.485 2.495c.673-1.167 2.357-1.167 3.03 0l6.28 10.875c.673 1.167-.17 2.625-1.516 2.625H3.72c-1.347 0-2.189-1.458-1.515-2.625L8.485 2.495zM10 5a.75.75 0 01.75.75v3.5a.75.75 0 01-1.5 0v-3.5A.75.75 0 0110 5zm0 9a1 1 0 100-2 1 1 0 000 2z" clip-rule="evenodd" />
+                </svg>
+              </div>
+              <div class="ml-3">
+                <h3 class="text-sm font-medium text-yellow-800">Limited data extracted</h3>
+                <p class="mt-1 text-sm text-yellow-700">Some product details couldn't be retrieved. The site may require JavaScript.</p>
+              </div>
+            </div>
+          </div>
+        <% end %>
+
+        <div class="flex gap-6">
+          <% if @scrape_result[:image_url].present? %>
+            <div class="shrink-0">
+              <img src="<%= @scrape_result[:image_url] %>" alt="<%= @scrape_result[:title] %>" class="size-32 object-contain rounded-lg bg-gray-100">
+            </div>
+          <% end %>
+
+          <div class="flex-1 min-w-0">
+            <dl class="space-y-3">
+              <% if @scrape_result[:title].present? %>
+                <div>
+                  <dt class="text-sm font-medium text-gray-500">Title</dt>
+                  <dd class="mt-1 text-sm text-gray-900"><%= @scrape_result[:title] %></dd>
+                </div>
+              <% end %>
+
+              <% if @scrape_result[:brand].present? %>
+                <div>
+                  <dt class="text-sm font-medium text-gray-500">Brand</dt>
+                  <dd class="mt-1 text-sm text-gray-900"><%= @scrape_result[:brand] %></dd>
+                </div>
+              <% end %>
+
+              <% if @scrape_result[:category].present? %>
+                <div>
+                  <dt class="text-sm font-medium text-gray-500">Category</dt>
+                  <dd class="mt-1 text-sm text-gray-900"><%= @scrape_result[:category] %></dd>
+                </div>
+              <% end %>
+
+              <% if @scrape_result[:price].present? %>
+                <div>
+                  <dt class="text-sm font-medium text-gray-500">Price</dt>
+                  <dd class="mt-1 text-sm text-gray-900">
+                    <%= @scrape_result[:currency] == "GBP" ? "£" : @scrape_result[:currency] == "EUR" ? "€" : "$" %><%= @scrape_result[:price] %>
+                  </dd>
+                </div>
+              <% end %>
+
+              <% if @scrape_result[:material].present? %>
+                <div>
+                  <dt class="text-sm font-medium text-gray-500">Material</dt>
+                  <dd class="mt-1 text-sm text-gray-900"><%= @scrape_result[:material] %></dd>
+                </div>
+              <% end %>
+            </dl>
+          </div>
+        </div>
+
+        <% if @scrape_result[:description].present? %>
+          <div class="mt-4 pt-4 border-t border-gray-200">
+            <dt class="text-sm font-medium text-gray-500">Description</dt>
+            <dd class="mt-1 text-sm text-gray-900"><%= truncate(@scrape_result[:description], length: 500) %></dd>
+          </div>
+        <% end %>
+
+        <div class="mt-4 pt-4 border-t border-gray-200">
+          <a href="<%= @scrape_result[:url] %>" target="_blank" rel="noopener" class="inline-flex items-center text-sm text-indigo-600 hover:text-indigo-500">
+            <svg class="mr-1 size-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
+            </svg>
+            View original product page
+          </a>
+        </div>
+      </div>
+    </div>
+
+    <!-- Commodity Code Card -->
+    <div class="bg-white shadow rounded-lg overflow-hidden">
+      <div class="px-4 py-5 sm:px-6 border-b border-gray-200">
+        <h3 class="text-base font-semibold leading-6 text-gray-900">Commodity Code</h3>
+      </div>
+
+      <div class="px-4 py-5 sm:px-6">
+        <% if @suggestion && @suggestion[:commodity_code].present? %>
+          <div class="rounded-md bg-green-50 p-4">
+            <div class="flex items-start">
+              <div class="shrink-0">
+                <svg class="size-5 text-green-400" viewBox="0 0 20 20" fill="currentColor">
+                  <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.857-9.809a.75.75 0 00-1.214-.882l-3.483 4.79-1.88-1.88a.75.75 0 10-1.06 1.061l2.5 2.5a.75.75 0 001.137-.089l4-5.5z" clip-rule="evenodd" />
+                </svg>
+              </div>
+              <div class="ml-3 flex-1">
+                <h3 class="text-lg font-medium text-green-800">Suggested Code: <%= @suggestion[:commodity_code] %></h3>
+                <% if @suggestion[:confidence].present? %>
+                  <p class="mt-1 text-sm text-green-700">Confidence: <%= number_to_percentage(@suggestion[:confidence] * 100, precision: 0) %></p>
+                <% end %>
+                <% if @suggestion[:reasoning].present? %>
+                  <p class="mt-2 text-sm text-green-700"><%= @suggestion[:reasoning] %></p>
+                <% end %>
+                <% if @suggestion[:official_description].present? %>
+                  <p class="mt-2 text-sm text-green-600">Official: <%= @suggestion[:official_description] %></p>
+                <% end %>
+              </div>
+            </div>
+          </div>
+        <% else %>
+          <div class="text-center py-4">
+            <svg class="mx-auto size-12 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"></path>
+            </svg>
+            <h3 class="mt-2 text-sm font-semibold text-gray-900">No suggestion available</h3>
+            <p class="mt-1 text-sm text-gray-500">We couldn't determine a commodity code for this product.</p>
+          </div>
+        <% end %>
+      </div>
+    </div>
+
+    <!-- Actions -->
+    <div class="flex items-center justify-between">
+      <%= link_to "Look up another product", new_product_lookup_path, class: "inline-flex items-center rounded-md bg-white px-3 py-2 text-sm font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50" %>
+
+      <% unless user_signed_in? %>
+        <%= link_to new_user_registration_path, class: "inline-flex items-center rounded-md bg-indigo-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500" do %>
+          Sign up to save lookups
+        <% end %>
+      <% end %>
+    </div>
+  </div>
+</div>

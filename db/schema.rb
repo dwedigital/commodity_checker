@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2026_01_15_213601) do
+ActiveRecord::Schema[8.0].define(version: 2026_01_16_124501) do
   create_table "action_mailbox_inbound_emails", force: :cascade do |t|
     t.integer "status", default: 0, null: false
     t.string "message_id", null: false
@@ -70,7 +70,11 @@ ActiveRecord::Schema[8.0].define(version: 2026_01_15_213601) do
     t.text "llm_reasoning"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.string "product_url"
+    t.text "scraped_description"
+    t.integer "product_lookup_id"
     t.index ["order_id"], name: "index_order_items_on_order_id"
+    t.index ["product_lookup_id"], name: "index_order_items_on_product_lookup_id"
   end
 
   create_table "orders", force: :cascade do |t|
@@ -83,6 +87,35 @@ ActiveRecord::Schema[8.0].define(version: 2026_01_15_213601) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.index ["user_id"], name: "index_orders_on_user_id"
+  end
+
+  create_table "product_lookups", force: :cascade do |t|
+    t.integer "user_id", null: false
+    t.integer "order_item_id"
+    t.string "url", null: false
+    t.string "retailer_name"
+    t.string "title"
+    t.text "description"
+    t.string "brand"
+    t.string "category"
+    t.string "price"
+    t.string "currency"
+    t.string "material"
+    t.string "image_url"
+    t.json "structured_data"
+    t.integer "scrape_status", default: 0
+    t.text "scrape_error"
+    t.datetime "scraped_at"
+    t.string "suggested_commodity_code"
+    t.decimal "commodity_code_confidence", precision: 5, scale: 4
+    t.text "llm_reasoning"
+    t.string "confirmed_commodity_code"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["order_item_id"], name: "index_product_lookups_on_order_item_id"
+    t.index ["url"], name: "index_product_lookups_on_url"
+    t.index ["user_id", "created_at"], name: "index_product_lookups_on_user_id_and_created_at"
+    t.index ["user_id"], name: "index_product_lookups_on_user_id"
   end
 
   create_table "tracking_events", force: :cascade do |t|
@@ -116,6 +149,9 @@ ActiveRecord::Schema[8.0].define(version: 2026_01_15_213601) do
   add_foreign_key "active_storage_variant_records", "active_storage_blobs", column: "blob_id"
   add_foreign_key "inbound_emails", "users"
   add_foreign_key "order_items", "orders"
+  add_foreign_key "order_items", "product_lookups"
   add_foreign_key "orders", "users"
+  add_foreign_key "product_lookups", "order_items"
+  add_foreign_key "product_lookups", "users"
   add_foreign_key "tracking_events", "orders"
 end

@@ -102,7 +102,26 @@ class ProcessInboundEmailJob < ApplicationJob
     UpdateTrackingJob.perform_later(order.id) if parsed_data[:tracking_urls].any?
     SuggestCommodityCodesJob.perform_later(order.id)
 
+    # Queue product page scraping if product URLs found
+    schedule_product_scraping(order, parsed_data[:product_urls]) if parsed_data[:product_urls].any?
+
     order
+  end
+
+  def schedule_product_scraping(order, product_urls)
+    return if product_urls.blank?
+
+    # Try to match product URLs to order items
+    order.order_items.each do |item|
+      next if item.product_url.present?
+
+      # Find a matching product URL (simple heuristic - use first available)
+      matching_url = product_urls.shift
+      break unless matching_url
+
+      item.update!(product_url: matching_url[:url])
+      ScrapeProductPageJob.perform_later(order_item_id: item.id)
+    end
   end
 
   def add_new_items(order, descriptions)

@@ -19,9 +19,10 @@ class SuggestCommodityCodesJob < ApplicationJob
   private
 
   def suggest_code_for_item(item, suggester)
-    Rails.logger.info("Suggesting commodity code for: #{item.description}")
+    description = item.enhanced_description
+    Rails.logger.info("Suggesting commodity code for: #{description}")
 
-    suggestion = suggester.suggest(item.description)
+    suggestion = suggester.suggest(description)
 
     if suggestion && suggestion[:commodity_code].present?
       item.update!(

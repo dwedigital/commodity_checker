@@ -2,6 +2,28 @@
 
 This file provides context for AI assistants working on this codebase.
 
+## Required: Implementation Documentation
+
+After implementing any significant feature (new models, services, controllers, or major modifications to existing functionality), you MUST create an implementation summary markdown file at:
+
+```
+./claude/implementations/<feature-name>.md
+```
+
+Use `./claude/implementations/product-url-lookup-and-scraping.md` as the template. Each implementation doc must include:
+
+- **Overview** - What was built and why
+- **Design Decisions** - Key architectural choices made
+- **Database Changes** - New tables, modified columns, migrations
+- **New Files Created** - Table listing each new file and its purpose
+- **Modified Files** - Table listing changes to existing files
+- **Routes** - Any new routes added
+- **Data Flow** - ASCII diagrams showing how data moves through the system
+- **Testing/Verification** - Manual testing steps and verification commands
+- **Limitations & Future Improvements** - Known issues and potential enhancements
+
+Do this automatically at the end of implementing a feature - do not wait to be asked.
+
 ## Project Overview
 
 **Commodity Code Checker** - A Rails 8 app that helps users track online orders and get EU/UK commodity tariff code suggestions. Users forward tracking emails, the app extracts order info, and uses Claude AI + UK Trade Tariff API to suggest HS codes.

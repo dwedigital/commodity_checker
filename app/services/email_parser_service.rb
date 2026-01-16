@@ -75,10 +75,16 @@ class EmailParserService
   def parse
     {
       tracking_urls: extract_tracking_urls,
+      product_urls: extract_product_urls,
       order_reference: extract_order_reference,
       retailer_name: identify_retailer,
       product_descriptions: extract_product_descriptions
     }
+  end
+
+  def extract_product_urls
+    extractor = ProductUrlExtractorService.new(@text)
+    extractor.extract
   end
 
   def extract_tracking_urls

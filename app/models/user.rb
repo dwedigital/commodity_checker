@@ -6,6 +6,7 @@ class User < ApplicationRecord
 
   has_many :orders, dependent: :destroy
   has_many :inbound_emails, dependent: :destroy
+  has_many :product_lookups, dependent: :destroy
 
   before_create :generate_inbound_email_token
 
