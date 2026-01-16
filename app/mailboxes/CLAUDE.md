@@ -1,11 +1,11 @@
 # Mailboxes - AI Context
 
-Action Mailbox integration for receiving forwarded emails.
+Action Mailbox integration for receiving forwarded emails via Resend.
 
 ## How It Works
 
 1. User forwards email to `track-{token}@inbound.yourdomain.com`
-2. Mailgun receives email, POSTs to `/rails/action_mailbox/mailgun/inbound_emails/mime`
+2. Resend receives email, POSTs to `/rails/action_mailbox/resend/inbound_emails`
 3. Action Mailbox creates `ActionMailbox::InboundEmail` record
 4. `ApplicationMailbox` routes based on recipient address
 5. `TrackingMailbox` processes the email
@@ -37,9 +37,15 @@ extract_token("track-abc123@domain.com")
 ```
 
 **Body extraction:**
-- Prefers plain text part
-- Falls back to HTML with tags stripped
-- Handles multipart emails
+- `extract_body_text` - Prefers plain text, falls back to HTML stripped of tags
+- `extract_body_html` - Saves raw HTML for image extraction
+
+**Creates InboundEmail with:**
+- `subject`
+- `from_address`
+- `body_text` - Plain text version
+- `body_html` - Raw HTML (for extracting product images)
+- `processing_status` - :received
 
 ## Mail Object
 
@@ -57,24 +63,33 @@ mail.multipart?   # true/false
 
 ## Testing Locally
 
-Without Mailgun, use the conductor UI:
+### Option 1: Test Emails Controller
+Use the test emails controller at `/test_emails/new` to paste email content.
+
+### Option 2: Action Mailbox Conductor
 ```
 http://localhost:3000/rails/conductor/action_mailbox/inbound_emails
 ```
 
-Or use the test emails controller at `/test_emails/new`.
+### Option 3: ngrok for Real Emails
+1. Start ngrok: `ngrok http 3000`
+2. Set Resend webhook URL to ngrok URL + `/rails/action_mailbox/resend/inbound_emails`
+3. Forward real emails to test
 
-## Mailgun Configuration
+## Resend Configuration
 
-See `docs/MAILGUN_SETUP.md` for full setup.
+See `docs/RESEND_SETUP.md` for full setup.
 
-Key config in `config/environments/production.rb`:
+**Key config in `config/initializers/action_mailbox.rb`:**
 ```ruby
-config.action_mailbox.ingress = :mailgun
+Rails.application.config.action_mailbox.resend_api_key = ENV["RESEND_API_KEY"]
+Rails.application.config.action_mailbox.resend_webhook_secret = ENV["RESEND_WEBHOOK_SECRET"]
 ```
 
-Credentials needed:
-- `MAILGUN_INGRESS_SIGNING_KEY` for webhook verification
+**Environment variables needed:**
+- `RESEND_API_KEY` - API key from Resend dashboard
+- `RESEND_WEBHOOK_SECRET` - Webhook signing secret
+- `INBOUND_EMAIL_DOMAIN` - e.g., `inbound.yourdomain.com`
 
 ## Adding New Mailboxes
 
@@ -106,4 +121,11 @@ ActionMailbox::InboundEmail.pending
 ActionMailbox::InboundEmail.processing
 ActionMailbox::InboundEmail.delivered
 ActionMailbox::InboundEmail.failed
+```
+
+Check our InboundEmail records:
+```ruby
+InboundEmail.last
+InboundEmail.last.body_html.present?  # Should be true
+InboundEmail.last.order               # Linked order (if any)
 ```

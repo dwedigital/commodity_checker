@@ -43,9 +43,21 @@ Do this automatically at the end of implementing a feature - do not wait to be a
 ```
 Email → Resend → Action Mailbox → TrackingMailbox → ProcessInboundEmailJob
                                                             ↓
-                                        OrderMatcherService (find or create order)
+                                              EmailClassifierService (AI classification)
                                                             ↓
-                                        SuggestCommodityCodesJob (async)
+                                              EmailParserService (tracking URLs, images)
+                                                            ↓
+                                    ┌───────────────────────┴───────────────────────┐
+                                    ▼                                               ▼
+                          Order Confirmation                              Shipping/Delivery
+                                    ↓                                               ↓
+                      OrderMatcherService                               OrderMatcherService
+                      (find or create order)                            (find matching order)
+                                    ↓                                               ↓
+                      ProductInfoFinderService                          Add tracking URLs
+                      (Tavily search if no URLs)                        Link email to order
+                                    ↓
+                      SuggestCommodityCodesJob
 ```
 
 ### Commodity Code Flow
@@ -61,14 +73,16 @@ Product Description → TariffLookupService (UK API) → LlmCommoditySuggester (
 
 | File | Purpose |
 |------|---------|
-| `app/services/email_parser_service.rb` | Extracts tracking URLs, products, retailers from emails |
+| `app/services/email_classifier_service.rb` | AI classification of email types (order, shipping, etc.) |
+| `app/services/email_parser_service.rb` | Extracts tracking URLs, products, images from emails |
+| `app/services/product_info_finder_service.rb` | Tavily web search + AI to find product details |
 | `app/services/order_matcher_service.rb` | Matches emails to existing orders (avoid duplicates) |
 | `app/services/tariff_lookup_service.rb` | UK Trade Tariff API client |
 | `app/services/llm_commodity_suggester.rb` | Claude AI integration for code suggestions |
 | `app/services/tracking_scraper_service.rb` | Scrapes carrier tracking pages |
 | `app/services/product_scraper_service.rb` | Scrapes product pages for descriptions (with ScrapingBee fallback) |
-| `app/mailboxes/tracking_mailbox.rb` | Routes inbound emails to users |
-| `app/jobs/process_inbound_email_job.rb` | Main email processing orchestration |
+| `app/mailboxes/tracking_mailbox.rb` | Routes inbound emails to users, saves HTML body |
+| `app/jobs/process_inbound_email_job.rb` | Main email processing orchestration with AI |
 
 ## Common Tasks
 
@@ -86,15 +100,43 @@ Product Description → TariffLookupService (UK API) → LlmCommoditySuggester (
 - Edit `LlmCommoditySuggester::SYSTEM_PROMPT` for different AI behavior
 - The service combines tariff API results with Claude's interpretation
 
+### AI Email Classification
+The system uses AI to classify incoming emails and extract product information:
+
+**Email Types:**
+- `order_confirmation` - Purchase confirmed, contains products
+- `shipping_notification` - Package shipped, may have tracking
+- `delivery_confirmation` - Package delivered
+- `return_confirmation` - Return/refund processed
+- `marketing` - Promotional emails (ignored)
+- `other` - Doesn't fit categories (ignored)
+
+**Processing Logic:**
+- Order confirmations with products → Create order, extract product images, suggest codes
+- Shipping notifications → Match to existing order by reference, add tracking
+- Delivery confirmations → Update order status
+
+**Image Extraction:**
+- Product images are extracted from email HTML
+- Filters out logos, icons, tracking pixels, social buttons
+- Falls back to Tavily web search if no images in email
+
 ## Database Schema Summary
 
 ```
 users (Devise auth + inbound_email_token)
   └── orders (retailer, reference, status)
-        ├── order_items (description, suggested/confirmed codes)
-        └── tracking_events (carrier, URL, status, location)
-  └── inbound_emails (subject, from, body, processing_status)
+        ├── order_items (description, suggested/confirmed codes, image_url, product_url)
+        ├── tracking_events (carrier, URL, status, location)
+        └── inbound_emails (many - linked by order_id)
+  └── inbound_emails (subject, from, body_text, body_html, processing_status, order_id)
 ```
+
+**Key relationships:**
+- `Order` has_many `inbound_emails` (all emails related to the order)
+- `Order` belongs_to `source_email` (the email that created it)
+- `InboundEmail` belongs_to `order` (linked by order reference number)
+- `OrderItem` has `image_url` for product thumbnails
 
 ## External APIs
 
@@ -106,8 +148,19 @@ users (Devise auth + inbound_email_token)
 
 ### Anthropic Claude API
 - Used via `anthropic` gem
-- Model: `claude-sonnet-4-20250514`
+- Model: `claude-sonnet-4-20250514` for commodity suggestions
+- Model: `claude-3-haiku-20240307` for email classification (fast/cheap)
 - Returns JSON with commodity_code, confidence, reasoning
+
+### Tavily API (Web Search)
+- Used for finding product details when email lacks product URLs
+- Endpoint: `https://api.tavily.com/search`
+- Returns search results with raw content and images
+- Used by `ProductInfoFinderService`
+
+### Resend (Inbound Email)
+- Webhook endpoint: `/rails/action_mailbox/resend/inbound_emails`
+- See `docs/RESEND_SETUP.md` for configuration
 
 ## Testing Without External Services
 
