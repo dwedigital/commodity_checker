@@ -7,6 +7,12 @@ class PagesController < ApplicationController
   def home
   end
 
+  def privacy
+  end
+
+  def terms
+  end
+
   def lookup
     url = params[:url]
 

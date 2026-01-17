@@ -40,4 +40,8 @@ Rails.application.routes.draw do
 
   # Home page lookup (inline quick lookup)
   post "lookup", to: "pages#lookup", as: :home_lookup
+
+  # Static pages
+  get "privacy", to: "pages#privacy", as: :privacy
+  get "terms", to: "pages#terms", as: :terms
 end
