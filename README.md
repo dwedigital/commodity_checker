@@ -12,6 +12,9 @@ A Rails application for tracking online orders and suggesting EU/UK commodity ta
 - **Commodity Code Suggestions**: Uses UK Trade Tariff API + Claude AI to suggest HS codes
 - **Code Confirmation**: Users can review and confirm suggested codes
 - **CSV Export**: Export confirmed codes for customs declarations
+- **Product URL Lookup**: Paste any product URL to get commodity code suggestions
+- **Photo Lookup**: Upload product photos for AI-powered identification
+- **Blog**: Markdown-based blog for SEO content about commodity codes
 
 ## Tech Stack
 
@@ -22,6 +25,9 @@ A Rails application for tracking online orders and suggesting EU/UK commodity ta
 - **Background Jobs**: Solid Queue
 - **Email Processing**: Action Mailbox + Resend
 - **AI**: Anthropic Claude API
+- **Markdown**: Redcarpet + Rouge (syntax highlighting)
+- **Storage**: Cloudflare R2 (S3-compatible)
+- **Hosting**: Render (with auto-deploy from GitHub)
 
 ## Getting Started
 
@@ -139,14 +145,56 @@ Edit `app/services/tracking_scraper_service.rb`:
 2. Implement `scrape_<carrier>` method
 3. Add URL patterns to `EmailParserService::TRACKING_PATTERNS`
 
+## Blog
+
+The site includes a file-based markdown blog at `/blog`. Posts are stored as markdown files in `content/blog/` with YAML front matter.
+
+### Adding a Post
+
+Create a file like `content/blog/my-post.md`:
+
+```yaml
+---
+title: "My Post Title"
+slug: my-post
+date: 2026-01-17
+description: "Brief description for SEO"
+author: Tariffik Team
+published: true
+tags:
+  - commodity-codes
+---
+
+Your markdown content here...
+```
+
+### Features
+- GitHub-flavored markdown with syntax highlighting
+- SEO meta tags (Open Graph, Twitter Cards, JSON-LD)
+- Auto-generated sitemap at `/sitemap.xml`
+- AI-friendly description at `/llms.txt`
+
 ## Deployment
 
-The app is configured for deployment on Render. Key considerations:
+The app is configured for deployment on Render with auto-deploy:
+
+- `main` branch → Production (`tariffik.com`)
+- `develop` branch → Staging (`tariffik-staging.onrender.com`)
+
+### Key Considerations
 
 1. Set all environment variables
 2. Configure Resend domain and webhook
 3. Run database migrations
-4. Ensure Solid Queue is running for background jobs
+4. Solid Queue runs inside Puma via plugin
+
+### Puma Configuration
+
+Puma auto-detects worker count based on available memory:
+- 2GB RAM → 2-3 workers
+- 4GB RAM → 6-7 workers
+
+Override with `WEB_CONCURRENCY` env var if needed.
 
 ## License
 

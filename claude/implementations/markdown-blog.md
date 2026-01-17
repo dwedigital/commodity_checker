@@ -26,11 +26,12 @@ None - this feature is entirely file-based.
 | `app/services/blog_post_service.rb` | Service to load, parse, and render markdown blog posts |
 | `app/helpers/blog_helper.rb` | Helper methods for SEO (JSON-LD, reading time, absolute URLs) |
 | `app/controllers/blog_controller.rb` | Controller with index and show actions |
-| `app/views/blog/index.html.erb` | Blog listing page with post cards grid |
+| `app/views/blog/index.html.erb` | Blog listing page (minimalist list design) |
 | `app/views/blog/show.html.erb` | Single post view with hero image and SEO meta tags |
-| `app/views/blog/_post_card.html.erb` | Partial for post thumbnail card |
+| `app/views/blog/_post_card.html.erb` | Partial for post list item (title, date, excerpt, tags) |
 | `content/blog/.keep` | Placeholder to ensure directory is tracked in git |
-| `content/blog/understanding-uk-commodity-codes.md` | Sample blog post for testing |
+| `content/blog/understanding-uk-commodity-codes.md` | Beginner's guide to commodity codes |
+| `content/blog/commodity-codes-for-electronics.md` | Electronics-specific commodity code guide |
 | `public/images/blog/.keep` | Placeholder for blog hero images directory |
 
 ## Modified Files
@@ -40,6 +41,7 @@ None - this feature is entirely file-based.
 | `Gemfile` | Added `redcarpet` and `rouge` gems |
 | `config/routes.rb` | Added `/blog` and `/blog/:slug` routes |
 | `app/views/shared/_footer.html.erb` | Added "Blog" link |
+| `app/views/layouts/application.html.erb` | Added flexbox sticky footer (min-h-screen, flex, grow) |
 
 ## Routes
 

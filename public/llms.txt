@@ -37,9 +37,13 @@ Example: 8471 30 00 00 = Portable computers (laptops)
 - Blog: https://tariffik.com/blog - Guides about commodity codes and importing
 - Sign up: https://tariffik.com/users/sign_up - Create a free account
 
-## Blog Topics
+## Blog Articles
 
-The Tariffik blog covers:
+Current blog posts:
+- https://tariffik.com/blog/understanding-uk-commodity-codes - Beginner's guide to HS codes
+- https://tariffik.com/blog/commodity-codes-for-electronics - Phones, laptops, accessories codes
+
+Topics covered:
 - Understanding commodity codes for beginners
 - Product-specific classification guides (electronics, clothing, etc.)
 - UK import duty rates and calculations
