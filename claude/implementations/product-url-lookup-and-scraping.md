@@ -5,7 +5,7 @@
 
 ## Overview
 
-This implementation adds two new capabilities to the Commodity Code Checker:
+This implementation adds two new capabilities to Tariffik:
 
 1. **Direct Product URL Lookup** - Users can paste a product page URL at `/product_lookups/new` to get commodity code suggestions without forwarding an email
 2. **Email Product Link Enhancement** - Product URLs found in forwarded order emails are automatically extracted and scraped to get richer product descriptions for better commodity code suggestions

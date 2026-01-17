@@ -1,4 +1,4 @@
-# Render Blueprint for Commodity Code Checker
+# Render Blueprint for Tariffik
 # https://render.com/docs/blueprint-spec
 #
 # Deployment workflow:
@@ -7,14 +7,14 @@
 
 databases:
   # Production database
-  - name: commodity-checker-db
-    databaseName: commodity_checker_production
-    user: commodity_checker
+  - name: tariffik-db
+    databaseName: tariffik_production
+    user: tariffik
 
   # Staging database
-  - name: commodity-checker-staging-db
-    databaseName: commodity_checker_staging
-    user: commodity_checker_staging
+  - name: tariffik-staging-db
+    databaseName: tariffik_staging
+    user: tariffik_staging
 
 services:
   # =============================================================================
@@ -23,7 +23,7 @@ services:
 
   # Production web application
   - type: web
-    name: commodity-checker
+    name: tariffik
     runtime: ruby
     plan: starter
     branch: main
@@ -60,7 +60,7 @@ services:
         value: "true"
       - key: DATABASE_URL
         fromDatabase:
-          name: commodity-checker-db
+          name: tariffik-db
           property: connectionString
       - key: RAILS_MASTER_KEY
         sync: false # Set manually in Render dashboard
@@ -90,7 +90,7 @@ services:
 
   # Staging web application
   - type: web
-    name: commodity-checker-staging
+    name: tariffik-staging
     runtime: ruby
     plan: starter
     branch: develop
@@ -131,7 +131,7 @@ services:
         value: "0"  # Single mode (threads only) - avoids cluster mode overhead on starter plan
       - key: DATABASE_URL
         fromDatabase:
-          name: commodity-checker-staging-db
+          name: tariffik-staging-db
           property: connectionString
       - key: RAILS_MASTER_KEY
         sync: false # Set manually - can use same as production

@@ -30,7 +30,7 @@ Rails.application.configure do
   config.active_storage.resolve_model_to_route = :rails_storage_proxy
 
   # Set default URL options for URL generation outside of request context (e.g., Turbo Streams from jobs)
-  # APP_HOST must be set in environment (e.g., commodity-checker.onrender.com or commodity-checker-staging.onrender.com)
+  # APP_HOST must be set in environment (e.g., tariffik.com or tariffik-staging.onrender.com)
   if ENV["APP_HOST"].present?
     config.action_controller.default_url_options = { host: ENV["APP_HOST"] }
     Rails.application.routes.default_url_options = { host: ENV["APP_HOST"] }

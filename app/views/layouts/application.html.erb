@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html class="h-full bg-gray-50">
   <head>
-    <title><%= content_for(:title) || "Commodity Code Checker" %></title>
+    <title><%= content_for(:title) || "Tariffik" %></title>
     <meta name="viewport" content="width=device-width,initial-scale=1">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="mobile-web-app-capable" content="yes">
@@ -27,7 +27,7 @@
             <div class="flex items-center">
               <div class="shrink-0">
                 <%= link_to root_path, class: "text-white font-bold text-xl" do %>
-                  Commodity Checker
+                  Tariffik
                 <% end %>
               </div>
               <% if user_signed_in? %>

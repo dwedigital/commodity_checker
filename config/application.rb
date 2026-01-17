@@ -6,7 +6,7 @@ require "rails/all"
 # you've limited to :test, :development, or :production.
 Bundler.require(*Rails.groups)
 
-module CommodityChecker
+module Tariffik
   class Application < Rails::Application
     # Initialize configuration defaults for originally generated Rails version.
     config.load_defaults 8.0
@@ -25,7 +25,7 @@ module CommodityChecker
     # config.eager_load_paths << Rails.root.join("extras")
 
     # Inbound email domain for forwarding tracking emails
-    config.inbound_email_domain = ENV.fetch("INBOUND_EMAIL_DOMAIN", "inbound.example.com")
+    config.inbound_email_domain = ENV.fetch("INBOUND_EMAIL_DOMAIN", "inbound.tariffik.com")
 
     # Use MiniMagick (ImageMagick) for image processing instead of vips
     config.active_storage.variant_processor = :mini_magick

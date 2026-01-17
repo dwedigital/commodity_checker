@@ -26,7 +26,7 @@ Do this automatically at the end of implementing a feature - do not wait to be a
 
 ## Project Overview
 
-**Commodity Code Checker** - A Rails 8 app that helps users track online orders and get EU/UK commodity tariff code suggestions. Users forward tracking emails, the app extracts order info, and uses Claude AI + UK Trade Tariff API to suggest HS codes.
+**Tariffik** ([tariffik.com](https://tariffik.com)) - A Rails 8 app that helps users track online orders and get EU/UK commodity tariff code suggestions. Users forward tracking emails, the app extracts order info, and uses Claude AI + UK Trade Tariff API to suggest HS codes.
 
 ## Key Architectural Decisions
 
@@ -186,8 +186,8 @@ users (Devise auth + inbound_email_token)
 
 ### Branches
 - `feature/*`, `bugfix/*`, `hotfix/*` → Feature branches for development
-- `develop` → Auto-deploys to **staging** (`commodity-checker-staging.onrender.com`)
-- `main` → Auto-deploys to **production** (`commodity-checker.onrender.com`)
+- `develop` → Auto-deploys to **staging** (`tariffik-staging.onrender.com`)
+- `main` → Auto-deploys to **production** (`tariffik.com`)
 
 ### Branch Naming (Gitflow)
 Use these prefixes for branch names:
@@ -222,7 +222,7 @@ Use these prefixes for branch names:
    gh pr merge --merge
    ```
 
-6. **Test on staging** - Verify on `commodity-checker-staging.onrender.com`
+6. **Test on staging** - Verify on `tariffik-staging.onrender.com`
 
 7. **Deploy to production** - Create PR from `develop` → `main`:
    ```bash
@@ -320,7 +320,7 @@ bin/rails console
 
 ```
 ANTHROPIC_API_KEY          # Required for commodity suggestions and email classification
-INBOUND_EMAIL_DOMAIN       # e.g., inbound.yourdomain.com
+INBOUND_EMAIL_DOMAIN       # inbound.tariffik.com
 RESEND_API_KEY             # For inbound email processing
 RESEND_WEBHOOK_SECRET      # For webhook verification
 TAVILY_API_KEY             # For AI web search (product info from emails without URLs)

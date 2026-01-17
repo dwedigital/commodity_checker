@@ -4,7 +4,7 @@ This guide walks through setting up Resend to receive forwarded tracking emails.
 
 ## Overview
 
-When users forward tracking emails to their unique address (e.g., `track-abc123@inbound.yourdomain.com`), Resend receives them and forwards to your Rails app via the `actionmailbox-resend` gem.
+When users forward tracking emails to their unique address (e.g., `track-abc123@inbound.tariffik.com`), Resend receives them and forwards to your Rails app via the `actionmailbox-resend` gem.
 
 ## Step 1: Create Resend Account
 
@@ -13,11 +13,11 @@ When users forward tracking emails to their unique address (e.g., `track-abc123@
 
 ## Step 2: Add Your Domain
 
-You'll need a subdomain for receiving emails (e.g., `inbound.yourdomain.com`).
+You'll need a subdomain for receiving emails (e.g., `inbound.tariffik.com`).
 
 1. In Resend dashboard, go to **Domains**
 2. Click **Add Domain**
-3. Enter your subdomain: `inbound.yourdomain.com`
+3. Enter your subdomain: `inbound.tariffik.com`
 4. Select your region
 
 ## Step 3: Configure DNS Records
@@ -27,7 +27,7 @@ Resend will provide DNS records to add. You need:
 ### MX Records (Required for receiving email)
 ```
 Type: MX
-Host: inbound (or inbound.yourdomain.com)
+Host: inbound (or inbound.tariffik.com)
 Value: feedback-smtp.us-east-1.amazonses.com (or as specified by Resend)
 Priority: 10
 ```
@@ -65,7 +65,7 @@ Note: The `.resend.app` addresses work automatically, but custom domains require
 3. Configure:
 
 ```
-Endpoint URL: https://yourdomain.com/rails/action_mailbox/resend/inbound_emails
+Endpoint URL: https://tariffik.com/rails/action_mailbox/resend/inbound_emails
 Events: Select "email.received" (or all inbound email events)
 ```
 
@@ -85,7 +85,7 @@ In production (Render), set these environment variables:
 
 ```bash
 # Required
-INBOUND_EMAIL_DOMAIN=inbound.yourdomain.com
+INBOUND_EMAIL_DOMAIN=inbound.tariffik.com
 RESEND_API_KEY=re_your-api-key
 RESEND_WEBHOOK_SECRET=whsec_your-webhook-signing-secret
 ```
@@ -114,7 +114,7 @@ For Render:
    https://abc123.ngrok.io/rails/action_mailbox/resend/inbound_emails
    ```
 
-4. Send a test email to `track-{your-token}@inbound.yourdomain.com`
+4. Send a test email to `track-{your-token}@inbound.tariffik.com`
 
 5. Check Rails logs for incoming email
 
@@ -152,8 +152,8 @@ For Render:
 - Wait longer for propagation (up to 48 hours)
 - Use `dig` to verify records:
   ```bash
-  dig MX inbound.yourdomain.com
-  dig TXT inbound.yourdomain.com
+  dig MX inbound.tariffik.com
+  dig TXT inbound.tariffik.com
   ```
 
 ## Security Notes

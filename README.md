@@ -1,6 +1,8 @@
-# Commodity Code Checker
+# Tariffik
 
 A Rails application for tracking online orders and suggesting EU/UK commodity tariff codes. Users forward tracking emails to the app, which extracts order/delivery info and suggests appropriate HS commodity codes using the UK Trade Tariff API combined with Claude AI.
+
+**Website**: [tariffik.com](https://tariffik.com)
 
 ## Features
 
@@ -18,7 +20,7 @@ A Rails application for tracking online orders and suggesting EU/UK commodity ta
 - **Frontend**: Hotwire (Turbo + Stimulus) + Tailwind CSS
 - **Authentication**: Devise
 - **Background Jobs**: Solid Queue
-- **Email Processing**: Action Mailbox + Mailgun
+- **Email Processing**: Action Mailbox + Resend
 - **AI**: Anthropic Claude API
 
 ## Getting Started
@@ -34,7 +36,7 @@ A Rails application for tracking online orders and suggesting EU/UK commodity ta
 ```bash
 # Clone the repository
 git clone <repo-url>
-cd commodity_checker
+cd tariffik
 
 # Install dependencies
 bundle install
@@ -55,9 +57,11 @@ cp .env.example .env
 ```
 
 Key variables:
+
 - `ANTHROPIC_API_KEY` - For commodity code suggestions
 - `INBOUND_EMAIL_DOMAIN` - Domain for receiving forwarded emails
-- `MAILGUN_INGRESS_SIGNING_KEY` - For Mailgun webhook verification
+- `RESEND_API_KEY` - For Resend API access
+- `RESEND_WEBHOOK_SECRET` - For Resend webhook verification
 
 ### Running Tests
 
@@ -91,8 +95,8 @@ bin/rails test
 
 ## Email Flow
 
-1. User forwards tracking email to `track-{token}@inbound.yourdomain.com`
-2. Mailgun receives and forwards to Action Mailbox endpoint
+1. User forwards tracking email to `track-{token}@inbound.tariffik.com`
+2. Resend receives and forwards to Action Mailbox endpoint
 3. TrackingMailbox routes to correct user via token
 4. ProcessInboundEmailJob parses email and creates/updates order
 5. SuggestCommodityCodesJob queries tariff API + Claude for codes
@@ -101,24 +105,28 @@ bin/rails test
 ## API Integrations
 
 ### UK Trade Tariff API
+
 - Base URL: `https://www.trade-tariff.service.gov.uk/api/v2/`
 - No authentication required
 - Used for searching and validating commodity codes
 
 ### Anthropic Claude API
+
 - Used for interpreting product descriptions
 - Suggests most appropriate HS codes with reasoning
 - Requires API key in credentials/environment
 
-### Mailgun
+### Resend
+
 - Receives inbound emails via webhook
-- See `docs/MAILGUN_SETUP.md` for configuration
+- See `docs/RESEND_SETUP.md` for configuration
 
 ## Development
 
 ### Testing Email Processing
 
-Without Mailgun setup, use the test interface:
+Without Resend setup, use the test interface:
+
 1. Visit `/test_emails/new`
 2. Paste email content
 3. Submit to process
@@ -126,16 +134,17 @@ Without Mailgun setup, use the test interface:
 ### Adding Carrier Support
 
 Edit `app/services/tracking_scraper_service.rb`:
+
 1. Add pattern to `CARRIER_HANDLERS`
 2. Implement `scrape_<carrier>` method
 3. Add URL patterns to `EmailParserService::TRACKING_PATTERNS`
 
 ## Deployment
 
-The app is configured for deployment with Kamal. Key considerations:
+The app is configured for deployment on Render. Key considerations:
 
 1. Set all environment variables
-2. Configure Mailgun domain and routes
+2. Configure Resend domain and webhook
 3. Run database migrations
 4. Ensure Solid Queue is running for background jobs
 

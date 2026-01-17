@@ -48,7 +48,7 @@ New route added via engine mount:
 ```
 Email forwarded by user
         ↓
-Resend receives email at inbound.yourdomain.com
+Resend receives email at inbound.tariffik.com
         ↓
 Resend sends webhook to /rails/action_mailbox/resend/inbound_emails
         ↓
@@ -72,7 +72,7 @@ ProcessInboundEmailJob processes email (unchanged from before)
 
 **Required for production:**
 ```
-INBOUND_EMAIL_DOMAIN=inbound.yourdomain.com
+INBOUND_EMAIL_DOMAIN=inbound.tariffik.com
 RESEND_API_KEY=re_your-api-key
 RESEND_WEBHOOK_SECRET=whsec_your-signing-secret
 ```
@@ -88,11 +88,11 @@ No Resend setup needed for local testing:
 
 ### Production Setup
 1. Create Resend account at resend.com
-2. Add domain (e.g., `inbound.yourdomain.com`)
+2. Add domain (e.g., `inbound.tariffik.com`)
 3. Configure DNS (MX records pointing to Resend)
-4. Create webhook pointing to `https://yourdomain.com/rails/action_mailbox/resend/inbound_emails`
+4. Create webhook pointing to `https://tariffik.com/rails/action_mailbox/resend/inbound_emails`
 5. Set environment variables in Render
-6. Forward test email to `track-{token}@inbound.yourdomain.com`
+6. Forward test email to `track-{token}@inbound.tariffik.com`
 7. Verify order appears in dashboard
 
 ### Verify Installation

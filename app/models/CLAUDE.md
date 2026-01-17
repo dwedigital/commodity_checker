@@ -37,7 +37,7 @@ Devise authentication with additional fields:
 **Key method:**
 ```ruby
 user.inbound_email_address
-# => "track-abc123@inbound.example.com"
+# => "track-abc123@inbound.tariffik.com"
 ```
 
 ## Order
