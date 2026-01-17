@@ -31,7 +31,7 @@
       <!-- Form (hidden when limit reached) -->
       <div data-lookup-limit-target="form">
         <%= form_with url: home_lookup_path, method: :post, data: { turbo_frame: "lookup_result" }, class: "space-y-4" do |f| %>
-          <div class="flex gap-3">
+          <div class="flex flex-col gap-3 sm:flex-row">
             <div class="relative flex-1">
               <div class="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-4">
                 <svg class="size-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -40,15 +40,15 @@
               </div>
               <%= f.url_field :url, placeholder: "Paste any product URL...", class: "block w-full rounded-xl border-0 py-4 pl-12 pr-4 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6", autofocus: true %>
             </div>
-            <%= f.submit "Get Code", data: { turbo_submits_with: "..." }, class: "rounded-xl bg-indigo-600 px-6 py-4 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600 cursor-pointer transition-colors" %>
+            <%= f.submit "Get Code", data: { turbo_submits_with: "..." }, class: "w-full sm:w-auto rounded-xl bg-indigo-600 px-6 py-4 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600 cursor-pointer transition-colors" %>
           </div>
-          <div class="flex items-center justify-between text-sm">
-            <p class="text-gray-500">Amazon, eBay, ASOS, John Lewis & 100+ retailers</p>
+          <div class="flex flex-col items-center gap-1 text-sm sm:flex-row sm:justify-between sm:gap-0">
             <% unless user_signed_in? %>
-              <p class="text-gray-400" data-remaining-wrapper>
+              <p class="text-gray-400 order-first sm:order-last" data-remaining-wrapper>
                 <span class="font-medium text-indigo-600" data-lookup-limit-target="remaining"><%= @guest_lookups_remaining || 3 %></span> free <span data-lookup-limit-target="lookupText"><%= (@guest_lookups_remaining || 3) == 1 ? 'lookup' : 'lookups' %></span> left
               </p>
             <% end %>
+            <p class="text-gray-500">Amazon, eBay, ASOS, John Lewis & 100+ retailers</p>
           </div>
         <% end %>
       </div>
