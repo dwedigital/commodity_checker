@@ -319,12 +319,27 @@ bin/rails console
 ## Environment Variables
 
 ```
-ANTHROPIC_API_KEY          # Required for commodity suggestions and email classification
-INBOUND_EMAIL_DOMAIN       # inbound.tariffik.com
-RESEND_API_KEY             # For inbound email processing
-RESEND_WEBHOOK_SECRET      # For webhook verification
-TAVILY_API_KEY             # For AI web search (product info from emails without URLs)
-SCRAPINGBEE_API_KEY        # Optional, for scraping protected websites (Cloudflare, etc.)
+# Rails
+RAILS_MASTER_KEY                   # For encrypted credentials
+APP_HOST                           # tariffik.com (prod) or tariffik-staging.onrender.com (staging)
+
+# Inbound Email (Resend)
+INBOUND_EMAIL_DOMAIN               # inbound.tariffik.com
+RESEND_API_KEY                     # For inbound email processing
+RESEND_WEBHOOK_SECRET              # For webhook verification
+
+# AI Services
+ANTHROPIC_API_KEY                  # Required for commodity suggestions and email classification
+TAVILY_API_KEY                     # For AI web search (product info from emails without URLs)
+
+# Web Scraping
+SCRAPINGBEE_API_KEY                # Optional, for scraping protected websites
+
+# Cloudflare R2 Storage
+CLOUDFLARE_R2_ACCESS_KEY_ID        # R2 API token access key
+CLOUDFLARE_R2_SECRET_ACCESS_KEY    # R2 API token secret
+CLOUDFLARE_R2_BUCKET               # tariffik-images
+CLOUDFLARE_R2_ENDPOINT             # https://<account_id>.r2.cloudflarestorage.com
 ```
 
 ## Future Improvements (Not Yet Implemented)
