@@ -150,16 +150,18 @@ Update this file when adding major features.
 Configured in `config/initializers/content_security_policy.rb`. Protects against XSS attacks.
 
 ```
-default-src 'self'; font-src 'self' data:; img-src 'self' https: data:;
+default-src 'self'; font-src 'self' data:; img-src 'self' https: http: data: blob: localhost;
 object-src 'none'; script-src 'self'; style-src 'self' 'unsafe-inline';
 connect-src 'self'; frame-ancestors 'none'; base-uri 'self'; form-action 'self'
 ```
 
 Key protections:
-- `script-src 'self'` - Only scripts from same origin (with nonce support)
+- `script-src 'self'` - Only scripts from same origin (no inline JS allowed)
 - `frame-ancestors 'none'` - Prevents clickjacking
 - `object-src 'none'` - Blocks Flash/plugins
-- `style-src 'unsafe-inline'` - Required for Tailwind CSS
+- `img-src` includes `blob:` for camera previews, `http:` and localhost for Active Storage
+
+**Important:** CSP blocks inline JavaScript. Use Stimulus controllers instead of `onclick` handlers or `<script>` tags. See `tabs_controller.js` for an example.
 
 **Troubleshooting:** If new functionality is blocked, check browser console for CSP errors. Enable report-only mode temporarily by uncommenting `config.content_security_policy_report_only = true`.
 
@@ -171,9 +173,9 @@ Configured in `config/initializers/secure_headers.rb`.
 | X-Frame-Options | DENY | Clickjacking protection |
 | X-Content-Type-Options | nosniff | Prevent MIME sniffing |
 | Referrer-Policy | strict-origin-when-cross-origin | Control referrer leakage |
-| Permissions-Policy | (disabled features) | Disable unused browser APIs |
+| Permissions-Policy | camera=(self), others disabled | Control browser API access |
 
-HSTS is automatically added by Rails when `force_ssl = true`.
+**Note:** `camera=(self)` is enabled for the Photo Lookup feature. HSTS is automatically added by Rails when `force_ssl = true`.
 
 ### Verification
 ```bash

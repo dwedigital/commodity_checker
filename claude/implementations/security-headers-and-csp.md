@@ -28,12 +28,14 @@ None - configuration only.
 | File | Purpose |
 |------|---------|
 | `config/initializers/secure_headers.rb` | Configures X-Frame-Options, X-Content-Type-Options, Referrer-Policy, Permissions-Policy |
+| `app/javascript/controllers/tabs_controller.js` | Stimulus controller for tab switching (replaces inline JS blocked by CSP) |
 
 ## Modified Files
 
 | File | Change |
 |------|--------|
 | `config/initializers/content_security_policy.rb` | Enabled and configured CSP (was commented out) |
+| `app/views/product_lookups/new.html.erb` | Converted inline JS tabs to Stimulus controller |
 
 ## Configuration Details
 
@@ -44,7 +46,7 @@ None - configuration only.
 config.content_security_policy do |policy|
   policy.default_src :self
   policy.font_src    :self, :data
-  policy.img_src     :self, :https, :data
+  policy.img_src     :self, :https, :http, :data, :blob, "http://localhost:3000", "http://127.0.0.1:3000"
   policy.object_src  :none
   policy.script_src  :self
   policy.style_src   :self, :unsafe_inline  # Tailwind CSS requires unsafe-inline
@@ -55,9 +57,13 @@ config.content_security_policy do |policy|
 end
 ```
 
+**Note on img-src:** The extended `img-src` directive includes:
+- `:blob` - Required for camera capture image previews (uses `URL.createObjectURL`)
+- `:http` and explicit localhost URLs - Required for Active Storage in development (localhost vs 127.0.0.1 origin mismatch)
+
 **Resulting Header:**
 ```
-Content-Security-Policy: default-src 'self'; font-src 'self' data:; img-src 'self' https: data:; object-src 'none'; script-src 'self'; style-src 'self' 'unsafe-inline'; connect-src 'self'; frame-ancestors 'none'; base-uri 'self'; form-action 'self'
+Content-Security-Policy: default-src 'self'; font-src 'self' data:; img-src 'self' https: http: data: blob: http://localhost:3000 http://127.0.0.1:3000; object-src 'none'; script-src 'self'; style-src 'self' 'unsafe-inline'; connect-src 'self'; frame-ancestors 'none'; base-uri 'self'; form-action 'self'
 ```
 
 ### Security Headers
@@ -68,9 +74,11 @@ Rails.application.config.action_dispatch.default_headers = {
   "X-Frame-Options" => "DENY",
   "X-Content-Type-Options" => "nosniff",
   "Referrer-Policy" => "strict-origin-when-cross-origin",
-  "Permissions-Policy" => "accelerometer=(), camera=(), geolocation=(), gyroscope=(), magnetometer=(), microphone=(), payment=(), usb=()"
+  "Permissions-Policy" => "accelerometer=(), camera=(self), geolocation=(), gyroscope=(), magnetometer=(), microphone=(), payment=(), usb=()"
 }
 ```
+
+**Note:** `camera=(self)` is enabled to support the Photo Lookup feature which uses the device camera.
 
 ## Security Protections
 
@@ -159,10 +167,43 @@ Permissions-Policy: accelerometer=(), camera=(), ...
 
 | Error | Solution |
 |-------|----------|
-| Inline script blocked | Add nonce to script tag: `<%= javascript_tag nonce: true %>` |
+| Inline script blocked | Convert to Stimulus controller (preferred) or add nonce |
+| Inline onclick handlers | Convert to Stimulus `data-action` attributes |
+| Camera permission denied | Ensure `camera=(self)` in Permissions-Policy |
+| Blob image preview broken | Add `:blob` to `img-src` |
+| Active Storage image broken | Check localhost vs 127.0.0.1 origin mismatch |
 | External font blocked | Add font CDN to `font_src` |
-| Image from CDN blocked | Already allows `:https` for images |
 | Iframe embed blocked | Add source to `frame_src` (not currently configured) |
+
+### Inline JS to Stimulus Migration
+
+When CSP blocks inline JavaScript (onclick handlers, `<script>` tags), convert to Stimulus:
+
+**Before (blocked by CSP):**
+```html
+<button onclick="switchTab('photo')">Photo</button>
+<script>
+  function switchTab(tab) { /* ... */ }
+</script>
+```
+
+**After (CSP compliant):**
+```html
+<div data-controller="tabs">
+  <button data-action="click->tabs#switch" data-tab="photo">Photo</button>
+</div>
+```
+
+```javascript
+// app/javascript/controllers/tabs_controller.js
+import { Controller } from "@hotwired/stimulus"
+export default class extends Controller {
+  switch(event) {
+    const tab = event.currentTarget.dataset.tab
+    // ...
+  }
+}
+```
 
 ## Limitations & Future Improvements
 
@@ -182,8 +223,10 @@ Permissions-Policy: accelerometer=(), camera=(), ...
 
 ## Files Summary
 
-### New Files (1)
+### New Files (2)
 - `config/initializers/secure_headers.rb`
+- `app/javascript/controllers/tabs_controller.js`
 
-### Modified Files (1)
+### Modified Files (2)
 - `config/initializers/content_security_policy.rb`
+- `app/views/product_lookups/new.html.erb`
