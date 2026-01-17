@@ -1,6 +1,6 @@
 class ProductLookupsController < ApplicationController
-  before_action :authenticate_user!, except: [:new, :create, :quick_lookup]
-  before_action :set_product_lookup, only: [:show, :confirm_commodity_code, :add_to_order]
+  before_action :authenticate_user!, except: [ :new, :create, :quick_lookup ]
+  before_action :set_product_lookup, only: [ :show, :confirm_commodity_code, :add_to_order ]
 
   def index
     @product_lookups = current_user.product_lookups

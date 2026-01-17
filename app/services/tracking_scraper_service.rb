@@ -14,11 +14,11 @@ class TrackingScraperService
 
   # Status mappings to normalize across carriers
   STATUS_MAPPINGS = {
-    delivered: ["delivered", "delivery complete", "signed for", "collected"],
-    out_for_delivery: ["out for delivery", "with driver", "on vehicle"],
-    in_transit: ["in transit", "on its way", "dispatched", "shipped", "en route", "departed", "arrived at"],
-    processing: ["processing", "label created", "shipment information received", "pending"],
-    exception: ["exception", "failed delivery", "returned", "held", "delayed"]
+    delivered: [ "delivered", "delivery complete", "signed for", "collected" ],
+    out_for_delivery: [ "out for delivery", "with driver", "on vehicle" ],
+    in_transit: [ "in transit", "on its way", "dispatched", "shipped", "en route", "departed", "arrived at" ],
+    processing: [ "processing", "label created", "shipment information received", "pending" ],
+    exception: [ "exception", "failed delivery", "returned", "held", "delayed" ]
   }.freeze
 
   def initialize

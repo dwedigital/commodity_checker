@@ -12,6 +12,6 @@ class CreateGuestLookups < ActiveRecord::Migration[8.0]
 
     add_index :guest_lookups, :guest_token
     add_index :guest_lookups, :created_at
-    add_index :guest_lookups, [:guest_token, :created_at]
+    add_index :guest_lookups, [ :guest_token, :created_at ]
   end
 end

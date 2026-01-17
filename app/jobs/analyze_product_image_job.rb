@@ -113,7 +113,7 @@ class AnalyzeProductImageJob < ApplicationJob
 
     # Process the variant that's used in the view (resize_to_limit: [200, 200])
     # This ensures the variant exists before broadcasting
-    lookup.product_image.variant(resize_to_limit: [200, 200]).processed
+    lookup.product_image.variant(resize_to_limit: [ 200, 200 ]).processed
   rescue => e
     Rails.logger.warn("Failed to preprocess image variant for lookup #{lookup.id}: #{e.message}")
   end

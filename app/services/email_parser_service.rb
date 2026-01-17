@@ -83,14 +83,14 @@ class EmailParserService
     /rating|star|review/i,
     /avatar|profile/i,
     /\.gif$/i,  # Usually tracking pixels or animations
-    /data:image/i,  # Inline data URIs (usually icons)
+    /data:image/i  # Inline data URIs (usually icons)
   ].freeze
 
   attr_reader :inbound_email
 
   def initialize(inbound_email)
     @inbound_email = inbound_email
-    @text = [inbound_email.subject, inbound_email.body_text].compact.join("\n")
+    @text = [ inbound_email.subject, inbound_email.body_text ].compact.join("\n")
     @html = inbound_email.body_html
   end
 
@@ -286,7 +286,7 @@ class EmailParserService
       next_chunk = next_lines.join(" ")
       if next_chunk.match?(/\b(Color|Size|Qty|Quantity|Article|SKU)[\s:]/i)
         # Build enhanced description with attributes
-        product_name = line.gsub(/^\[|\]$/, '').strip  # Remove brackets if present
+        product_name = line.gsub(/^\[|\]$/, "").strip  # Remove brackets if present
         enhanced = build_product_with_attributes(product_name, next_lines)
 
         normalized = enhanced.downcase.gsub(/\s+/, " ")
@@ -298,7 +298,7 @@ class EmailParserService
   end
 
   def build_product_with_attributes(name, attribute_lines)
-    parts = [name]
+    parts = [ name ]
 
     attribute_lines.each do |line|
       # Extract color

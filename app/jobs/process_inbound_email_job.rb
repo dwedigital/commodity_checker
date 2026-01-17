@@ -337,7 +337,7 @@ class ProcessInboundEmailJob < ApplicationJob
   def merge_parsed_data(classification, regex_data)
     # Build product descriptions from AI-extracted products
     ai_products = classification[:products].map do |p|
-      parts = [p[:name]]
+      parts = [ p[:name] ]
       parts << "Brand: #{p[:brand]}" if p[:brand].present?
       parts << "Color: #{p[:color]}" if p[:color].present?
       parts << "Material: #{p[:material]}" if p[:material].present?

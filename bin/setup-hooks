@@ -1,0 +1,14 @@
+#!/bin/bash
+
+# Install git hooks from bin/hooks to .git/hooks
+
+echo "Installing git hooks..."
+
+for hook in bin/hooks/*; do
+  hook_name=$(basename "$hook")
+  cp "$hook" ".git/hooks/$hook_name"
+  chmod +x ".git/hooks/$hook_name"
+  echo "  Installed $hook_name"
+done
+
+echo "Done! Git hooks are now active."
