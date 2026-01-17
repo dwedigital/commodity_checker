@@ -15,7 +15,8 @@ Rails.application.config.action_dispatch.default_headers = {
   "Referrer-Policy" => "strict-origin-when-cross-origin",
 
   # Disable browser features that aren't needed (reduces attack surface)
-  "Permissions-Policy" => "accelerometer=(), camera=(), geolocation=(), gyroscope=(), magnetometer=(), microphone=(), payment=(), usb=()"
+  # Note: camera=(self) is enabled for the Photo Lookup feature
+  "Permissions-Policy" => "accelerometer=(), camera=(self), geolocation=(), gyroscope=(), magnetometer=(), microphone=(), payment=(), usb=()"
 }
 
 # Note: Strict-Transport-Security (HSTS) is automatically added by Rails

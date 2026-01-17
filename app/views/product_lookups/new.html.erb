@@ -29,13 +29,15 @@
   <% end %>
 
   <!-- Tabs -->
+  <div data-controller="tabs">
   <div class="bg-white shadow rounded-lg overflow-hidden">
     <div class="border-b border-gray-200">
       <nav class="-mb-px flex" aria-label="Tabs">
         <button type="button"
-                id="url-tab"
-                class="tab-button w-1/2 border-b-2 border-indigo-500 py-4 px-1 text-center text-sm font-medium text-indigo-600"
-                onclick="switchTab('url')">
+                data-tabs-target="tab"
+                data-tab="url"
+                data-action="click->tabs#switch"
+                class="w-1/2 border-b-2 border-indigo-500 py-4 px-1 text-center text-sm font-medium text-indigo-600">
           <svg class="inline-block size-5 mr-2 -mt-0.5" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
             <path stroke-linecap="round" stroke-linejoin="round" d="M13.19 8.688a4.5 4.5 0 0 1 1.242 7.244l-4.5 4.5a4.5 4.5 0 0 1-6.364-6.364l1.757-1.757m13.35-.622 1.757-1.757a4.5 4.5 0 0 0-6.364-6.364l-4.5 4.5a4.5 4.5 0 0 0 1.242 7.244" />
           </svg>
@@ -43,9 +45,10 @@
         </button>
         <% if user_signed_in? %>
           <button type="button"
-                  id="photo-tab"
-                  class="tab-button w-1/2 border-b-2 border-transparent py-4 px-1 text-center text-sm font-medium text-gray-500 hover:border-gray-300 hover:text-gray-700"
-                  onclick="switchTab('photo')">
+                  data-tabs-target="tab"
+                  data-tab="photo"
+                  data-action="click->tabs#switch"
+                  class="w-1/2 border-b-2 border-transparent py-4 px-1 text-center text-sm font-medium text-gray-500 hover:border-gray-300 hover:text-gray-700">
             <svg class="inline-block size-5 mr-2 -mt-0.5" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
               <path stroke-linecap="round" stroke-linejoin="round" d="M6.827 6.175A2.31 2.31 0 0 1 5.186 7.23c-.38.054-.757.112-1.134.175C2.999 7.58 2.25 8.507 2.25 9.574V18a2.25 2.25 0 0 0 2.25 2.25h15A2.25 2.25 0 0 0 21.75 18V9.574c0-1.067-.75-1.994-1.802-2.169a47.865 47.865 0 0 0-1.134-.175 2.31 2.31 0 0 1-1.64-1.055l-.822-1.316a2.192 2.192 0 0 0-1.736-1.039 48.774 48.774 0 0 0-5.232 0 2.192 2.192 0 0 0-1.736 1.039l-.821 1.316Z" />
               <path stroke-linecap="round" stroke-linejoin="round" d="M16.5 12.75a4.5 4.5 0 1 1-9 0 4.5 4.5 0 0 1 9 0ZM18.75 10.5h.008v.008h-.008V10.5Z" />
@@ -72,7 +75,7 @@
     </div>
 
     <!-- URL Lookup Tab Content -->
-    <div id="url-content" class="tab-content">
+    <div data-tabs-target="content" data-tab="url">
       <%= form_with model: @product_lookup, url: product_lookups_path, method: :post, class: "p-6 space-y-6" do |f| %>
         <% if @product_lookup.errors.any? %>
           <div class="rounded-md bg-red-50 p-4">
@@ -115,14 +118,14 @@
 
     <!-- Photo Lookup Tab Content -->
     <% if user_signed_in? %>
-      <div id="photo-content" class="tab-content hidden">
+      <div data-tabs-target="content" data-tab="photo" class="hidden">
         <%= render "photo_form" %>
       </div>
     <% end %>
   </div>
 
   <!-- Info section for URL lookup -->
-  <div id="url-info" class="info-section mt-8 bg-indigo-50 rounded-lg p-4">
+  <div data-tabs-target="info" data-tab="url" class="mt-8 bg-indigo-50 rounded-lg p-4">
     <div class="flex">
       <div class="shrink-0">
         <svg class="size-5 text-indigo-400" viewBox="0 0 20 20" fill="currentColor">
@@ -143,7 +146,7 @@
 
   <!-- Info section for Photo lookup -->
   <% if user_signed_in? %>
-    <div id="photo-info" class="info-section mt-8 bg-yellow-50 rounded-lg p-4 hidden">
+    <div data-tabs-target="info" data-tab="photo" class="mt-8 bg-yellow-50 rounded-lg p-4 hidden">
       <div class="flex">
         <div class="shrink-0">
           <svg class="size-5 text-yellow-400" viewBox="0 0 20 20" fill="currentColor">
@@ -165,38 +168,5 @@
       </div>
     </div>
   <% end %>
+  </div>
 </div>
-
-<script>
-  function switchTab(tab) {
-    // Update tab buttons
-    document.querySelectorAll('.tab-button').forEach(btn => {
-      btn.classList.remove('border-indigo-500', 'text-indigo-600');
-      btn.classList.add('border-transparent', 'text-gray-500');
-    });
-
-    const activeTab = document.getElementById(tab + '-tab');
-    if (activeTab) {
-      activeTab.classList.remove('border-transparent', 'text-gray-500');
-      activeTab.classList.add('border-indigo-500', 'text-indigo-600');
-    }
-
-    // Update content
-    document.querySelectorAll('.tab-content').forEach(content => {
-      content.classList.add('hidden');
-    });
-    const activeContent = document.getElementById(tab + '-content');
-    if (activeContent) {
-      activeContent.classList.remove('hidden');
-    }
-
-    // Update info sections
-    document.querySelectorAll('.info-section').forEach(info => {
-      info.classList.add('hidden');
-    });
-    const activeInfo = document.getElementById(tab + '-info');
-    if (activeInfo) {
-      activeInfo.classList.remove('hidden');
-    }
-  }
-</script>
