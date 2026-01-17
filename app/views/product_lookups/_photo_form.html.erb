@@ -1,4 +1,4 @@
-<%= form_with url: create_from_photo_product_lookups_path, method: :post, data: { controller: "camera-capture", action: "submit->camera-capture#submitForm" }, class: "p-6 space-y-6" do |f| %>
+<%= form_with url: create_from_photo_product_lookups_path, method: :post, multipart: true, data: { controller: "camera-capture", action: "submit->camera-capture#submitForm" }, class: "p-6 space-y-6" do |f| %>
   <!-- Hidden file input for form submission -->
   <input type="file"
          id="product-image-input"
