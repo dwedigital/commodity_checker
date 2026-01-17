@@ -2,18 +2,31 @@
 
 This directory contains service objects that encapsulate business logic.
 
+## CRITICAL: Test Integrity
+
+**Tests exist for core services. NEVER modify tests just to make them pass.**
+
+If a test fails after your changes:
+1. The test defines expected behavior - assume it's correct
+2. Fix your code to match the expected behavior
+3. Only modify tests if requirements have genuinely changed (confirm with user)
+
+See `test/CLAUDE.md` for detailed testing guidelines.
+
 ## Service Overview
 
-| Service | Purpose | External Dependencies |
-|---------|---------|----------------------|
-| `email_classifier_service.rb` | AI classification of email types | Anthropic Claude (Haiku) |
-| `email_parser_service.rb` | Extract data from forwarded emails | None |
-| `product_info_finder_service.rb` | Find product details via web search | Tavily API, Anthropic Claude |
-| `product_url_finder_service.rb` | Find product pages on retailer sites | ScrapingBee (optional) |
-| `order_matcher_service.rb` | Match emails to existing orders | None |
-| `tariff_lookup_service.rb` | Query UK Trade Tariff API | UK Gov API |
-| `llm_commodity_suggester.rb` | AI commodity code suggestions | Anthropic Claude |
-| `tracking_scraper_service.rb` | Scrape carrier tracking pages | Carrier websites |
+| Service | Purpose | External Dependencies | Tests |
+|---------|---------|----------------------|-------|
+| `email_classifier_service.rb` | AI classification of email types | Anthropic Claude (Haiku) | Pending |
+| `email_parser_service.rb` | Extract data from forwarded emails | None | ✅ 35 tests |
+| `product_info_finder_service.rb` | Find product details via web search | Tavily API, Anthropic Claude | Pending |
+| `product_url_finder_service.rb` | Find product pages on retailer sites | ScrapingBee (optional) | Pending |
+| `order_matcher_service.rb` | Match emails to existing orders | None | ✅ 18 tests |
+| `tariff_lookup_service.rb` | Query UK Trade Tariff API | UK Gov API | ✅ 7 tests |
+| `llm_commodity_suggester.rb` | AI commodity code suggestions | Anthropic Claude | ✅ 16 tests |
+| `tracking_scraper_service.rb` | Scrape carrier tracking pages | Carrier websites | Pending |
+
+**Run service tests:** `bin/rails test test/services/`
 
 ## EmailClassifierService
 
@@ -223,3 +236,37 @@ Follow the pattern:
 3. Public methods return data, don't save to DB
 4. Handle errors gracefully, return nil/empty on failure
 5. Log errors for debugging
+6. **Write tests** - Add tests in `test/services/<service_name>_test.rb`
+
+### Testing New Services
+
+1. Create test file in `test/services/`
+2. Choose testing strategy based on dependencies:
+   - **No external calls**: Unit tests with mock objects
+   - **HTTP APIs**: VCR cassettes (except Claude - use mocks)
+   - **Database queries**: Use fixtures, create records in tests
+3. Cover: happy path, edge cases, error handling
+4. Update this file's service table with test count
+
+Example test structure:
+```ruby
+# test/services/my_service_test.rb
+require "test_helper"
+
+class MyServiceTest < ActiveSupport::TestCase
+  def setup
+    @service = MyService.new
+  end
+
+  test "returns nil for blank input" do
+    assert_nil @service.process("")
+  end
+
+  test "processes valid input" do
+    with_cassette("my_service/valid_request") do
+      result = @service.process("valid input")
+      assert result.is_a?(Hash)
+    end
+  end
+end
+```

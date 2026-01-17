@@ -89,4 +89,11 @@ group :test do
   # Use system testing [https://guides.rubyonrails.org/testing.html#system-testing]
   gem "capybara"
   gem "selenium-webdriver"
+
+  # HTTP mocking and recording
+  gem "webmock"
+  gem "vcr"
+
+  # Pin minitest for Rails 8 compatibility
+  gem "minitest", "~> 5.25"
 end
