@@ -1,0 +1,58 @@
+# Tariffik
+
+> AI-powered UK commodity code lookup for importers
+
+## What is Tariffik?
+
+Tariffik is a web application that helps individuals and businesses find the correct UK commodity codes (also known as HS codes or tariff codes) for products they are importing. These codes are required for customs declarations and determine the duty rates applied to imports.
+
+## Core Features
+
+- **Product URL Lookup**: Paste a product URL from any retailer and get commodity code suggestions
+- **Photo Lookup**: Upload a product photo to identify items and get code suggestions
+- **Email Forwarding**: Forward order confirmation emails to automatically extract products and suggest codes
+- **AI-Powered Suggestions**: Uses AI to analyse product descriptions and match them to the UK Trade Tariff
+- **Confidence Ratings**: Each suggestion includes a confidence score and reasoning
+
+## How It Works
+
+1. User provides a product description, URL, or photo
+2. Tariffik extracts product details (description, materials, intended use)
+3. The UK Trade Tariff API is searched for relevant commodity codes
+4. AI analyses the results and suggests the most appropriate code
+5. User can confirm or adjust the suggestion
+
+## Commodity Code Information
+
+UK commodity codes are 10-digit numbers that classify goods for import/export:
+- First 6 digits: International Harmonized System (HS) code
+- Digits 7-8: EU/UK subdivision
+- Digits 9-10: UK national subdivision
+
+Example: 8471 30 00 00 = Portable computers (laptops)
+
+## Useful Pages
+
+- Homepage: https://tariffik.com/ - Quick product lookup
+- Blog: https://tariffik.com/blog - Guides about commodity codes and importing
+- Sign up: https://tariffik.com/users/sign_up - Create a free account
+
+## Blog Topics
+
+The Tariffik blog covers:
+- Understanding commodity codes for beginners
+- Product-specific classification guides (electronics, clothing, etc.)
+- UK import duty rates and calculations
+- Common classification mistakes to avoid
+
+## Contact
+
+Website: https://tariffik.com
+Location: Jersey, Channel Islands
+
+## Technical Notes for AI Agents
+
+- The site uses the official UK Trade Tariff API (https://www.trade-tariff.service.gov.uk/api/v2/)
+- Commodity code suggestions should be verified against official sources
+- Codes and duty rates change periodically - always check current rates
+- This site focuses on UK imports; EU codes may differ slightly
