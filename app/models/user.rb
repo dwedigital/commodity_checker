@@ -8,6 +8,8 @@ class User < ApplicationRecord
   has_many :inbound_emails, dependent: :destroy
   has_many :product_lookups, dependent: :destroy
 
+  validate :password_strength, if: -> { password.present? }
+
   before_create :generate_inbound_email_token
 
   def inbound_email_address
@@ -18,5 +20,21 @@ class User < ApplicationRecord
 
   def generate_inbound_email_token
     self.inbound_email_token = SecureRandom.hex(8)
+  end
+
+  def password_strength
+    return if password.blank?
+
+    unless password.match?(/[A-Z]/)
+      errors.add(:password, "must include at least one uppercase letter")
+    end
+
+    unless password.match?(/[a-z]/)
+      errors.add(:password, "must include at least one lowercase letter")
+    end
+
+    unless password.match?(/\d/)
+      errors.add(:password, "must include at least one digit")
+    end
   end
 end
