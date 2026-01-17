@@ -34,6 +34,6 @@ class CreateProductLookups < ActiveRecord::Migration[8.0]
     end
 
     add_index :product_lookups, :url
-    add_index :product_lookups, [:user_id, :created_at]
+    add_index :product_lookups, [ :user_id, :created_at ]
   end
 end

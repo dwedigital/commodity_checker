@@ -15,7 +15,7 @@ class ProductLookup < ApplicationRecord
     if photo? && image_description.present?
       image_description
     else
-      parts = [title, description, brand, category, material].compact.reject(&:blank?)
+      parts = [ title, description, brand, category, material ].compact.reject(&:blank?)
       parts.any? ? parts.join(". ") : url
     end
   end

@@ -2,7 +2,7 @@ class PagesController < ApplicationController
   GUEST_LOOKUP_LIMIT = 3
   GUEST_LOOKUP_WINDOW_HOURS = 168  # 1 week
 
-  before_action :set_guest_lookup_data, only: [:home, :lookup]
+  before_action :set_guest_lookup_data, only: [ :home, :lookup ]
 
   def home
   end
@@ -12,7 +12,7 @@ class PagesController < ApplicationController
 
     if url.blank?
       @error = "Please enter a product URL"
-      return render partial: "pages/lookup_result", formats: [:html]
+      return render partial: "pages/lookup_result", formats: [ :html ]
     end
 
     # Check rate limit for guest users
@@ -20,7 +20,7 @@ class PagesController < ApplicationController
       if @guest_lookup_count >= GUEST_LOOKUP_LIMIT
         @error = "You've reached your free lookup limit. Sign up for unlimited lookups!"
         @limit_reached = true
-        return render partial: "pages/lookup_result", formats: [:html]
+        return render partial: "pages/lookup_result", formats: [ :html ]
       end
     end
 
@@ -49,7 +49,7 @@ class PagesController < ApplicationController
       record_guest_lookup(url: url, lookup_type: "url")
     end
 
-    render partial: "pages/lookup_result", formats: [:html]
+    render partial: "pages/lookup_result", formats: [ :html ]
   end
 
   private
@@ -71,7 +71,7 @@ class PagesController < ApplicationController
 
     # Get current lookup count from database
     @guest_lookup_count = GuestLookup.count_for_token(@guest_token, window_hours: GUEST_LOOKUP_WINDOW_HOURS)
-    @guest_lookups_remaining = [GUEST_LOOKUP_LIMIT - @guest_lookup_count, 0].max
+    @guest_lookups_remaining = [ GUEST_LOOKUP_LIMIT - @guest_lookup_count, 0 ].max
   end
 
   def record_guest_lookup(url:, lookup_type:)
@@ -85,6 +85,6 @@ class PagesController < ApplicationController
 
     # Update the count after recording
     @guest_lookup_count += 1
-    @guest_lookups_remaining = [GUEST_LOOKUP_LIMIT - @guest_lookup_count, 0].max
+    @guest_lookups_remaining = [ GUEST_LOOKUP_LIMIT - @guest_lookup_count, 0 ].max
   end
 end

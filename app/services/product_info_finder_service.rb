@@ -100,7 +100,7 @@ class ProductInfoFinderService
   end
 
   def build_search_query(product_name, retailer, brand)
-    parts = [product_name]
+    parts = [ product_name ]
     parts << brand if brand.present?
     parts << retailer if retailer.present?
     parts << "product details specifications"
