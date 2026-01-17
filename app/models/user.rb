@@ -11,6 +11,7 @@ class User < ApplicationRecord
   validate :password_strength, if: -> { password.present? }
 
   before_create :generate_inbound_email_token
+  after_create :track_account_created
 
   def inbound_email_address
     "track-#{inbound_email_token}@#{Rails.application.config.inbound_email_domain}"
@@ -20,6 +21,12 @@ class User < ApplicationRecord
 
   def generate_inbound_email_token
     self.inbound_email_token = SecureRandom.hex(8)
+  end
+
+  def track_account_created
+    AnalyticsTracker.new(user: self).track("user_account_created", user_id: id)
+  rescue => e
+    Rails.logger.error("Failed to track account creation: #{e.message}")
   end
 
   def password_strength

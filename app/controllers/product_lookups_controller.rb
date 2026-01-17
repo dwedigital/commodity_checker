@@ -25,6 +25,7 @@ class ProductLookupsController < ApplicationController
     if @product_lookup.save
       # Queue background scraping and suggestion
       ScrapeProductPageJob.perform_later(product_lookup_id: @product_lookup.id)
+      track_event("user_lookup_performed", lookup_id: @product_lookup.id, lookup_type: "url")
 
       redirect_to product_lookup_path(@product_lookup), notice: "Looking up product... This may take a moment."
     else
@@ -72,6 +73,7 @@ class ProductLookupsController < ApplicationController
 
   def confirm_commodity_code
     @product_lookup.update!(confirmed_commodity_code: params[:commodity_code])
+    track_event("commodity_code_confirmed", product_lookup_id: @product_lookup.id, commodity_code: params[:commodity_code])
     redirect_to product_lookup_path(@product_lookup), notice: "Commodity code confirmed."
   end
 
@@ -110,6 +112,7 @@ class ProductLookupsController < ApplicationController
     if @product_lookup.save
       # Queue background image analysis
       AnalyzeProductImageJob.perform_later(@product_lookup.id)
+      track_event("user_lookup_performed", lookup_id: @product_lookup.id, lookup_type: "photo")
 
       redirect_to product_lookup_path(@product_lookup), notice: "Analyzing product image... This may take a moment."
     else

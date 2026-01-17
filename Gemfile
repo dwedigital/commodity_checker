@@ -35,6 +35,10 @@ gem "anthropic"
 # Resend for inbound emails via Action Mailbox
 gem "actionmailbox-resend"
 
+# Analytics (privacy-first, cookieless)
+gem "ahoy_matey"
+gem "device_detector"
+
 # Windows does not include zoneinfo files, so bundle the tzinfo-data gem
 gem "tzinfo-data", platforms: %i[ windows jruby ]
 

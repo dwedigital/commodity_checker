@@ -37,6 +37,12 @@ class ProcessInboundEmailJob < ApplicationJob
       Rails.logger.info("Email type '#{classification[:email_type]}' - no processing needed")
     end
 
+    # Track email forwarded event
+    track_analytics(inbound_email.user, "user_email_forwarded",
+      email_id: inbound_email.id,
+      email_type: classification[:email_type]
+    )
+
     inbound_email.update!(processing_status: :completed, processed_at: Time.current)
   rescue => e
     Rails.logger.error("Failed to process inbound email #{inbound_email_id}: #{e.message}")
@@ -103,6 +109,13 @@ class ProcessInboundEmailJob < ApplicationJob
       order_reference: parsed_data[:order_reference],
       retailer_name: parsed_data[:retailer_name],
       status: :pending
+    )
+
+    # Track order creation
+    track_analytics(inbound_email.user, "order_created",
+      order_id: order.id,
+      retailer: order.retailer_name,
+      source: "email"
     )
 
     # Link this email to the order
@@ -405,5 +418,11 @@ class ProcessInboundEmailJob < ApplicationJob
       UpdateTrackingJob.perform_later(order.id)
       Rails.logger.info("Created tracking-only order #{order.id}")
     end
+  end
+
+  def track_analytics(user, event_name, properties = {})
+    AnalyticsTracker.new(user: user).track(event_name, properties)
+  rescue => e
+    Rails.logger.error("Analytics tracking failed: #{e.message}")
   end
 end

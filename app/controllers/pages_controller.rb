@@ -24,6 +24,7 @@ class PagesController < ApplicationController
     # Check rate limit for guest users
     unless user_signed_in?
       if @guest_lookup_count >= GUEST_LOOKUP_LIMIT
+        track_event("guest_limit_reached", guest_token: @guest_token, lookup_count: @guest_lookup_count)
         @error = "You've reached your free lookup limit. Sign up for unlimited lookups!"
         @limit_reached = true
         return render partial: "pages/lookup_result", formats: [ :html ]
@@ -53,6 +54,16 @@ class PagesController < ApplicationController
     # Record the lookup for guest users (after successful scrape)
     unless user_signed_in?
       record_guest_lookup(url: url, lookup_type: "url")
+      track_event("guest_lookup_performed",
+        guest_token: @guest_token,
+        lookups_remaining: @guest_lookups_remaining,
+        commodity_code: @suggestion&.dig(:commodity_code)
+      )
+    else
+      track_event("user_lookup_performed",
+        lookup_type: "url",
+        commodity_code: @suggestion&.dig(:commodity_code)
+      )
     end
 
     render partial: "pages/lookup_result", formats: [ :html ]

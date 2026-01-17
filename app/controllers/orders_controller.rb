@@ -34,6 +34,7 @@ class OrdersController < ApplicationController
       # Queue commodity code suggestion
       SuggestCommodityCodesJob.perform_later(@order.id)
 
+      track_event("order_created", order_id: @order.id, retailer: @order.retailer_name, source: "manual")
       redirect_to @order, notice: "Order created successfully."
     else
       render :new, status: :unprocessable_entity
@@ -44,6 +45,7 @@ class OrdersController < ApplicationController
     @order_item = @order.order_items.find(params[:order_item_id])
     @order_item.update!(confirmed_commodity_code: params[:commodity_code])
 
+    track_event("commodity_code_confirmed", order_item_id: @order_item.id, commodity_code: params[:commodity_code])
     redirect_to @order, notice: "Commodity code confirmed."
   end
 
