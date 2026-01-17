@@ -44,4 +44,8 @@ Rails.application.routes.draw do
   # Static pages
   get "privacy", to: "pages#privacy", as: :privacy
   get "terms", to: "pages#terms", as: :terms
+
+  # Blog
+  get "blog", to: "blog#index", as: :blog
+  get "blog/:slug", to: "blog#show", as: :blog_post
 end

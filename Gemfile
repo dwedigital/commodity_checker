@@ -32,6 +32,10 @@ gem "faraday-follow_redirects"
 # Anthropic Claude API
 gem "anthropic"
 
+# Markdown rendering for blog
+gem "redcarpet"
+gem "rouge"
+
 # Resend for inbound emails via Action Mailbox
 gem "actionmailbox-resend"
 
