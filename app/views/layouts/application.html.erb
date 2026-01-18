@@ -112,9 +112,9 @@
         </div>
       </nav>
 
-      <!-- Flash messages -->
+      <!-- Flash messages (data-turbo-cache="false" prevents stale flashes with Turbo) -->
       <% if notice.present? %>
-        <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 mt-4">
+        <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 mt-4" data-turbo-cache="false">
           <div class="rounded-md bg-green-50 p-4">
             <div class="flex">
               <div class="shrink-0">
@@ -131,7 +131,7 @@
       <% end %>
 
       <% if alert.present? %>
-        <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 mt-4">
+        <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 mt-4" data-turbo-cache="false">
           <div class="rounded-md bg-red-50 p-4">
             <div class="flex">
               <div class="shrink-0">
