@@ -1,6 +1,5 @@
 class PagesController < ApplicationController
   GUEST_LOOKUP_LIMIT = 3
-  GUEST_LOOKUP_WINDOW_HOURS = 168  # 1 week
 
   before_action :set_guest_lookup_data, only: [ :home, :lookup ]
 
@@ -74,20 +73,20 @@ class PagesController < ApplicationController
   def set_guest_lookup_data
     return if user_signed_in?
 
-    # Get or create guest token
+    # Get or create guest token (persists for 10 years to enforce "forever" limit)
     @guest_token = cookies.signed[:guest_token]
     if @guest_token.blank?
       @guest_token = SecureRandom.uuid
       cookies.signed[:guest_token] = {
         value: @guest_token,
-        expires: GUEST_LOOKUP_WINDOW_HOURS.hours.from_now,
+        expires: 10.years.from_now,
         httponly: true,
         same_site: :lax
       }
     end
 
-    # Get current lookup count from database
-    @guest_lookup_count = GuestLookup.count_for_token(@guest_token, window_hours: GUEST_LOOKUP_WINDOW_HOURS)
+    # Get current lookup count from database (all-time, no window)
+    @guest_lookup_count = GuestLookup.count_for_token(@guest_token)
     @guest_lookups_remaining = [ GUEST_LOOKUP_LIMIT - @guest_lookup_count, 0 ].max
   end
 

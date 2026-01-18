@@ -1,4 +1,6 @@
 class User < ApplicationRecord
+  FREE_MONTHLY_LOOKUP_LIMIT = 5
+
   # Include default devise modules. Others available are:
   # :confirmable, :lockable, :timeoutable, :trackable and :omniauthable
   devise :database_authenticatable, :registerable,
@@ -41,6 +43,24 @@ class User < ApplicationRecord
 
   def has_api_access?
     subscription_tier.in?(%w[starter professional enterprise]) && subscription_active?
+  end
+
+  def premium?
+    subscription_tier.in?(%w[starter professional enterprise]) && subscription_active?
+  end
+
+  def can_perform_lookup?
+    return true unless free?
+    lookups_this_month < FREE_MONTHLY_LOOKUP_LIMIT
+  end
+
+  def lookups_this_month
+    product_lookups.where(created_at: Time.current.beginning_of_month..).count
+  end
+
+  def lookups_remaining
+    return nil unless free?
+    [ FREE_MONTHLY_LOOKUP_LIMIT - lookups_this_month, 0 ].max
   end
 
   private

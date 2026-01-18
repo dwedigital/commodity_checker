@@ -1,0 +1,18 @@
+<div id="lookup_form" class="rounded-2xl bg-gradient-to-br from-amber-500 to-orange-600 p-8 text-center text-white shadow-xl">
+  <div class="mx-auto flex size-16 items-center justify-center rounded-full bg-white/20">
+    <svg class="size-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+    </svg>
+  </div>
+  <h3 class="mt-4 text-xl font-bold">Monthly Limit Reached</h3>
+  <p class="mt-2 text-amber-100">
+    You've used all <%= User::FREE_MONTHLY_LOOKUP_LIMIT %> free lookups for this month.
+  </p>
+  <p class="mt-1 text-amber-100">
+    Your limit resets on <strong><%= Time.current.next_month.beginning_of_month.strftime("%d %B %Y") %></strong>.
+  </p>
+  <div class="mt-6 flex flex-col gap-3 sm:flex-row sm:justify-center">
+    <%= link_to "Upgrade for unlimited", root_path(anchor: "pricing"), class: "rounded-xl bg-white px-6 py-3 text-sm font-semibold text-amber-600 shadow-sm hover:bg-amber-50 transition-colors" %>
+    <%= link_to "View history", product_lookups_path, class: "rounded-xl bg-white/10 px-6 py-3 text-sm font-semibold text-white hover:bg-white/20 transition-colors" %>
+  </div>
+</div>

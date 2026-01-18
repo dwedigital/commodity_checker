@@ -1,0 +1,17 @@
+# Read about fixtures at https://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+one:
+  user: one
+  url: "https://www.amazon.co.uk/dp/B08N5WRWNW"
+  scrape_status: 1  # completed
+  lookup_type: 0    # url
+  title: "Test Product"
+  description: "A test product description"
+
+two:
+  user: free_user
+  url: "https://www.ebay.co.uk/itm/12345"
+  scrape_status: 1
+  lookup_type: 0
+  title: "Another Product"
+  description: "Another product description"

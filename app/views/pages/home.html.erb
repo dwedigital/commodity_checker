@@ -61,8 +61,8 @@
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z" />
             </svg>
           </div>
-          <h3 class="mt-4 text-xl font-bold">You're on a roll!</h3>
-          <p class="mt-2 text-indigo-100">Create a free account for unlimited lookups, saved history, and more.</p>
+          <h3 class="mt-4 text-xl font-bold">You've used your free lookups!</h3>
+          <p class="mt-2 text-indigo-100">Create a free account for 5 lookups/month, saved history, and photo lookup.</p>
           <div class="mt-6 flex flex-col gap-3 sm:flex-row sm:justify-center">
             <%= link_to "Create free account", new_user_registration_path, class: "rounded-xl bg-white px-6 py-3 text-sm font-semibold text-indigo-600 shadow-sm hover:bg-indigo-50 transition-colors" %>
             <%= link_to "Sign in", new_user_session_path, class: "rounded-xl bg-white/10 px-6 py-3 text-sm font-semibold text-white hover:bg-white/20 transition-colors" %>
@@ -224,7 +224,7 @@
   </div>
 </div>
 
-<!-- Free vs Account Comparison -->
+<!-- Free Tiers Comparison -->
 <div class="bg-white py-24">
   <div class="mx-auto max-w-7xl px-6 lg:px-8">
     <div class="mx-auto max-w-2xl text-center">
@@ -235,13 +235,13 @@
     </div>
 
     <div class="mx-auto mt-16 grid max-w-lg grid-cols-1 gap-8 lg:max-w-4xl lg:grid-cols-2">
-      <!-- Free Tier -->
+      <!-- Guest Tier -->
       <div class="rounded-3xl p-8 ring-1 ring-gray-200 bg-white">
-        <h3 class="text-lg font-semibold leading-8 text-gray-900">Free Lookups</h3>
-        <p class="mt-4 text-sm leading-6 text-gray-600">Perfect for occasional imports or trying out the service.</p>
+        <h3 class="text-lg font-semibold leading-8 text-gray-900">Guest Lookups</h3>
+        <p class="mt-4 text-sm leading-6 text-gray-600">Perfect for trying out the service - no account needed.</p>
         <p class="mt-6 flex items-baseline gap-x-1">
           <span class="text-4xl font-bold tracking-tight text-gray-900">3</span>
-          <span class="text-sm font-semibold leading-6 text-gray-600">lookups / per week</span>
+          <span class="text-sm font-semibold leading-6 text-gray-600">free lookups total</span>
         </p>
         <ul role="list" class="mt-8 space-y-3 text-sm leading-6 text-gray-600">
           <li class="flex gap-x-3">
@@ -284,31 +284,25 @@
         <p class="mt-8 text-center text-sm text-gray-500">No account required</p>
       </div>
 
-      <!-- Account Tier -->
+      <!-- Free Account Tier -->
       <div class="rounded-3xl p-8 ring-2 ring-indigo-600 bg-white relative">
         <div class="absolute -top-4 left-1/2 -translate-x-1/2">
           <span class="inline-flex items-center rounded-full bg-indigo-600 px-4 py-1 text-xs font-medium text-white">
-            Recommended
+            Most Popular
           </span>
         </div>
         <h3 class="text-lg font-semibold leading-8 text-indigo-600">Free Account</h3>
         <p class="mt-4 text-sm leading-6 text-gray-600">For regular importers who want to track and manage orders.</p>
         <p class="mt-6 flex items-baseline gap-x-1">
-          <span class="text-4xl font-bold tracking-tight text-gray-900">Unlimited</span>
-          <span class="text-sm font-semibold leading-6 text-gray-600">lookups</span>
+          <span class="text-4xl font-bold tracking-tight text-gray-900">5</span>
+          <span class="text-sm font-semibold leading-6 text-gray-600">lookups / month</span>
         </p>
         <ul role="list" class="mt-8 space-y-3 text-sm leading-6 text-gray-600">
           <li class="flex gap-x-3">
             <svg class="h-6 w-5 flex-none text-indigo-600" viewBox="0 0 20 20" fill="currentColor">
               <path fill-rule="evenodd" d="M16.704 4.153a.75.75 0 01.143 1.052l-8 10.5a.75.75 0 01-1.127.075l-4.5-4.5a.75.75 0 011.06-1.06l3.894 3.893 7.48-9.817a.75.75 0 011.05-.143z" clip-rule="evenodd" />
             </svg>
-            <strong>Everything in Free, plus:</strong>
-          </li>
-          <li class="flex gap-x-3">
-            <svg class="h-6 w-5 flex-none text-indigo-600" viewBox="0 0 20 20" fill="currentColor">
-              <path fill-rule="evenodd" d="M16.704 4.153a.75.75 0 01.143 1.052l-8 10.5a.75.75 0 01-1.127.075l-4.5-4.5a.75.75 0 011.06-1.06l3.894 3.893 7.48-9.817a.75.75 0 011.05-.143z" clip-rule="evenodd" />
-            </svg>
-            Unlimited commodity lookups
+            <strong>Everything in Guest, plus:</strong>
           </li>
           <li class="flex gap-x-3">
             <svg class="h-6 w-5 flex-none text-indigo-600" viewBox="0 0 20 20" fill="currentColor">
@@ -343,6 +337,59 @@
         </ul>
         <%= link_to new_user_registration_path, class: "mt-8 block rounded-xl bg-indigo-600 px-4 py-3 text-center text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 transition-colors" do %>
           Create free account
+        <% end %>
+      </div>
+    </div>
+
+    <!-- Professional Tier Section -->
+    <div class="mx-auto mt-20 max-w-2xl">
+      <div class="text-center mb-12">
+        <h3 class="text-2xl font-bold tracking-tight text-gray-900">Need more lookups?</h3>
+        <p class="mt-3 text-lg text-gray-600">Unlock unlimited lookups plus API access for your business</p>
+      </div>
+
+      <div class="rounded-3xl p-8 ring-2 ring-indigo-600 bg-white relative">
+        <div class="absolute -top-4 left-1/2 -translate-x-1/2">
+          <span class="inline-flex items-center rounded-full bg-indigo-600 px-4 py-1 text-xs font-medium text-white">
+            For Business
+          </span>
+        </div>
+        <h3 class="text-lg font-semibold leading-8 text-indigo-600">Professional</h3>
+        <p class="mt-4 text-sm leading-6 text-gray-600">For businesses and teams who need high-volume commodity code lookups with API integration.</p>
+        <ul role="list" class="mt-8 space-y-3 text-sm leading-6 text-gray-600">
+          <li class="flex gap-x-3">
+            <svg class="h-6 w-5 flex-none text-indigo-600" viewBox="0 0 20 20" fill="currentColor">
+              <path fill-rule="evenodd" d="M16.704 4.153a.75.75 0 01.143 1.052l-8 10.5a.75.75 0 01-1.127.075l-4.5-4.5a.75.75 0 011.06-1.06l3.894 3.893 7.48-9.817a.75.75 0 011.05-.143z" clip-rule="evenodd" />
+            </svg>
+            <strong>Unlimited</strong> manual lookups
+          </li>
+          <li class="flex gap-x-3">
+            <svg class="h-6 w-5 flex-none text-indigo-600" viewBox="0 0 20 20" fill="currentColor">
+              <path fill-rule="evenodd" d="M16.704 4.153a.75.75 0 01.143 1.052l-8 10.5a.75.75 0 01-1.127.075l-4.5-4.5a.75.75 0 011.06-1.06l3.894 3.893 7.48-9.817a.75.75 0 011.05-.143z" clip-rule="evenodd" />
+            </svg>
+            API access from 20 requests/day
+          </li>
+          <li class="flex gap-x-3">
+            <svg class="h-6 w-5 flex-none text-indigo-600" viewBox="0 0 20 20" fill="currentColor">
+              <path fill-rule="evenodd" d="M16.704 4.153a.75.75 0 01.143 1.052l-8 10.5a.75.75 0 01-1.127.075l-4.5-4.5a.75.75 0 011.06-1.06l3.894 3.893 7.48-9.817a.75.75 0 011.05-.143z" clip-rule="evenodd" />
+            </svg>
+            Batch processing from 10 items
+          </li>
+          <li class="flex gap-x-3">
+            <svg class="h-6 w-5 flex-none text-indigo-600" viewBox="0 0 20 20" fill="currentColor">
+              <path fill-rule="evenodd" d="M16.704 4.153a.75.75 0 01.143 1.052l-8 10.5a.75.75 0 01-1.127.075l-4.5-4.5a.75.75 0 011.06-1.06l3.894 3.893 7.48-9.817a.75.75 0 011.05-.143z" clip-rule="evenodd" />
+            </svg>
+            Webhooks for automation
+          </li>
+          <li class="flex gap-x-3">
+            <svg class="h-6 w-5 flex-none text-indigo-600" viewBox="0 0 20 20" fill="currentColor">
+              <path fill-rule="evenodd" d="M16.704 4.153a.75.75 0 01.143 1.052l-8 10.5a.75.75 0 01-1.127.075l-4.5-4.5a.75.75 0 011.06-1.06l3.894 3.893 7.48-9.817a.75.75 0 011.05-.143z" clip-rule="evenodd" />
+            </svg>
+            <span><span class="text-indigo-600 font-medium">Coming soon:</span> MCP server for agentic integration</span>
+          </li>
+        </ul>
+        <%= link_to "mailto:hello@tariffik.com?subject=Professional%20Plan%20Enquiry", class: "mt-8 block rounded-xl bg-indigo-600 px-4 py-3 text-center text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 transition-colors" do %>
+          Contact us
         <% end %>
       </div>
     </div>
