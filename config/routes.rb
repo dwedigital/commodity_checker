@@ -25,8 +25,21 @@ Rails.application.routes.draw do
       # Usage statistics
       get "usage", to: "usage#show"
       get "usage/history", to: "usage#history"
+
+      # Browser extension endpoints
+      scope :extension, controller: :extension do
+        post "lookup", action: :lookup, as: :extension_lookup
+        get "usage", action: :usage, as: :extension_usage
+        post "token", action: :exchange_token, as: :extension_token
+        delete "token", action: :revoke_token
+      end
     end
   end
+
+  # Extension OAuth flow (web pages)
+  get "extension/auth", to: "extension_auth#authorize", as: :extension_auth
+  post "extension/auth", to: "extension_auth#create_code", as: :extension_auth_create
+  get "extension/auth/callback", to: "extension_auth#callback", as: :extension_auth_callback
 
   devise_for :users
 
@@ -37,6 +50,7 @@ Rails.application.routes.draw do
   get "developer", to: "developer#index", as: :developer
   post "developer/api-keys", to: "developer#create_api_key", as: :create_api_key
   delete "developer/api-keys/:id", to: "developer#revoke_api_key", as: :revoke_api_key
+  delete "developer/extension-tokens/:id", to: "developer#revoke_extension_token", as: :revoke_extension_token
 
   # Orders
   resources :orders, only: [ :index, :show, :new, :create ] do

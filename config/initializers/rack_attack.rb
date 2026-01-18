@@ -27,6 +27,40 @@ class Rack::Attack
     end
   end
 
+  ### Extension API Rate Limiting ###
+
+  # Throttle anonymous extension lookups by extension_id (10/min)
+  throttle("extension/anonymous", limit: 10, period: 1.minute) do |req|
+    if req.path == "/api/v1/extension/lookup" && req.post?
+      # Anonymous requests have extension_id in body
+      unless req.get_header("HTTP_AUTHORIZATION")&.start_with?("Bearer ext_tk_")
+        req.params["extension_id"]
+      end
+    end
+  end
+
+  # Throttle extension usage checks by IP (30/min)
+  throttle("extension/usage", limit: 30, period: 1.minute) do |req|
+    if req.path == "/api/v1/extension/usage" && req.get?
+      req.ip
+    end
+  end
+
+  # Throttle extension token exchange (5/min by IP)
+  throttle("extension/token_exchange", limit: 5, period: 1.minute) do |req|
+    if req.path == "/api/v1/extension/token" && req.post?
+      req.ip
+    end
+  end
+
+  # Throttle authenticated extension requests (varies by tier, handled by API key middleware)
+  throttle("extension/authenticated", limit: proc { |req| req.env["rack.attack.extension_limit"] || 30 },
+                                      period: 1.minute) do |req|
+    if req.path.start_with?("/api/v1/extension") && req.get_header("HTTP_AUTHORIZATION")&.start_with?("Bearer ext_tk_")
+      req.env["rack.attack.extension_token_id"]
+    end
+  end
+
   ### General Protection ###
 
   # Block suspicious requests
@@ -101,8 +135,16 @@ class Rack::Attack
   end
 end
 
-# Middleware to extract API key and set rate limits
+# Middleware to extract API key and extension token for rate limits
 class ApiKeyRateLimitMiddleware
+  # Extension rate limits by user subscription tier
+  EXTENSION_TIER_LIMITS = {
+    free: 10,
+    starter: 30,
+    professional: 60,
+    enterprise: 100
+  }.freeze
+
   def initialize(app)
     @app = app
   end
@@ -110,7 +152,9 @@ class ApiKeyRateLimitMiddleware
   def call(env)
     request = Rack::Request.new(env)
 
-    if request.path.start_with?("/api/v1")
+    if request.path.start_with?("/api/v1/extension")
+      extract_extension_token_limits(request, env)
+    elsif request.path.start_with?("/api/v1")
       extract_api_key_limits(request, env)
     end
 
@@ -137,6 +181,27 @@ class ApiKeyRateLimitMiddleware
     end
   rescue => e
     Rails.logger.error("Error in API key rate limit middleware: #{e.message}")
+  end
+
+  def extract_extension_token_limits(request, env)
+    auth_header = request.get_header("HTTP_AUTHORIZATION")
+    return unless auth_header&.start_with?("Bearer ext_tk_")
+
+    raw_token = auth_header.split(" ", 2).last
+    ext_token = ExtensionToken.authenticate(raw_token)
+
+    if ext_token
+      tier = ext_token.user.subscription_tier.to_sym
+      env["rack.attack.extension_token_id"] = "ext_token:#{ext_token.id}"
+      env["rack.attack.extension_limit"] = EXTENSION_TIER_LIMITS[tier] || EXTENSION_TIER_LIMITS[:free]
+      env["rack.attack.extension_token"] = ext_token
+    else
+      # Unknown token gets lowest limit
+      env["rack.attack.extension_token_id"] = "ext_token:unknown:#{raw_token[0, 15]}"
+      env["rack.attack.extension_limit"] = 5
+    end
+  rescue => e
+    Rails.logger.error("Error in extension token rate limit middleware: #{e.message}")
   end
 end
 

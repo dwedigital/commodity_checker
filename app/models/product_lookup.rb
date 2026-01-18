@@ -5,7 +5,7 @@ class ProductLookup < ApplicationRecord
   has_one_attached :product_image
 
   enum :scrape_status, { pending: 0, completed: 1, failed: 2, partial: 3 }
-  enum :lookup_type, { url: 0, photo: 1 }
+  enum :lookup_type, { url: 0, photo: 1, description: 2 }
 
   validates :url, presence: true, if: :url?
   validate :url_format, if: :url?

@@ -11,6 +11,10 @@ class DeveloperController < ApplicationController
     @api_keys = current_user.api_keys.order(created_at: :desc)
     @active_keys = @api_keys.active
 
+    # Extension tokens
+    @extension_tokens = current_user.extension_tokens.order(created_at: :desc)
+    @active_extension_tokens = @extension_tokens.active
+
     # Filter by specific key if requested
     @selected_key_id = params[:key_id].presence&.to_i
     @selected_key = @api_keys.find_by(id: @selected_key_id) if @selected_key_id
@@ -54,6 +58,12 @@ class DeveloperController < ApplicationController
     @api_key = current_user.api_keys.find(params[:id])
     @api_key.revoke!
     redirect_to developer_path, notice: "API key revoked."
+  end
+
+  def revoke_extension_token
+    @extension_token = current_user.extension_tokens.find(params[:id])
+    @extension_token.revoke!
+    redirect_to developer_path, notice: "Extension token revoked."
   end
 
   private
