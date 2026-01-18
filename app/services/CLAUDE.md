@@ -25,6 +25,8 @@ See `test/CLAUDE.md` for detailed testing guidelines.
 | `tariff_lookup_service.rb` | Query UK Trade Tariff API | UK Gov API | ✅ 7 tests |
 | `llm_commodity_suggester.rb` | AI commodity code suggestions | Anthropic Claude | ✅ 16 tests |
 | `tracking_scraper_service.rb` | Scrape carrier tracking pages | Carrier websites | Pending |
+| `api_commodity_service.rb` | Wraps services for API use | LlmCommoditySuggester, ProductScraperService | Pending |
+| `webhook_signer.rb` | HMAC-SHA256 webhook signing | None | ✅ 14 tests |
 
 **Run service tests:** `bin/rails test test/services/`
 
@@ -227,6 +229,64 @@ Scrapes carrier tracking pages for delivery status.
 
 **Status normalization:**
 Maps carrier-specific statuses to: `delivered`, `out_for_delivery`, `in_transit`, `processing`, `exception`
+
+## ApiCommodityService
+
+Wraps existing services for API endpoints. Handles both description-based and URL-based suggestions.
+
+**Usage:**
+```ruby
+service = ApiCommodityService.new
+
+# From description (sync)
+result = service.suggest_from_description("Cotton t-shirt, blue")
+# => { commodity_code: "6109100010", confidence: 0.85, ... }
+
+# From URL (scrapes first, then suggests)
+result = service.suggest_from_url("https://example.com/product/123")
+# => { commodity_code: "...", scraped_product: { title: "...", ... } }
+```
+
+**Response format:**
+```ruby
+{
+  commodity_code: "6109100010",
+  confidence: 0.85,
+  reasoning: "Cotton t-shirt classified under HS 6109",
+  category: "Apparel - T-shirts",
+  validated: true,
+  official_description: "T-shirts, cotton",
+  duty_rate: "12%",
+  scraped_product: { ... }  # Only for URL-based suggestions
+}
+```
+
+## WebhookSigner
+
+HMAC-SHA256 signing for webhook payloads.
+
+**Usage:**
+```ruby
+# Generate signature
+signature = WebhookSigner.sign(payload_json, secret)
+# => "sha256=abc123..."
+
+# Verify signature (constant-time comparison)
+WebhookSigner.verify?(payload_json, secret, signature)
+# => true/false
+```
+
+**Webhook payload format:**
+```json
+{
+  "event": "batch.completed",
+  "batch_id": "batch_abc123",
+  "timestamp": "2026-01-18T12:00:00Z",
+  "data": { ... }
+}
+```
+
+**Signature header:** `X-Tariffik-Signature: sha256=...`
 
 ## Adding New Services
 

@@ -15,6 +15,8 @@ A Rails application for tracking online orders and suggesting EU/UK commodity ta
 - **Product URL Lookup**: Paste any product URL to get commodity code suggestions
 - **Photo Lookup**: Upload product photos for AI-powered identification
 - **Blog**: Markdown-based blog for SEO content about commodity codes
+- **Premium API**: REST API for programmatic commodity code lookups (Starter+ plans)
+- **Developer Dashboard**: API key management and usage monitoring at `/developer`
 
 ## Tech Stack
 
@@ -25,6 +27,7 @@ A Rails application for tracking online orders and suggesting EU/UK commodity ta
 - **Background Jobs**: Solid Queue
 - **Email Processing**: Action Mailbox + Resend
 - **AI**: Anthropic Claude API
+- **Rate Limiting**: Rack::Attack
 - **Markdown**: Redcarpet + Rouge (syntax highlighting)
 - **Storage**: Cloudflare R2 (S3-compatible)
 - **Hosting**: Render (with auto-deploy from GitHub)
@@ -108,7 +111,50 @@ bin/rails test
 5. SuggestCommodityCodesJob queries tariff API + Claude for codes
 6. User reviews suggestions on dashboard
 
-## API Integrations
+## Premium API
+
+Tariffik offers a REST API for programmatic commodity code lookups. API access requires a Starter subscription or higher.
+
+### Authentication
+
+All API requests require a Bearer token:
+
+```bash
+curl -X POST https://tariffik.com/api/v1/commodity-codes/suggest \
+  -H "Authorization: Bearer tk_live_your_api_key" \
+  -H "Content-Type: application/json" \
+  -d '{"description": "Cotton t-shirt, blue"}'
+```
+
+### Endpoints
+
+| Method | Endpoint | Description |
+|--------|----------|-------------|
+| GET | `/api/v1/commodity-codes/search?q=` | Search tariff codes |
+| GET | `/api/v1/commodity-codes/:code` | Get code details |
+| POST | `/api/v1/commodity-codes/suggest` | AI suggestion (sync) |
+| POST | `/api/v1/commodity-codes/suggest-from-url` | AI from URL (async) |
+| POST | `/api/v1/commodity-codes/batch` | Batch processing |
+| GET | `/api/v1/batch-jobs/:id` | Poll batch status |
+| GET | `/api/v1/usage` | Usage statistics |
+
+### Rate Limits
+
+| Tier | Requests/min | Requests/day | Batch Size |
+|------|-------------|--------------|------------|
+| Starter | 30 | 1,000 | 25 |
+| Professional | 100 | 10,000 | 100 |
+| Enterprise | 500 | Unlimited | 500 |
+
+### Developer Dashboard
+
+Manage API keys and monitor usage at `/developer`. Free users see an upsell page.
+
+### Postman Collection
+
+Import `docs/Tariffik_API.postman_collection.json` for ready-to-use API requests.
+
+## External API Integrations
 
 ### UK Trade Tariff API
 

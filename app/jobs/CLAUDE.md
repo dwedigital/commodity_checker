@@ -9,6 +9,9 @@ Background jobs using Solid Queue (Rails 8 default).
 | `process_inbound_email_job.rb` | After email received | Parse email, create/update order |
 | `suggest_commodity_codes_job.rb` | After order created/updated | Get AI code suggestions |
 | `update_tracking_job.rb` | Manual refresh or scheduled | Scrape tracking status |
+| `api_batch_processing_job.rb` | API batch endpoint | Orchestrate batch processing |
+| `api_batch_item_job.rb` | Batch processing job | Process individual batch items |
+| `webhook_delivery_job.rb` | Batch completion | Deliver webhooks with retries |
 
 ## ProcessInboundEmailJob
 
@@ -93,6 +96,64 @@ bin/rails solid_queue:start
 # In development, jobs run inline by default
 # Check config/environments/development.rb
 ```
+
+## ApiBatchProcessingJob
+
+**Triggered by:** `POST /api/v1/commodity-codes/batch`
+
+**Flow:**
+1. Load BatchJob, mark as `processing`
+2. For each BatchJobItem:
+   - Enqueue `ApiBatchItemJob`
+3. Wait for all items to complete
+4. Mark BatchJob as `completed`
+5. If `webhook_url` set: enqueue `WebhookDeliveryJob`
+
+**Key behaviors:**
+- Items processed in parallel via separate jobs
+- Progress tracked via `completed_items` / `failed_items` counters
+- Partial success allowed (some items may fail)
+
+## ApiBatchItemJob
+
+**Triggered by:** `ApiBatchProcessingJob`
+
+**Flow:**
+1. Load BatchJobItem, mark as `processing`
+2. Process based on `input_type`:
+   - `description` → Call `ApiCommodityService.suggest_from_description`
+   - `url` → Call `ApiCommodityService.suggest_from_url`
+3. Update BatchJobItem with results
+4. Mark as `completed` or `failed`
+5. Increment parent BatchJob counters
+
+**Error handling:**
+- Catches exceptions, stores error_message
+- Marks item as `failed`, doesn't stop batch
+- Rate limiting: 0.5s delay between API calls
+
+## WebhookDeliveryJob
+
+**Triggered by:** `ApiBatchProcessingJob` or manual test
+
+**Flow:**
+1. Load Webhook and payload
+2. Sign payload with `WebhookSigner`
+3. POST to webhook URL with headers:
+   - `Content-Type: application/json`
+   - `X-Tariffik-Signature: sha256=...`
+   - `X-Tariffik-Event: batch.completed`
+4. On success: `webhook.record_success!`
+5. On failure: `webhook.record_failure!`, retry
+
+**Retry behavior:**
+- 3 attempts with exponential backoff
+- Delays: 30s, 5min, 30min
+- Circuit breaker: disables webhook after 10 consecutive failures
+
+**Supported events:**
+- `batch.completed` - Batch processing finished
+- `test` - Test webhook delivery
 
 ## Adding New Jobs
 

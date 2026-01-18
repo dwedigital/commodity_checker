@@ -69,6 +69,38 @@ Product Description → TariffLookupService (UK API) → LlmCommoditySuggester (
                                                   Save to OrderItem
 ```
 
+### Premium API Flow
+```
+┌─────────────────────────────────────────────────────────────────────┐
+│                         API Gateway Layer                           │
+├─────────────────────────────────────────────────────────────────────┤
+│  Rack::Attack (rate limiting) → API Authentication → Controllers   │
+└─────────────────────────────────────────────────────────────────────┘
+                                    │
+                    ┌───────────────┼───────────────┐
+                    ▼               ▼               ▼
+              ┌──────────┐   ┌──────────┐   ┌──────────┐
+              │   Sync   │   │  Async   │   │  Batch   │
+              │ Endpoint │   │ Endpoint │   │ Endpoint │
+              └────┬─────┘   └────┬─────┘   └────┬─────┘
+                   │              │              │
+                   ▼              ▼              ▼
+              ┌──────────────────────────────────────┐
+              │         Existing Services            │
+              │  TariffLookupService                 │
+              │  LlmCommoditySuggester               │
+              │  ProductScraperService               │
+              └──────────────────────────────────────┘
+                              │
+                              ▼ (for async/batch)
+              ┌──────────────────────────────────────┐
+              │         Solid Queue Jobs             │
+              │  ApiBatchProcessingJob               │
+              │  ApiBatchItemJob                     │
+              │  WebhookDeliveryJob                  │
+              └──────────────────────────────────────┘
+```
+
 ## Important Files to Know
 
 | File | Purpose |
@@ -86,6 +118,12 @@ Product Description → TariffLookupService (UK API) → LlmCommoditySuggester (
 | `app/jobs/process_inbound_email_job.rb` | Main email processing orchestration with AI |
 | `config/initializers/content_security_policy.rb` | CSP configuration for XSS protection |
 | `config/initializers/secure_headers.rb` | Security headers (X-Frame-Options, etc.) |
+| `app/controllers/api/v1/base_controller.rb` | API authentication, rate limiting, error handling |
+| `app/controllers/api/v1/commodity_codes_controller.rb` | API endpoints for code search/suggest/batch |
+| `app/controllers/developer_controller.rb` | Developer dashboard for API key management |
+| `app/models/api_key.rb` | API key with tier, usage tracking, authentication |
+| `app/services/api_commodity_service.rb` | Wraps scraper + suggester for API use |
+| `config/initializers/rack_attack.rb` | Per-tier API rate limiting configuration |
 
 ## Blog System
 
@@ -329,12 +367,17 @@ The system uses AI to classify incoming emails and extract product information:
 ## Database Schema Summary
 
 ```
-users (Devise auth + inbound_email_token)
-  └── orders (retailer, reference, status)
-        ├── order_items (description, suggested/confirmed codes, image_url, product_url)
-        ├── tracking_events (carrier, URL, status, location)
-        └── inbound_emails (many - linked by order_id)
-  └── inbound_emails (subject, from, body_text, body_html, processing_status, order_id)
+users (Devise auth + inbound_email_token + subscription_tier)
+  ├── orders (retailer, reference, status)
+  │     ├── order_items (description, suggested/confirmed codes, image_url, product_url)
+  │     ├── tracking_events (carrier, URL, status, location)
+  │     └── inbound_emails (many - linked by order_id)
+  ├── inbound_emails (subject, from, body_text, body_html, processing_status, order_id)
+  ├── api_keys (key_prefix, key_digest, tier, usage tracking)
+  │     └── api_requests (endpoint, status_code, response_time_ms)
+  ├── batch_jobs (status, total_items, webhook_url)
+  │     └── batch_job_items (description/url, status, result)
+  └── webhooks (url, secret, events, enabled)
 ```
 
 **Key relationships:**
@@ -342,6 +385,9 @@ users (Devise auth + inbound_email_token)
 - `Order` belongs_to `source_email` (the email that created it)
 - `InboundEmail` belongs_to `order` (linked by order reference number)
 - `OrderItem` has `image_url` for product thumbnails
+- `User` has_many `api_keys` (API authentication)
+- `ApiKey` has_many `api_requests` (usage logging)
+- `User` has_many `webhooks` (webhook delivery URLs)
 
 ## External APIs
 
@@ -366,6 +412,52 @@ users (Devise auth + inbound_email_token)
 ### Resend (Inbound Email)
 - Webhook endpoint: `/rails/action_mailbox/resend/inbound_emails`
 - See `docs/RESEND_SETUP.md` for configuration
+
+## Premium API
+
+Tariffik offers a REST API for programmatic commodity code lookups at `/api/v1/`. Requires Starter subscription or higher.
+
+### Authentication
+All API requests require a Bearer token: `Authorization: Bearer tk_live_...`
+
+### Key Endpoints
+
+| Method | Endpoint | Description |
+|--------|----------|-------------|
+| GET | `/api/v1/commodity-codes/search?q=` | Search tariff codes |
+| GET | `/api/v1/commodity-codes/:code` | Get code details |
+| POST | `/api/v1/commodity-codes/suggest` | AI suggestion (sync) |
+| POST | `/api/v1/commodity-codes/suggest-from-url` | AI from URL (async) |
+| POST | `/api/v1/commodity-codes/batch` | Batch processing |
+| GET | `/api/v1/batch-jobs/:id` | Poll batch status |
+| GET | `/api/v1/usage` | Usage statistics |
+
+### Rate Limits by Tier
+
+| Tier | Requests/min | Requests/day | Batch Size |
+|------|-------------|--------------|------------|
+| Trial | 5 | 50 | 5 |
+| Starter | 30 | 1,000 | 25 |
+| Professional | 100 | 10,000 | 100 |
+| Enterprise | 500 | Unlimited | 500 |
+
+### Developer Dashboard
+- Route: `/developer`
+- Free users see upsell page
+- Subscribers see usage stats, API key management, recent requests
+
+### API Key Management (Console)
+```ruby
+# Create API key
+user = User.find_by(email: "user@example.com")
+api_key = user.api_keys.create!(name: "My Key", tier: :starter)
+puts api_key.raw_key  # Only shown once!
+
+# Revoke key
+api_key.revoke!
+```
+
+See `claude/implementations/api-layer-premium-feature.md` for full implementation details.
 
 ## Testing Without External Services
 
@@ -578,8 +670,9 @@ CLOUDFLARE_R2_ENDPOINT             # https://<account_id>.r2.cloudflarestorage.c
 
 - Email notifications for delivery updates
 - Better tracking scraper with headless browser
-- Batch commodity code processing
 - Order search/filtering
 - Blog pagination (when post count exceeds 10-12)
 - Blog tag filtering and archive pages
 - RSS/Atom feed for blog
+- API documentation page with interactive examples
+- Stripe integration for subscription payments
