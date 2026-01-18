@@ -7,6 +7,15 @@ class User < ApplicationRecord
   has_many :orders, dependent: :destroy
   has_many :inbound_emails, dependent: :destroy
   has_many :product_lookups, dependent: :destroy
+  has_many :api_keys, dependent: :destroy
+  has_many :webhooks, dependent: :destroy
+
+  enum :subscription_tier, {
+    free: 0,
+    starter: 1,
+    professional: 2,
+    enterprise: 3
+  }
 
   validate :password_strength, if: -> { password.present? }
 
@@ -15,6 +24,23 @@ class User < ApplicationRecord
 
   def inbound_email_address
     "track-#{inbound_email_token}@#{Rails.application.config.inbound_email_domain}"
+  end
+
+  def subscription_active?
+    subscription_expires_at.nil? || subscription_expires_at > Time.current
+  end
+
+  def api_tier
+    return :trial unless subscription_active?
+    subscription_tier.to_sym
+  end
+
+  def active_api_keys
+    api_keys.active
+  end
+
+  def has_api_access?
+    subscription_tier.in?(%w[starter professional enterprise]) && subscription_active?
   end
 
   private

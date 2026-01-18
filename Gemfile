@@ -29,6 +29,12 @@ gem "devise"
 gem "faraday"
 gem "faraday-follow_redirects"
 
+# API rate limiting
+gem "rack-attack"
+
+# API pagination
+gem "pagy"
+
 # Anthropic Claude API
 gem "anthropic"
 

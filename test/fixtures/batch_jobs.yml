@@ -1,0 +1,32 @@
+# Batch Jobs fixtures
+
+one:
+  api_key: one
+  public_id: "batch_test12345"
+  status: 0  # pending
+  total_items: 3
+  completed_items: 0
+  failed_items: 0
+  created_at: <%= Time.current %>
+  updated_at: <%= Time.current %>
+
+completed:
+  api_key: one
+  public_id: "batch_completed1"
+  status: 2  # completed
+  total_items: 2
+  completed_items: 2
+  failed_items: 0
+  completed_at: <%= 1.hour.ago %>
+  created_at: <%= 2.hours.ago %>
+  updated_at: <%= 1.hour.ago %>
+
+processing:
+  api_key: one
+  public_id: "batch_process1"
+  status: 1  # processing
+  total_items: 5
+  completed_items: 2
+  failed_items: 1
+  created_at: <%= 30.minutes.ago %>
+  updated_at: <%= 5.minutes.ago %>

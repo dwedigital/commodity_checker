@@ -4,8 +4,16 @@ one:
   email: "user_one@example.com"
   encrypted_password: "$2a$12$abcdefghijklmnopqrstuv"
   inbound_email_token: "token_one"
+  subscription_tier: 1  # starter - has API access
 
 two:
   email: "user_two@example.com"
   encrypted_password: "$2a$12$abcdefghijklmnopqrstuv"
   inbound_email_token: "token_two"
+  subscription_tier: 1  # starter - has API access
+
+free_user:
+  email: "free_user@example.com"
+  encrypted_password: "$2a$12$abcdefghijklmnopqrstuv"
+  inbound_email_token: "token_free"
+  subscription_tier: 0  # free - no API access

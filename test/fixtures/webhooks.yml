@@ -1,0 +1,20 @@
+# Webhooks fixtures
+
+one:
+  user: one
+  url: "https://example.com/webhook"
+  secret: "whsec_testsecret12345678901234567890"
+  enabled: true
+  failure_count: 0
+  created_at: <%= Time.current %>
+  updated_at: <%= Time.current %>
+
+disabled:
+  user: one
+  url: "https://example.com/webhook-disabled"
+  secret: "whsec_disabled12345678901234567890"
+  enabled: false
+  failure_count: 5
+  last_failure_at: <%= 1.day.ago %>
+  created_at: <%= 1.week.ago %>
+  updated_at: <%= 1.day.ago %>
