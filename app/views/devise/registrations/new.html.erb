@@ -37,11 +37,29 @@
 
         <div>
           <%= f.label :password, class: "block text-sm font-medium leading-6 text-gray-900" %>
-          <% if @minimum_password_length %>
-            <span class="text-sm text-gray-500">(<%= @minimum_password_length %> characters minimum)</span>
-          <% end %>
           <div class="mt-2">
-            <%= f.password_field :password, autocomplete: "new-password", class: "block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6 px-3" %>
+            <%= f.password_field :password, autocomplete: "new-password", id: "password", class: "block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6 px-3" %>
+          </div>
+          <div class="mt-2 text-sm text-gray-500">
+            <p class="mb-1">Password must contain:</p>
+            <ul class="list-none space-y-1" id="password-requirements">
+              <li id="req-length" class="flex items-center gap-1">
+                <span class="req-icon text-gray-400">&#9675;</span>
+                At least 8 characters
+              </li>
+              <li id="req-uppercase" class="flex items-center gap-1">
+                <span class="req-icon text-gray-400">&#9675;</span>
+                One uppercase letter
+              </li>
+              <li id="req-lowercase" class="flex items-center gap-1">
+                <span class="req-icon text-gray-400">&#9675;</span>
+                One lowercase letter
+              </li>
+              <li id="req-digit" class="flex items-center gap-1">
+                <span class="req-icon text-gray-400">&#9675;</span>
+                One digit
+              </li>
+            </ul>
           </div>
         </div>
 
@@ -64,3 +82,45 @@
     </p>
   </div>
 </div>
+
+<script>
+  document.addEventListener('DOMContentLoaded', function() {
+    const passwordInput = document.getElementById('password');
+    if (!passwordInput) return;
+
+    const requirements = {
+      'req-length': (pwd) => pwd.length >= 8,
+      'req-uppercase': (pwd) => /[A-Z]/.test(pwd),
+      'req-lowercase': (pwd) => /[a-z]/.test(pwd),
+      'req-digit': (pwd) => /\d/.test(pwd)
+    };
+
+    function updateRequirements() {
+      const password = passwordInput.value;
+
+      Object.entries(requirements).forEach(([id, validator]) => {
+        const element = document.getElementById(id);
+        if (!element) return;
+
+        const icon = element.querySelector('.req-icon');
+        const isMet = validator(password);
+
+        if (isMet) {
+          icon.innerHTML = '&#10003;';
+          icon.classList.remove('text-gray-400');
+          icon.classList.add('text-green-500');
+          element.classList.add('text-green-600');
+          element.classList.remove('text-gray-500');
+        } else {
+          icon.innerHTML = '&#9675;';
+          icon.classList.add('text-gray-400');
+          icon.classList.remove('text-green-500');
+          element.classList.remove('text-green-600');
+          element.classList.add('text-gray-500');
+        }
+      });
+    }
+
+    passwordInput.addEventListener('input', updateRequirements);
+  });
+</script>

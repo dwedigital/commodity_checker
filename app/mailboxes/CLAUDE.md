@@ -4,7 +4,7 @@ Action Mailbox integration for receiving forwarded emails via Resend.
 
 ## How It Works
 
-1. User forwards email to `track-{token}@inbound.yourdomain.com`
+1. User forwards email to `track-{token}@inbound.tariffik.com`
 2. Resend receives email, POSTs to `/rails/action_mailbox/resend/inbound_emails`
 3. Action Mailbox creates `ActionMailbox::InboundEmail` record
 4. `ApplicationMailbox` routes based on recipient address
@@ -89,7 +89,7 @@ Rails.application.config.action_mailbox.resend_webhook_secret = ENV["RESEND_WEBH
 **Environment variables needed:**
 - `RESEND_API_KEY` - API key from Resend dashboard
 - `RESEND_WEBHOOK_SECRET` - Webhook signing secret
-- `INBOUND_EMAIL_DOMAIN` - e.g., `inbound.yourdomain.com`
+- `INBOUND_EMAIL_DOMAIN` - e.g., `inbound.tariffik.com`
 
 ## Adding New Mailboxes
 

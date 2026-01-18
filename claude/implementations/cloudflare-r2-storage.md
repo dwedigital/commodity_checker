@@ -90,14 +90,14 @@ config.active_storage.resolve_model_to_route = :rails_storage_proxy
 |----------|-------------|---------|
 | `CLOUDFLARE_R2_ACCESS_KEY_ID` | R2 API token access key | `abc123...` |
 | `CLOUDFLARE_R2_SECRET_ACCESS_KEY` | R2 API token secret | `xyz789...` |
-| `CLOUDFLARE_R2_BUCKET` | R2 bucket name | `commodity-checker-images` |
+| `CLOUDFLARE_R2_BUCKET` | R2 bucket name | `tariffik-images` |
 | `CLOUDFLARE_R2_ENDPOINT` | R2 endpoint URL | `https://<account_id>.r2.cloudflarestorage.com` |
 
 ## Cloudflare R2 Setup (Manual Steps)
 
 1. **Create R2 bucket** in Cloudflare dashboard:
    - Go to R2 > Create bucket
-   - Name: `commodity-checker-images` (or similar)
+   - Name: `tariffik-images` (or similar)
    - Location: Automatic
 
 2. **Create API token**:

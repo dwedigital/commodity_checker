@@ -1,0 +1,38 @@
+# API Keys fixtures
+# key_digest is SHA256 hash of actual key, key_prefix is first 15 chars
+
+one:
+  user: one
+  key_digest: "a1b2c3d4e5f6a1b2c3d4e5f6a1b2c3d4e5f6a1b2c3d4e5f6a1b2c3d4e5f6a1b2"
+  key_prefix: "tk_test_abc123"
+  name: "Test API Key"
+  tier: 1  # starter
+  requests_today: 5
+  requests_this_month: 100
+  requests_reset_date: <%= Date.current %>
+  created_at: <%= Time.current %>
+  updated_at: <%= Time.current %>
+
+two:
+  user: two
+  key_digest: "b2c3d4e5f6a1b2c3d4e5f6a1b2c3d4e5f6a1b2c3d4e5f6a1b2c3d4e5f6a1b2c3"
+  key_prefix: "tk_test_def456"
+  name: "Second API Key"
+  tier: 0  # trial
+  requests_today: 0
+  requests_this_month: 0
+  requests_reset_date: <%= Date.current %>
+  created_at: <%= Time.current %>
+  updated_at: <%= Time.current %>
+
+revoked:
+  user: one
+  key_digest: "c3d4e5f6a1b2c3d4e5f6a1b2c3d4e5f6a1b2c3d4e5f6a1b2c3d4e5f6a1b2c3d4"
+  key_prefix: "tk_test_revoke"
+  name: "Revoked Key"
+  tier: 1
+  requests_today: 0
+  requests_this_month: 0
+  revoked_at: <%= 1.day.ago %>
+  created_at: <%= 1.week.ago %>
+  updated_at: <%= 1.day.ago %>

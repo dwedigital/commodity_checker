@@ -1,0 +1,16 @@
+{
+  "email_type": "order_confirmation",
+  "confidence": 0.95,
+  "contains_products": true,
+  "products": [
+    {
+      "name": "Cotton T-Shirt",
+      "brand": "Test Brand",
+      "color": "Black",
+      "material": "100% Cotton"
+    }
+  ],
+  "retailer": "Test Retailer",
+  "order_reference": "ORD-12345",
+  "reasoning": "Email contains order confirmation language with product details and order number"
+}

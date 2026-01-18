@@ -29,11 +29,28 @@ gem "devise"
 gem "faraday"
 gem "faraday-follow_redirects"
 
+# API rate limiting
+gem "rack-attack"
+
+# CORS for browser extension
+gem "rack-cors"
+
+# API pagination
+gem "pagy"
+
 # Anthropic Claude API
 gem "anthropic"
 
+# Markdown rendering for blog
+gem "redcarpet"
+gem "rouge"
+
 # Resend for inbound emails via Action Mailbox
 gem "actionmailbox-resend"
+
+# Analytics (privacy-first, cookieless)
+gem "ahoy_matey"
+gem "device_detector"
 
 # Windows does not include zoneinfo files, so bundle the tzinfo-data gem
 gem "tzinfo-data", platforms: %i[ windows jruby ]
@@ -81,4 +98,11 @@ group :test do
   # Use system testing [https://guides.rubyonrails.org/testing.html#system-testing]
   gem "capybara"
   gem "selenium-webdriver"
+
+  # HTTP mocking and recording
+  gem "webmock"
+  gem "vcr"
+
+  # Pin minitest for Rails 8 compatibility
+  gem "minitest", "~> 5.25"
 end

@@ -7,7 +7,26 @@ ActiveRecord models for the application.
 ```
 User (Devise)
 ├── has_many :orders
-└── has_many :inbound_emails
+├── has_many :inbound_emails
+├── has_many :api_keys
+└── has_many :webhooks
+
+ApiKey
+├── belongs_to :user
+└── has_many :api_requests
+
+ApiRequest
+└── belongs_to :api_key
+
+BatchJob
+├── belongs_to :api_key
+└── has_many :batch_job_items
+
+BatchJobItem
+└── belongs_to :batch_job
+
+Webhook
+└── belongs_to :user
 
 Order
 ├── belongs_to :user
@@ -32,12 +51,25 @@ InboundEmail
 
 Devise authentication with additional fields:
 - `inbound_email_token` - Unique hex token for email forwarding
+- `subscription_tier` - enum: free, starter, professional, enterprise
+- `subscription_expires_at` - Datetime for subscription expiry
 - Generated on create via `before_create :generate_inbound_email_token`
 
-**Key method:**
+**Subscription tier enum:**
+```ruby
+enum :subscription_tier, { free: 0, starter: 1, professional: 2, enterprise: 3 }
+```
+
+**Key methods:**
 ```ruby
 user.inbound_email_address
-# => "track-abc123@inbound.example.com"
+# => "track-abc123@inbound.tariffik.com"
+
+user.has_api_access?
+# => true if subscription_tier is starter, professional, or enterprise AND not expired
+
+user.subscription_active?
+# => true if subscription_expires_at is nil or in the future
 ```
 
 ## Order
@@ -132,6 +164,113 @@ email.order           # Order linked by order reference
 email.created_order   # Order where this is the source_email (legacy)
 ```
 
+## ApiKey
+
+API authentication token with tiered rate limiting.
+
+**Attributes:**
+- `key_prefix` - First 15 chars of key (for lookup)
+- `key_digest` - SHA256 hash (for verification)
+- `name` - User-friendly name
+- `tier` - enum: trial, starter, professional, enterprise
+- `requests_today` / `requests_this_month` - Usage counters
+- `last_request_at` - Timestamp
+- `revoked_at` - Soft delete timestamp
+
+**Tier enum:**
+```ruby
+enum :tier, { trial: 0, starter: 1, professional: 2, enterprise: 3 }
+```
+
+**Key methods:**
+```ruby
+api_key.raw_key        # Only available immediately after create
+api_key.revoke!        # Soft delete the key
+api_key.revoked?       # Check if revoked
+api_key.increment_usage! # Track a request
+
+# Class method for authentication
+ApiKey.authenticate("tk_live_abc123...")  # Returns ApiKey or nil
+```
+
+**Rate limits by tier:**
+```ruby
+api_key.requests_per_minute_limit  # 5/30/100/500
+api_key.requests_per_day_limit     # 50/1000/10000/unlimited
+api_key.batch_size_limit           # 5/25/100/500
+```
+
+**Validation:**
+- API key tier cannot exceed user's subscription tier
+- User must have API access (starter+ subscription)
+
+## ApiRequest
+
+Request logging for analytics.
+
+**Attributes:**
+- `api_key_id` - Foreign key
+- `endpoint` - Request path
+- `status_code` - HTTP response code
+- `response_time_ms` - Performance tracking
+- `created_at` - Timestamp
+
+## BatchJob
+
+Tracks async batch processing status.
+
+**Attributes:**
+- `api_key_id` - Foreign key
+- `status` - enum: pending, processing, completed, failed
+- `total_items` / `completed_items` / `failed_items` - Counters
+- `webhook_url` - Optional URL for completion notification
+- `results` - JSON with full results
+
+**Status enum:**
+```ruby
+enum :status, { pending: 0, processing: 1, completed: 2, failed: 3 }
+```
+
+**Key methods:**
+```ruby
+batch_job.finished?        # completed or failed
+batch_job.mark_completed!  # Set status, trigger webhook
+batch_job.as_json_response # Full response with results
+```
+
+## BatchJobItem
+
+Individual item within a batch.
+
+**Attributes:**
+- `batch_job_id` - Foreign key
+- `external_id` - Client-provided ID
+- `input_type` - enum: description, url
+- `description` / `url` - Input data
+- `status` - enum: pending, processing, completed, failed
+- `commodity_code` / `confidence` / `reasoning` - Results
+- `scraped_product` - JSON (for URL items)
+- `error_message` - Failure reason
+
+## Webhook
+
+User webhook configuration.
+
+**Attributes:**
+- `user_id` - Foreign key
+- `url` - HTTPS URL for delivery
+- `secret` - HMAC signing secret
+- `events` - JSON array of subscribed events
+- `enabled` - Toggle
+- `failure_count` - For circuit breaking
+- `last_success_at` / `last_failure_at` - Timestamps
+
+**Key methods:**
+```ruby
+webhook.subscribes_to?("batch.completed")  # Check subscription
+webhook.record_success! / webhook.record_failure!
+```
+
 ## Database Indexes
 
 Key indexes for performance:
@@ -139,6 +278,11 @@ Key indexes for performance:
 - `orders.user_id` - For user's orders
 - `order_items.order_id` - For order's items
 - `tracking_events.order_id` - For order's tracking
+- `api_keys.key_prefix` - For authentication lookup
+- `api_keys.user_id` - For user's keys
+- `api_requests.api_key_id` - For key's requests
+- `batch_jobs.api_key_id` - For key's batch jobs
+- `webhooks.user_id` - For user's webhooks
 
 ## Migrations
 

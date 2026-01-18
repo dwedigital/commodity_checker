@@ -2,10 +2,55 @@ Rails.application.routes.draw do
   # Resend inbound email webhook endpoint
   mount ActionMailbox::Resend::Engine, at: "/rails/action_mailbox/resend"
 
+  # API v1 endpoints
+  namespace :api do
+    namespace :v1 do
+      # Commodity code endpoints
+      get "commodity-codes/search", to: "commodity_codes#search"
+      get "commodity-codes/:id", to: "commodity_codes#show"
+      post "commodity-codes/suggest", to: "commodity_codes#suggest"
+      post "commodity-codes/suggest-from-url", to: "commodity_codes#suggest_from_url"
+      post "commodity-codes/batch", to: "commodity_codes#batch"
+
+      # Batch job polling
+      resources :batch_jobs, only: [ :index, :show ], path: "batch-jobs"
+
+      # Webhooks management
+      resources :webhooks, only: [ :index, :show, :create, :update, :destroy ] do
+        member do
+          post :test
+        end
+      end
+
+      # Usage statistics
+      get "usage", to: "usage#show"
+      get "usage/history", to: "usage#history"
+
+      # Browser extension endpoints
+      scope :extension, controller: :extension do
+        post "lookup", action: :lookup, as: :extension_lookup
+        get "usage", action: :usage, as: :extension_usage
+        post "token", action: :exchange_token, as: :extension_token
+        delete "token", action: :revoke_token
+      end
+    end
+  end
+
+  # Extension OAuth flow (web pages)
+  get "extension/auth", to: "extension_auth#authorize", as: :extension_auth
+  post "extension/auth", to: "extension_auth#create_code", as: :extension_auth_create
+  get "extension/auth/callback", to: "extension_auth#callback", as: :extension_auth_callback
+
   devise_for :users
 
   # Dashboard (authenticated)
   get "dashboard", to: "dashboard#index"
+
+  # Developer / API Dashboard
+  get "developer", to: "developer#index", as: :developer
+  post "developer/api-keys", to: "developer#create_api_key", as: :create_api_key
+  delete "developer/api-keys/:id", to: "developer#revoke_api_key", as: :revoke_api_key
+  delete "developer/extension-tokens/:id", to: "developer#revoke_extension_token", as: :revoke_extension_token
 
   # Orders
   resources :orders, only: [ :index, :show, :new, :create ] do
@@ -35,9 +80,20 @@ Rails.application.routes.draw do
   # Reveal health status on /up that returns 200 if the app boots with no exceptions, otherwise 500.
   get "up" => "rails/health#show", as: :rails_health_check
 
+  # Sitemap for SEO
+  get "sitemap.xml", to: "sitemap#index", as: :sitemap, defaults: { format: "xml" }
+
   # Root path - redirect to dashboard if logged in
   root "pages#home"
 
   # Home page lookup (inline quick lookup)
   post "lookup", to: "pages#lookup", as: :home_lookup
+
+  # Static pages
+  get "privacy", to: "pages#privacy", as: :privacy
+  get "terms", to: "pages#terms", as: :terms
+
+  # Blog
+  get "blog", to: "blog#index", as: :blog
+  get "blog/:slug", to: "blog#show", as: :blog_post
 end

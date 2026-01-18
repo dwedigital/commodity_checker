@@ -26,7 +26,7 @@ Do this automatically at the end of implementing a feature - do not wait to be a
 
 ## Project Overview
 
-**Commodity Code Checker** - A Rails 8 app that helps users track online orders and get EU/UK commodity tariff code suggestions. Users forward tracking emails, the app extracts order info, and uses Claude AI + UK Trade Tariff API to suggest HS codes.
+**Tariffik** ([tariffik.com](https://tariffik.com)) - A Rails 8 app that helps users track online orders and get EU/UK commodity tariff code suggestions. Users forward tracking emails, the app extracts order info, and uses Claude AI + UK Trade Tariff API to suggest HS codes.
 
 ## Key Architectural Decisions
 
@@ -69,6 +69,38 @@ Product Description → TariffLookupService (UK API) → LlmCommoditySuggester (
                                                   Save to OrderItem
 ```
 
+### Premium API Flow
+```
+┌─────────────────────────────────────────────────────────────────────┐
+│                         API Gateway Layer                           │
+├─────────────────────────────────────────────────────────────────────┤
+│  Rack::Attack (rate limiting) → API Authentication → Controllers   │
+└─────────────────────────────────────────────────────────────────────┘
+                                    │
+                    ┌───────────────┼───────────────┐
+                    ▼               ▼               ▼
+              ┌──────────┐   ┌──────────┐   ┌──────────┐
+              │   Sync   │   │  Async   │   │  Batch   │
+              │ Endpoint │   │ Endpoint │   │ Endpoint │
+              └────┬─────┘   └────┬─────┘   └────┬─────┘
+                   │              │              │
+                   ▼              ▼              ▼
+              ┌──────────────────────────────────────┐
+              │         Existing Services            │
+              │  TariffLookupService                 │
+              │  LlmCommoditySuggester               │
+              │  ProductScraperService               │
+              └──────────────────────────────────────┘
+                              │
+                              ▼ (for async/batch)
+              ┌──────────────────────────────────────┐
+              │         Solid Queue Jobs             │
+              │  ApiBatchProcessingJob               │
+              │  ApiBatchItemJob                     │
+              │  WebhookDeliveryJob                  │
+              └──────────────────────────────────────┘
+```
+
 ## Important Files to Know
 
 | File | Purpose |
@@ -81,8 +113,116 @@ Product Description → TariffLookupService (UK API) → LlmCommoditySuggester (
 | `app/services/llm_commodity_suggester.rb` | Claude AI integration for code suggestions |
 | `app/services/tracking_scraper_service.rb` | Scrapes carrier tracking pages |
 | `app/services/product_scraper_service.rb` | Scrapes product pages for descriptions (with ScrapingBee fallback) |
+| `app/services/blog_post_service.rb` | Loads and renders markdown blog posts with YAML front matter |
 | `app/mailboxes/tracking_mailbox.rb` | Routes inbound emails to users, saves HTML body |
 | `app/jobs/process_inbound_email_job.rb` | Main email processing orchestration with AI |
+| `config/initializers/content_security_policy.rb` | CSP configuration for XSS protection |
+| `config/initializers/secure_headers.rb` | Security headers (X-Frame-Options, etc.) |
+| `app/controllers/api/v1/base_controller.rb` | API authentication, rate limiting, error handling |
+| `app/controllers/api/v1/commodity_codes_controller.rb` | API endpoints for code search/suggest/batch |
+| `app/controllers/developer_controller.rb` | Developer dashboard for API key management |
+| `app/models/api_key.rb` | API key with tier, usage tracking, authentication |
+| `app/services/api_commodity_service.rb` | Wraps scraper + suggester for API use |
+| `config/initializers/rack_attack.rb` | Per-tier API rate limiting configuration |
+
+## Blog System
+
+The site includes a file-based markdown blog for SEO content. No database required.
+
+### Blog Architecture
+```
+content/blog/*.md          → Markdown files with YAML front matter
+        ↓
+BlogPostService            → Parses front matter, renders markdown
+        ↓
+BlogController             → index (list) and show (single post)
+        ↓
+/blog, /blog/:slug         → Public URLs
+```
+
+### Adding a Blog Post
+1. Create a new `.md` file in `content/blog/`
+2. Add YAML front matter:
+```yaml
+---
+title: "Your Post Title"
+slug: your-post-slug
+date: 2026-01-17
+description: "SEO description for the post"
+author: Tariffik Team
+published: true
+tags:
+  - commodity-codes
+  - importing
+---
+```
+3. Write content in markdown below the front matter
+4. Optionally add hero images to `public/images/blog/`
+5. Set `published: false` to keep as draft (visible in dev, hidden in production)
+
+### Blog Features
+- GitHub-flavored markdown with syntax highlighting (Rouge)
+- SEO meta tags (Open Graph, Twitter Cards, JSON-LD)
+- Reading time estimation
+- Tag display
+- Responsive design
+
+## SEO & AI Agent Configuration
+
+### robots.txt
+Located at `public/robots.txt`. Allows all crawlers and references sitemap.
+
+### sitemap.xml
+Dynamic route at `/sitemap.xml` generated by `SitemapController`. Auto-includes:
+- Static pages (home, blog, privacy, terms)
+- All published blog posts with lastmod dates
+
+### llms.txt
+Located at `public/llms.txt`. Plain-text site description for AI agents/LLMs.
+Follows the emerging llms.txt convention (like robots.txt but for AI).
+Update this file when adding major features.
+
+## Security Configuration
+
+### Content Security Policy (CSP)
+Configured in `config/initializers/content_security_policy.rb`. Protects against XSS attacks.
+
+```
+default-src 'self'; font-src 'self' data:; img-src 'self' https: http: data: blob: localhost;
+object-src 'none'; script-src 'self'; style-src 'self' 'unsafe-inline';
+connect-src 'self'; frame-ancestors 'none'; base-uri 'self'; form-action 'self'
+```
+
+Key protections:
+- `script-src 'self'` - Only scripts from same origin (no inline JS allowed)
+- `frame-ancestors 'none'` - Prevents clickjacking
+- `object-src 'none'` - Blocks Flash/plugins
+- `img-src` includes `blob:` for camera previews, `http:` and localhost for Active Storage
+
+**Important:** CSP blocks inline JavaScript. Use Stimulus controllers instead of `onclick` handlers or `<script>` tags. See `tabs_controller.js` for an example.
+
+**Troubleshooting:** If new functionality is blocked, check browser console for CSP errors. Enable report-only mode temporarily by uncommenting `config.content_security_policy_report_only = true`.
+
+### Security Headers
+Configured in `config/initializers/secure_headers.rb`.
+
+| Header | Value | Purpose |
+|--------|-------|---------|
+| X-Frame-Options | DENY | Clickjacking protection |
+| X-Content-Type-Options | nosniff | Prevent MIME sniffing |
+| Referrer-Policy | strict-origin-when-cross-origin | Control referrer leakage |
+| Permissions-Policy | camera=(self), others disabled | Control browser API access |
+
+**Note:** `camera=(self)` is enabled for the Photo Lookup feature. HSTS is automatically added by Rails when `force_ssl = true`.
+
+### Verification
+```bash
+# Check headers locally
+bin/rails runner "puts Rails.application.config.content_security_policy.build(nil)"
+
+# Check headers in production
+curl -I https://tariffik.com | grep -E "(Content-Security|X-Frame|X-Content-Type)"
+```
 
 ## Common Tasks
 
@@ -99,6 +239,109 @@ Product Description → TariffLookupService (UK API) → LlmCommoditySuggester (
 ### Modifying commodity code suggestions
 - Edit `LlmCommoditySuggester::SYSTEM_PROMPT` for different AI behavior
 - The service combines tariff API results with Claude's interpretation
+
+## Testing
+
+### CRITICAL: Test Integrity Policy
+
+**NEVER modify tests just to make them pass.** Tests define expected behavior. If a test fails:
+
+1. **Assume the test is correct** - Tests were written to verify specific, intended behavior
+2. **Fix the code, not the test** - The implementation should match the expected behavior
+3. **Only modify a test if:**
+   - The *requirements* have genuinely changed (confirmed by user)
+   - The test itself has a bug (rare - investigate thoroughly first)
+   - You're adding new test cases (not changing existing assertions)
+
+**Why this matters:** Tests are the specification. Changing tests to match broken code defeats the purpose of testing and hides bugs.
+
+### Test Strategy
+
+This project uses a **hybrid testing approach**:
+
+| API Type | Testing Method | Rationale |
+|----------|---------------|-----------|
+| UK Trade Tariff API | VCR cassettes | Deterministic, stable responses |
+| Tavily Search API | VCR cassettes | Real search results, complex JSON |
+| Web scraping | VCR cassettes | Captures real HTML for parsing |
+| Anthropic Claude API | Mocks/stubs | LLM outputs are non-deterministic |
+
+### Running Tests
+
+```bash
+# Run all tests
+bin/rails test
+
+# Run service tests only
+bin/rails test test/services/
+
+# Run a specific test file
+bin/rails test test/services/email_parser_service_test.rb
+
+# Run a specific test by line number
+bin/rails test test/services/email_parser_service_test.rb:42
+```
+
+### Test Structure
+
+```
+test/
+├── services/                    # Service unit tests
+│   ├── tariff_lookup_service_test.rb
+│   ├── email_parser_service_test.rb
+│   ├── order_matcher_service_test.rb
+│   └── llm_commodity_suggester_test.rb
+├── cassettes/                   # VCR recorded API responses
+│   ├── tariff_api/
+│   ├── tavily/
+│   └── scraping/
+├── fixtures/
+│   ├── llm_responses/           # JSON fixtures for Claude responses
+│   └── *.yml                    # Rails model fixtures
+└── support/
+    ├── vcr_setup.rb             # VCR configuration
+    └── llm_mock_helper.rb       # Helpers for mocking Claude API
+```
+
+### Writing Tests
+
+**For VCR tests (external APIs):**
+```ruby
+test "searches tariff API" do
+  with_cassette("tariff_api/search_tshirt") do
+    results = @service.search("cotton t-shirt")
+
+    # Assert structure, NOT specific content
+    assert results.is_a?(Array)
+    assert results.first.key?(:code)
+  end
+end
+```
+
+**For Claude API (use mocks):**
+```ruby
+test "suggests commodity code" do
+  stub_commodity_suggestion(
+    code: "6109100010",
+    confidence: 0.85,
+    reasoning: "Cotton t-shirt"
+  )
+
+  result = @suggester.suggest("Cotton t-shirt")
+
+  assert_equal "6109100010", result[:commodity_code]
+end
+```
+
+### Adding Tests for New Services
+
+1. Create test file in `test/services/`
+2. Use `with_cassette` for external HTTP calls
+3. Use `stub_*` helpers for Claude API
+4. Test error handling (API failures, invalid responses)
+5. Test edge cases (empty input, malformed data)
+
+See `test/CLAUDE.md` for detailed testing guidelines.
 
 ### AI Email Classification
 The system uses AI to classify incoming emails and extract product information:
@@ -124,12 +367,17 @@ The system uses AI to classify incoming emails and extract product information:
 ## Database Schema Summary
 
 ```
-users (Devise auth + inbound_email_token)
-  └── orders (retailer, reference, status)
-        ├── order_items (description, suggested/confirmed codes, image_url, product_url)
-        ├── tracking_events (carrier, URL, status, location)
-        └── inbound_emails (many - linked by order_id)
-  └── inbound_emails (subject, from, body_text, body_html, processing_status, order_id)
+users (Devise auth + inbound_email_token + subscription_tier)
+  ├── orders (retailer, reference, status)
+  │     ├── order_items (description, suggested/confirmed codes, image_url, product_url)
+  │     ├── tracking_events (carrier, URL, status, location)
+  │     └── inbound_emails (many - linked by order_id)
+  ├── inbound_emails (subject, from, body_text, body_html, processing_status, order_id)
+  ├── api_keys (key_prefix, key_digest, tier, usage tracking)
+  │     └── api_requests (endpoint, status_code, response_time_ms)
+  ├── batch_jobs (status, total_items, webhook_url)
+  │     └── batch_job_items (description/url, status, result)
+  └── webhooks (url, secret, events, enabled)
 ```
 
 **Key relationships:**
@@ -137,6 +385,9 @@ users (Devise auth + inbound_email_token)
 - `Order` belongs_to `source_email` (the email that created it)
 - `InboundEmail` belongs_to `order` (linked by order reference number)
 - `OrderItem` has `image_url` for product thumbnails
+- `User` has_many `api_keys` (API authentication)
+- `ApiKey` has_many `api_requests` (usage logging)
+- `User` has_many `webhooks` (webhook delivery URLs)
 
 ## External APIs
 
@@ -162,6 +413,52 @@ users (Devise auth + inbound_email_token)
 - Webhook endpoint: `/rails/action_mailbox/resend/inbound_emails`
 - See `docs/RESEND_SETUP.md` for configuration
 
+## Premium API
+
+Tariffik offers a REST API for programmatic commodity code lookups at `/api/v1/`. Requires Starter subscription or higher.
+
+### Authentication
+All API requests require a Bearer token: `Authorization: Bearer tk_live_...`
+
+### Key Endpoints
+
+| Method | Endpoint | Description |
+|--------|----------|-------------|
+| GET | `/api/v1/commodity-codes/search?q=` | Search tariff codes |
+| GET | `/api/v1/commodity-codes/:code` | Get code details |
+| POST | `/api/v1/commodity-codes/suggest` | AI suggestion (sync) |
+| POST | `/api/v1/commodity-codes/suggest-from-url` | AI from URL (async) |
+| POST | `/api/v1/commodity-codes/batch` | Batch processing |
+| GET | `/api/v1/batch-jobs/:id` | Poll batch status |
+| GET | `/api/v1/usage` | Usage statistics |
+
+### Rate Limits by Tier
+
+| Tier | Requests/min | Requests/day | Batch Size |
+|------|-------------|--------------|------------|
+| Trial | 5 | 50 | 5 |
+| Starter | 30 | 1,000 | 25 |
+| Professional | 100 | 10,000 | 100 |
+| Enterprise | 500 | Unlimited | 500 |
+
+### Developer Dashboard
+- Route: `/developer`
+- Free users see upsell page
+- Subscribers see usage stats, API key management, recent requests
+
+### API Key Management (Console)
+```ruby
+# Create API key
+user = User.find_by(email: "user@example.com")
+api_key = user.api_keys.create!(name: "My Key", tier: :starter)
+puts api_key.raw_key  # Only shown once!
+
+# Revoke key
+api_key.revoke!
+```
+
+See `claude/implementations/api-layer-premium-feature.md` for full implementation details.
+
 ## Testing Without External Services
 
 1. **Without Resend**: Use `/test_emails/new` to paste email content
@@ -186,8 +483,8 @@ users (Devise auth + inbound_email_token)
 
 ### Branches
 - `feature/*`, `bugfix/*`, `hotfix/*` → Feature branches for development
-- `develop` → Auto-deploys to **staging** (`commodity-checker-staging.onrender.com`)
-- `main` → Auto-deploys to **production** (`commodity-checker.onrender.com`)
+- `develop` → Auto-deploys to **staging** (`tariffik-staging.onrender.com`)
+- `main` → Auto-deploys to **production** (`tariffik.com`)
 
 ### Branch Naming (Gitflow)
 Use these prefixes for branch names:
@@ -222,7 +519,7 @@ Use these prefixes for branch names:
    gh pr merge --merge
    ```
 
-6. **Test on staging** - Verify on `commodity-checker-staging.onrender.com`
+6. **Test on staging** - Verify on `tariffik-staging.onrender.com`
 
 7. **Deploy to production** - Create PR from `develop` → `main`:
    ```bash
@@ -303,11 +600,11 @@ change_column :products, :count, :string  # ❌ DANGEROUS
 ## Running the App
 
 ```bash
-# Development
-bin/rails server
-
-# With Tailwind watching (if needed)
+# Development (RECOMMENDED - runs Tailwind watcher)
 bin/dev
+
+# Alternative: Rails server only (Tailwind won't rebuild for new classes)
+bin/rails server
 
 # Background jobs (Solid Queue)
 bin/rails solid_queue:start
@@ -316,21 +613,66 @@ bin/rails solid_queue:start
 bin/rails console
 ```
 
+**Important**: Always use `bin/dev` in development. It runs both Rails and the Tailwind CSS watcher via Procfile.dev. Using `bin/rails server` alone means new Tailwind utility classes won't be compiled.
+
+## Production Configuration (Render)
+
+### Puma Workers
+Puma auto-detects worker count based on available memory in production:
+- Reads `/proc/meminfo` to get total RAM
+- Reserves 512MB for system, allocates 512MB per worker
+- Caps at 8 workers maximum
+
+Override with `WEB_CONCURRENCY` env var if needed.
+
+| RAM | Workers |
+|-----|---------|
+| 1GB | 1 |
+| 2GB | 2-3 |
+| 4GB | 6-7 |
+
+### Deployment
+- `main` branch auto-deploys to production (`tariffik.com`)
+- `develop` branch auto-deploys to staging (`tariffik-staging.onrender.com`)
+- Puma runs with `preload_app!` for copy-on-write memory savings
+
 ## Environment Variables
 
 ```
-ANTHROPIC_API_KEY          # Required for commodity suggestions and email classification
-INBOUND_EMAIL_DOMAIN       # e.g., inbound.yourdomain.com
-RESEND_API_KEY             # For inbound email processing
-RESEND_WEBHOOK_SECRET      # For webhook verification
-TAVILY_API_KEY             # For AI web search (product info from emails without URLs)
-SCRAPINGBEE_API_KEY        # Optional, for scraping protected websites (Cloudflare, etc.)
+# Rails
+RAILS_MASTER_KEY                   # For encrypted credentials
+APP_HOST                           # tariffik.com (prod) or tariffik-staging.onrender.com (staging)
+
+# Puma (Production)
+WEB_CONCURRENCY                    # Optional: Override auto-detected worker count
+RAILS_MAX_THREADS                  # Threads per worker (default: 3)
+
+# Inbound Email (Resend)
+INBOUND_EMAIL_DOMAIN               # inbound.tariffik.com
+RESEND_API_KEY                     # For inbound email processing
+RESEND_WEBHOOK_SECRET              # For webhook verification
+
+# AI Services
+ANTHROPIC_API_KEY                  # Required for commodity suggestions and email classification
+TAVILY_API_KEY                     # For AI web search (product info from emails without URLs)
+
+# Web Scraping
+SCRAPINGBEE_API_KEY                # Optional, for scraping protected websites
+
+# Cloudflare R2 Storage
+CLOUDFLARE_R2_ACCESS_KEY_ID        # R2 API token access key
+CLOUDFLARE_R2_SECRET_ACCESS_KEY    # R2 API token secret
+CLOUDFLARE_R2_BUCKET               # tariffik-images
+CLOUDFLARE_R2_ENDPOINT             # https://<account_id>.r2.cloudflarestorage.com
 ```
 
 ## Future Improvements (Not Yet Implemented)
 
-- CSV export for confirmed codes
 - Email notifications for delivery updates
 - Better tracking scraper with headless browser
-- Batch commodity code processing
 - Order search/filtering
+- Blog pagination (when post count exceeds 10-12)
+- Blog tag filtering and archive pages
+- RSS/Atom feed for blog
+- API documentation page with interactive examples
+- Stripe integration for subscription payments

@@ -1,0 +1,89 @@
+---
+http_interactions:
+- request:
+    method: get
+    uri: https://www.trade-tariff.service.gov.uk/api/v2/search?q=cotton%20t-shirt
+    body:
+      encoding: US-ASCII
+      string: ''
+    headers:
+      User-Agent:
+      - Faraday v2.14.0
+      Accept-Encoding:
+      - gzip;q=1.0,deflate;q=0.6,identity;q=0.3
+      Accept:
+      - "*/*"
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Content-Type:
+      - application/json; charset=utf-8
+      Content-Length:
+      - '4037'
+      Connection:
+      - keep-alive
+      Date:
+      - Sat, 17 Jan 2026 22:49:06 GMT
+      X-Runtime:
+      - '0.050989'
+      X-Frame-Options:
+      - SAMEORIGIN
+      X-Xss-Protection:
+      - '0'
+      X-Content-Type-Options:
+      - nosniff
+      X-Download-Options:
+      - noopen
+      X-Permitted-Cross-Domain-Policies:
+      - none
+      Referrer-Policy:
+      - strict-origin-when-cross-origin
+      X-Old-Path:
+      - "/api/v2/search"
+      X-Path-Transformed:
+      - 'true'
+      Etag:
+      - W/"d8d822c9f8c3858581a8d072cccd885d"
+      X-Request-Id:
+      - 429114b6-be9f-4483-a289-482bf4ca4fe6
+      X-Cache:
+      - Miss from cloudfront
+      Via:
+      - 1.1 6c764dc941201b2dee59f4fdf4cd1602.cloudfront.net (CloudFront)
+      X-Amz-Cf-Pop:
+      - DUB56-P1
+      X-Amz-Cf-Id:
+      - Fca29o7q1Bbtb-xTVylJiMBHmMZ3gKruZPdq3WuhIDnHOH1J4DsAFw==
+      Strict-Transport-Security:
+      - max-age=31536000; includeSubDomains
+      Vary:
+      - Origin
+    body:
+      encoding: UTF-8
+      string: '{"data":{"id":"1","type":"fuzzy_search","attributes":{"type":"fuzzy_match","goods_nomenclature_match":{"chapters":[],"commodities":[{"_index":"tariff-commodities-uk","_id":"99290","_score":24.782965,"_source":{"id":99290,"goods_nomenclature_item_id":"6109100010","producline_suffix":"80","validity_start_date":"2015-03-10T00:00:00.000Z","validity_end_date":null,"description":"T-shirts","description_indexed":"t-shirts
+        of cotton t-shirts, singlets and other vests, knitted or crocheted articles
+        of apparel and clothing accessories, knitted or crocheted","number_indents":2,"declarable":true,"ancestor_descriptions":["ARTICLES
+        OF APPAREL AND CLOTHING ACCESSORIES, KNITTED OR CROCHETED","T-shirts, singlets
+        and other vests, knitted or crocheted","Of cotton","T-shirts"],"section":{"numeral":"XI","title":"Textiles
+        and textile articles","position":11},"chapter":{"goods_nomenclature_sid":42796,"goods_nomenclature_item_id":"6100000000","producline_suffix":"80","validity_start_date":"1971-12-31T00:00:00.000Z","validity_end_date":null,"description":"Articles
+        of apparel and clothing accessories, knitted or crocheted","guides":[]},"heading":{"goods_nomenclature_sid":42978,"goods_nomenclature_item_id":"6109000000","producline_suffix":"80","validity_start_date":"1972-01-01T00:00:00.000Z","validity_end_date":null,"description":"T-shirts,
+        singlets and other vests, knitted or crocheted","number_indents":0}}},{"_index":"tariff-commodities-uk","_id":"42979","_score":20.682287,"_source":{"id":42979,"goods_nomenclature_item_id":"6109100000","producline_suffix":"80","validity_start_date":"1972-01-01T00:00:00.000Z","validity_end_date":null,"description":"Of
+        cotton","description_indexed":"of cotton t-shirts, singlets and other vests,
+        knitted or crocheted articles of apparel and clothing accessories, knitted
+        or crocheted","number_indents":1,"declarable":false,"ancestor_descriptions":["ARTICLES
+        OF APPAREL AND CLOTHING ACCESSORIES, KNITTED OR CROCHETED","T-shirts, singlets
+        and other vests, knitted or crocheted","Of cotton"],"section":{"numeral":"XI","title":"Textiles
+        and textile articles","position":11},"chapter":{"goods_nomenclature_sid":42796,"goods_nomenclature_item_id":"6100000000","producline_suffix":"80","validity_start_date":"1971-12-31T00:00:00.000Z","validity_end_date":null,"description":"Articles
+        of apparel and clothing accessories, knitted or crocheted","guides":[]},"heading":{"goods_nomenclature_sid":42978,"goods_nomenclature_item_id":"6109000000","producline_suffix":"80","validity_start_date":"1972-01-01T00:00:00.000Z","validity_end_date":null,"description":"T-shirts,
+        singlets and other vests, knitted or crocheted","number_indents":0}}},{"_index":"tariff-commodities-uk","_id":"99291","_score":20.39711,"_source":{"id":99291,"goods_nomenclature_item_id":"6109100090","producline_suffix":"80","validity_start_date":"2015-03-10T00:00:00.000Z","validity_end_date":null,"description":"Other","description_indexed":"other
+        of cotton t-shirts, singlets and other vests, knitted or crocheted articles
+        of apparel and clothing accessories, knitted or crocheted","number_indents":2,"declarable":true,"ancestor_descriptions":["ARTICLES
+        OF APPAREL AND CLOTHING ACCESSORIES, KNITTED OR CROCHETED","T-shirts, singlets
+        and other vests, knitted or crocheted","Of cotton","Other"],"section":{"numeral":"XI","title":"Textiles
+        and textile articles","position":11},"chapter":{"goods_nomenclature_sid":42796,"goods_nomenclature_item_id":"6100000000","producline_suffix":"80","validity_start_date":"1971-12-31T00:00:00.000Z","validity_end_date":null,"description":"Articles
+        of apparel and clothing accessories, knitted or crocheted","guides":[]},"heading":{"goods_nomenclature_sid":42978,"goods_nomenclature_item_id":"6109000000","producline_suffix":"80","validity_start_date":"1972-01-01T00:00:00.000Z","validity_end_date":null,"description":"T-shirts,
+        singlets and other vests, knitted or crocheted","number_indents":0}}}],"headings":[],"sections":[]},"reference_match":{"chapters":[],"commodities":[],"headings":[],"sections":[]}}}}'
+  recorded_at: Sat, 17 Jan 2026 22:49:06 GMT
+recorded_with: VCR 6.4.0

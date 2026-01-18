@@ -1,6 +1,7 @@
 class ProductLookupsController < ApplicationController
   before_action :authenticate_user!, except: [ :new, :create, :quick_lookup ]
   before_action :set_product_lookup, only: [ :show, :confirm_commodity_code, :add_to_order ]
+  before_action :check_lookup_limit, only: [ :create, :create_from_photo ]
 
   def index
     @product_lookups = current_user.product_lookups
@@ -25,6 +26,7 @@ class ProductLookupsController < ApplicationController
     if @product_lookup.save
       # Queue background scraping and suggestion
       ScrapeProductPageJob.perform_later(product_lookup_id: @product_lookup.id)
+      track_event("user_lookup_performed", lookup_id: @product_lookup.id, lookup_type: "url")
 
       redirect_to product_lookup_path(@product_lookup), notice: "Looking up product... This may take a moment."
     else
@@ -72,6 +74,7 @@ class ProductLookupsController < ApplicationController
 
   def confirm_commodity_code
     @product_lookup.update!(confirmed_commodity_code: params[:commodity_code])
+    track_event("commodity_code_confirmed", product_lookup_id: @product_lookup.id, commodity_code: params[:commodity_code])
     redirect_to product_lookup_path(@product_lookup), notice: "Commodity code confirmed."
   end
 
@@ -110,6 +113,7 @@ class ProductLookupsController < ApplicationController
     if @product_lookup.save
       # Queue background image analysis
       AnalyzeProductImageJob.perform_later(@product_lookup.id)
+      track_event("user_lookup_performed", lookup_id: @product_lookup.id, lookup_type: "photo")
 
       redirect_to product_lookup_path(@product_lookup), notice: "Analyzing product image... This may take a moment."
     else
@@ -125,5 +129,15 @@ class ProductLookupsController < ApplicationController
 
   def product_lookup_params
     params.require(:product_lookup).permit(:url)
+  end
+
+  def check_lookup_limit
+    return unless user_signed_in?
+    return if current_user.can_perform_lookup?
+
+    respond_to do |format|
+      format.html { redirect_to product_lookups_path, alert: "You've reached your monthly lookup limit of #{User::FREE_MONTHLY_LOOKUP_LIMIT}. Upgrade for unlimited lookups." }
+      format.turbo_stream { render turbo_stream: turbo_stream.replace("lookup_form", partial: "product_lookups/limit_reached") }
+    end
   end
 end

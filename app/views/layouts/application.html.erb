@@ -1,10 +1,25 @@
 <!DOCTYPE html>
 <html class="h-full bg-gray-50">
   <head>
-    <title><%= content_for(:title) || "Commodity Code Checker" %></title>
+    <title><%= content_for(:title) || "Tariffik - never guess a code again" %></title>
     <meta name="viewport" content="width=device-width,initial-scale=1">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="mobile-web-app-capable" content="yes">
+    <meta name="description" content="Forward your order confirmation emails and get accurate EU/UK commodity tariff codes suggested automatically using AI.">
+
+    <!-- Open Graph -->
+    <meta property="og:title" content="Tariffik - never guess a code again">
+    <meta property="og:description" content="Forward your order confirmation emails and get accurate EU/UK commodity tariff codes suggested automatically using AI.">
+    <meta property="og:image" content="<%= request.base_url %>/images/paperwork.png">
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="<%= request.original_url %>">
+
+    <!-- Twitter Card -->
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="Tariffik - never guess a code again">
+    <meta name="twitter:description" content="Forward your order confirmation emails and get accurate EU/UK commodity tariff codes suggested automatically using AI.">
+    <meta name="twitter:image" content="<%= request.base_url %>/images/paperwork.png">
+
     <%= csrf_meta_tags %>
     <%= csp_meta_tag %>
 
@@ -19,7 +34,7 @@
   </head>
 
   <body class="h-full">
-    <div class="min-h-full">
+    <div class="min-h-screen flex flex-col">
       <!-- Navigation -->
       <nav class="bg-indigo-600" data-controller="mobile-menu">
         <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
@@ -27,7 +42,7 @@
             <div class="flex items-center">
               <div class="shrink-0">
                 <%= link_to root_path, class: "text-white font-bold text-xl" do %>
-                  Commodity Checker
+                  Tariffik
                 <% end %>
               </div>
               <% if user_signed_in? %>
@@ -36,6 +51,7 @@
                     <%= link_to "Dashboard", dashboard_path, class: "rounded-md px-3 py-2 text-sm font-medium #{request.path == dashboard_path ? 'bg-indigo-700 text-white' : 'text-indigo-100 hover:bg-indigo-500 hover:text-white'}" %>
                     <%= link_to "Lookup", product_lookups_path, class: "rounded-md px-3 py-2 text-sm font-medium #{request.path.start_with?('/product_lookups') ? 'bg-indigo-700 text-white' : 'text-indigo-100 hover:bg-indigo-500 hover:text-white'}" %>
                     <%= link_to "Orders", orders_path, class: "rounded-md px-3 py-2 text-sm font-medium #{request.path.start_with?('/orders') ? 'bg-indigo-700 text-white' : 'text-indigo-100 hover:bg-indigo-500 hover:text-white'}" %>
+                    <%= link_to "API", developer_path, class: "rounded-md px-3 py-2 text-sm font-medium #{request.path.start_with?('/developer') ? 'bg-indigo-700 text-white' : 'text-indigo-100 hover:bg-indigo-500 hover:text-white'}" %>
                   </div>
                 </div>
               <% end %>
@@ -53,7 +69,7 @@
             </div>
             <!-- Mobile menu button -->
             <div class="flex md:hidden">
-              <button type="button" data-action="click->mobile-menu#toggle" class="inline-flex items-center justify-center rounded-md p-2 text-indigo-200 hover:bg-indigo-500 hover:text-white focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-indigo-600">
+              <button type="button" data-action="click->mobile-menu#toggle touchend->mobile-menu#toggle" class="cursor-pointer inline-flex items-center justify-center rounded-md p-2 text-indigo-200 hover:bg-indigo-500 hover:text-white focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-indigo-600">
                 <span class="sr-only">Open main menu</span>
                 <!-- Hamburger icon -->
                 <svg data-mobile-menu-target="openIcon" class="size-6" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
@@ -75,6 +91,7 @@
               <%= link_to "Dashboard", dashboard_path, class: "block rounded-md px-3 py-2 text-base font-medium #{request.path == dashboard_path ? 'bg-indigo-700 text-white' : 'text-indigo-100 hover:bg-indigo-500 hover:text-white'}" %>
               <%= link_to "Lookup", product_lookups_path, class: "block rounded-md px-3 py-2 text-base font-medium #{request.path.start_with?('/product_lookups') ? 'bg-indigo-700 text-white' : 'text-indigo-100 hover:bg-indigo-500 hover:text-white'}" %>
               <%= link_to "Orders", orders_path, class: "block rounded-md px-3 py-2 text-base font-medium #{request.path.start_with?('/orders') ? 'bg-indigo-700 text-white' : 'text-indigo-100 hover:bg-indigo-500 hover:text-white'}" %>
+              <%= link_to "API", developer_path, class: "block rounded-md px-3 py-2 text-base font-medium #{request.path.start_with?('/developer') ? 'bg-indigo-700 text-white' : 'text-indigo-100 hover:bg-indigo-500 hover:text-white'}" %>
             <% end %>
           </div>
           <div class="border-t border-indigo-500 pb-3 pt-4">
@@ -131,11 +148,14 @@
       <% end %>
 
       <!-- Main content -->
-      <main>
+      <main class="grow">
         <div class="mx-auto max-w-7xl px-4 py-6 sm:px-6 lg:px-8">
           <%= yield %>
         </div>
       </main>
+
+      <!-- Footer -->
+      <%= render "shared/footer" %>
     </div>
   </body>
 </html>

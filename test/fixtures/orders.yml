@@ -2,16 +2,16 @@
 
 one:
   user: one
-  source_email_id: 1
-  order_reference: MyString
-  retailer_name: MyString
+  source_email: one
+  order_reference: ORD-001
+  retailer_name: Test Retailer
   status: 1
-  estimated_delivery: 2026-01-15
+  estimated_delivery: 2026-01-20
 
 two:
   user: two
-  source_email_id: 1
-  order_reference: MyString
-  retailer_name: MyString
+  source_email: two
+  order_reference: ORD-002
+  retailer_name: Another Retailer
   status: 1
-  estimated_delivery: 2026-01-15
+  estimated_delivery: 2026-01-21

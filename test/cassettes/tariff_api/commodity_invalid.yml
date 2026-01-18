@@ -1,0 +1,69 @@
+---
+http_interactions:
+- request:
+    method: get
+    uri: https://www.trade-tariff.service.gov.uk/api/v2/commodities/0000000000
+    body:
+      encoding: US-ASCII
+      string: ''
+    headers:
+      User-Agent:
+      - Faraday v2.14.0
+      Accept-Encoding:
+      - gzip;q=1.0,deflate;q=0.6,identity;q=0.3
+      Accept:
+      - "*/*"
+  response:
+    status:
+      code: 404
+      message: Not Found
+    headers:
+      Content-Type:
+      - application/json; charset=utf-8
+      Content-Length:
+      - '88'
+      Connection:
+      - keep-alive
+      Date:
+      - Sat, 17 Jan 2026 22:49:06 GMT
+      X-Runtime:
+      - '0.010126'
+      X-Frame-Options:
+      - SAMEORIGIN
+      X-Xss-Protection:
+      - '0'
+      X-Content-Type-Options:
+      - nosniff
+      X-Download-Options:
+      - noopen
+      X-Permitted-Cross-Domain-Policies:
+      - none
+      Referrer-Policy:
+      - strict-origin-when-cross-origin
+      Etag:
+      - W/"b33c40a46ac2b0c22c87d2247b0ef659"
+      Last-Modified:
+      - Sat, 17 Jan 2026 05:11:38 GMT
+      X-Old-Path:
+      - "/api/v2/chapters/00"
+      X-Path-Transformed:
+      - 'true'
+      X-Request-Id:
+      - 7ef7ab36-f048-426a-bd18-a4480e0ff60c
+      X-Cache:
+      - Error from cloudfront
+      Via:
+      - 1.1 bae6c56679b50ffff11fef6a7ffeea12.cloudfront.net (CloudFront)
+      X-Amz-Cf-Pop:
+      - DUB56-P1
+      X-Amz-Cf-Id:
+      - HJLm_sX0u_I8UADi_jB0nHpJS8Gfexvi4rdFSy2JqQmefIZUhKl-LQ==
+      Strict-Transport-Security:
+      - max-age=31536000; includeSubDomains
+      Vary:
+      - Origin
+    body:
+      encoding: UTF-8
+      string: '{"error":"not found","url":"https://www.trade-tariff.service.gov.uk/uk/api/chapters/00"}'
+  recorded_at: Sat, 17 Jan 2026 22:49:06 GMT
+recorded_with: VCR 6.4.0

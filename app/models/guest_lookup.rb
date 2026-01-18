@@ -3,7 +3,7 @@ class GuestLookup < ApplicationRecord
   validates :lookup_type, presence: true, inclusion: { in: %w[url photo] }
 
   scope :for_token, ->(token) { where(guest_token: token) }
-  scope :within_window, ->(hours = 168) { where(created_at: hours.hours.ago..) }
+  scope :within_window, ->(hours) { hours ? where(created_at: hours.hours.ago..) : all }
   scope :recent, -> { order(created_at: :desc) }
 
   # Analytics scopes
@@ -11,7 +11,7 @@ class GuestLookup < ApplicationRecord
   scope :this_week, -> { where(created_at: 1.week.ago..) }
   scope :this_month, -> { where(created_at: 1.month.ago..) }
 
-  def self.count_for_token(token, window_hours: 168)
+  def self.count_for_token(token, window_hours: nil)
     for_token(token).within_window(window_hours).count
   end
 

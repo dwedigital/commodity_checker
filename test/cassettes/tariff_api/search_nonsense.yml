@@ -1,0 +1,67 @@
+---
+http_interactions:
+- request:
+    method: get
+    uri: https://www.trade-tariff.service.gov.uk/api/v2/search?q=xyzzy12345nonsense
+    body:
+      encoding: US-ASCII
+      string: ''
+    headers:
+      User-Agent:
+      - Faraday v2.14.0
+      Accept-Encoding:
+      - gzip;q=1.0,deflate;q=0.6,identity;q=0.3
+      Accept:
+      - "*/*"
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Content-Type:
+      - application/json; charset=utf-8
+      Content-Length:
+      - '244'
+      Connection:
+      - keep-alive
+      Date:
+      - Sat, 17 Jan 2026 22:49:06 GMT
+      X-Runtime:
+      - '0.073529'
+      X-Frame-Options:
+      - SAMEORIGIN
+      X-Xss-Protection:
+      - '0'
+      X-Content-Type-Options:
+      - nosniff
+      X-Download-Options:
+      - noopen
+      X-Permitted-Cross-Domain-Policies:
+      - none
+      Referrer-Policy:
+      - strict-origin-when-cross-origin
+      X-Old-Path:
+      - "/api/v2/search"
+      X-Path-Transformed:
+      - 'true'
+      Etag:
+      - W/"950231491983260c3114d301178e0116"
+      X-Request-Id:
+      - 97960cb1-78e7-4d6a-bffe-7d2679588728
+      X-Cache:
+      - Miss from cloudfront
+      Via:
+      - 1.1 7285dbd4c05f1133ea7048c8307b03ee.cloudfront.net (CloudFront)
+      X-Amz-Cf-Pop:
+      - DUB56-P1
+      X-Amz-Cf-Id:
+      - pl9-OZBDzMOTPgtD80hUwSj79h7Zd9a0G6eDMADc5NqisAjRHKXxQw==
+      Strict-Transport-Security:
+      - max-age=31536000; includeSubDomains
+      Vary:
+      - Origin
+    body:
+      encoding: UTF-8
+      string: '{"data":{"id":"1","type":"fuzzy_search","attributes":{"type":"fuzzy_match","goods_nomenclature_match":{"chapters":[],"commodities":[],"headings":[],"sections":[]},"reference_match":{"chapters":[],"commodities":[],"headings":[],"sections":[]}}}}'
+  recorded_at: Sat, 17 Jan 2026 22:49:06 GMT
+recorded_with: VCR 6.4.0

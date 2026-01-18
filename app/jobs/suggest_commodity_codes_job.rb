@@ -2,11 +2,11 @@ class SuggestCommodityCodesJob < ApplicationJob
   queue_as :default
 
   def perform(order_id)
-    order = Order.includes(:order_items).find(order_id)
+    order = Order.includes(:order_items, :user).find(order_id)
     suggester = LlmCommoditySuggester.new
 
     order.order_items.where(suggested_commodity_code: nil).each do |item|
-      suggest_code_for_item(item, suggester)
+      suggest_code_for_item(item, suggester, order.user)
 
       # Small delay between API calls to avoid rate limiting
       sleep(0.5)
@@ -18,7 +18,7 @@ class SuggestCommodityCodesJob < ApplicationJob
 
   private
 
-  def suggest_code_for_item(item, suggester)
+  def suggest_code_for_item(item, suggester, user)
     description = item.enhanced_description
     Rails.logger.info("Suggesting commodity code for: #{description}")
 
@@ -29,6 +29,13 @@ class SuggestCommodityCodesJob < ApplicationJob
         suggested_commodity_code: suggestion[:commodity_code],
         commodity_code_confidence: suggestion[:confidence],
         llm_reasoning: build_reasoning(suggestion)
+      )
+
+      # Track commodity code suggestion
+      track_analytics(user, "commodity_code_suggested",
+        order_item_id: item.id,
+        commodity_code: suggestion[:commodity_code],
+        confidence: suggestion[:confidence]
       )
 
       Rails.logger.info("Suggested #{suggestion[:commodity_code]} for '#{item.description}' (confidence: #{suggestion[:confidence]})")
@@ -48,5 +55,11 @@ class SuggestCommodityCodesJob < ApplicationJob
     parts << "(Unvalidated - code may need verification)" if suggestion[:validated] == false
 
     parts.join(" | ")
+  end
+
+  def track_analytics(user, event_name, properties = {})
+    AnalyticsTracker.new(user: user).track(event_name, properties)
+  rescue => e
+    Rails.logger.error("Analytics tracking failed: #{e.message}")
   end
 end

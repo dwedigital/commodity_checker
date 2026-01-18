@@ -6,10 +6,28 @@
 
   <div class="field">
     <%= f.label :password, "New password" %><br />
-    <% if @minimum_password_length %>
-      <em>(<%= @minimum_password_length %> characters minimum)</em><br />
-    <% end %>
-    <%= f.password_field :password, autofocus: true, autocomplete: "new-password" %>
+    <%= f.password_field :password, autofocus: true, autocomplete: "new-password", id: "password" %>
+    <div class="password-requirements" style="margin-top: 0.5rem; font-size: 0.875rem; color: #6b7280;">
+      <p style="margin-bottom: 0.25rem;">Password must contain:</p>
+      <ul style="list-style: none; padding: 0; margin: 0;">
+        <li id="req-length" style="display: flex; align-items: center; gap: 0.25rem;">
+          <span class="req-icon" style="color: #9ca3af;">&#9675;</span>
+          At least 8 characters
+        </li>
+        <li id="req-uppercase" style="display: flex; align-items: center; gap: 0.25rem;">
+          <span class="req-icon" style="color: #9ca3af;">&#9675;</span>
+          One uppercase letter
+        </li>
+        <li id="req-lowercase" style="display: flex; align-items: center; gap: 0.25rem;">
+          <span class="req-icon" style="color: #9ca3af;">&#9675;</span>
+          One lowercase letter
+        </li>
+        <li id="req-digit" style="display: flex; align-items: center; gap: 0.25rem;">
+          <span class="req-icon" style="color: #9ca3af;">&#9675;</span>
+          One digit
+        </li>
+      </ul>
+    </div>
   </div>
 
   <div class="field">
@@ -23,3 +41,41 @@
 <% end %>
 
 <%= render "devise/shared/links" %>
+
+<script>
+  document.addEventListener('DOMContentLoaded', function() {
+    const passwordInput = document.getElementById('password');
+    if (!passwordInput) return;
+
+    const requirements = {
+      'req-length': (pwd) => pwd.length >= 8,
+      'req-uppercase': (pwd) => /[A-Z]/.test(pwd),
+      'req-lowercase': (pwd) => /[a-z]/.test(pwd),
+      'req-digit': (pwd) => /\d/.test(pwd)
+    };
+
+    function updateRequirements() {
+      const password = passwordInput.value;
+
+      Object.entries(requirements).forEach(([id, validator]) => {
+        const element = document.getElementById(id);
+        if (!element) return;
+
+        const icon = element.querySelector('.req-icon');
+        const isMet = validator(password);
+
+        if (isMet) {
+          icon.innerHTML = '&#10003;';
+          icon.style.color = '#22c55e';
+          element.style.color = '#16a34a';
+        } else {
+          icon.innerHTML = '&#9675;';
+          icon.style.color = '#9ca3af';
+          element.style.color = '#6b7280';
+        }
+      });
+    }
+
+    passwordInput.addEventListener('input', updateRequirements);
+  });
+</script>

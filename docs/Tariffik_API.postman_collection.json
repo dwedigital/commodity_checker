@@ -1,0 +1,506 @@
+{
+  "info": {
+    "_postman_id": "tariffik-api-v1",
+    "name": "Tariffik API v1",
+    "description": "Tariffik Premium API for programmatic commodity code lookups.\n\n## Authentication\nAll endpoints require Bearer token authentication. Include your API key in the Authorization header:\n```\nAuthorization: Bearer tk_live_your_api_key_here\n```\n\n## Rate Limits\n| Tier | Requests/min | Requests/day | Batch Size |\n|------|-------------|--------------|------------|\n| Trial | 5 | 50 | 5 |\n| Starter | 30 | 1,000 | 25 |\n| Professional | 100 | 10,000 | 100 |\n| Enterprise | 500 | Unlimited | 500 |\n\n## Getting Started\n1. Set your API key in the `api_key` collection variable\n2. Set `base_url` to your environment (localhost:3000 for dev, tariffik.com for prod)\n3. Run requests!",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "auth": {
+    "type": "bearer",
+    "bearer": [
+      {
+        "key": "token",
+        "value": "{{api_key}}",
+        "type": "string"
+      }
+    ]
+  },
+  "variable": [
+    {
+      "key": "base_url",
+      "value": "http://localhost:3000",
+      "type": "string"
+    },
+    {
+      "key": "batch_id",
+      "value": "",
+      "type": "string"
+    },
+    {
+      "key": "webhook_id",
+      "value": "",
+      "type": "string"
+    }
+  ],
+  "item": [
+    {
+      "name": "Commodity Codes",
+      "description": "Endpoints for searching and getting commodity code suggestions",
+      "item": [
+        {
+          "name": "Search Commodity Codes",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/v1/commodity-codes/search?q=cotton t-shirt",
+              "host": ["{{base_url}}"],
+              "path": ["api", "v1", "commodity-codes", "search"],
+              "query": [
+                {
+                  "key": "q",
+                  "value": "cotton t-shirt",
+                  "description": "Search query for commodity codes"
+                }
+              ]
+            },
+            "description": "Search the UK Trade Tariff API for commodity codes matching your query.\n\n**Response time:** ~300ms\n\n**Example queries:**\n- `cotton t-shirt`\n- `leather shoes`\n- `electronic components`"
+          },
+          "response": [
+            {
+              "name": "Success",
+              "originalRequest": {
+                "method": "GET",
+                "url": {
+                  "raw": "{{base_url}}/api/v1/commodity-codes/search?q=cotton t-shirt"
+                }
+              },
+              "status": "OK",
+              "code": 200,
+              "_postman_previewlanguage": "json",
+              "body": "{\n  \"results\": [\n    {\n      \"code\": \"6109100010\",\n      \"description\": \"T-shirts, singlets and other vests, of cotton\",\n      \"score\": 95\n    }\n  ],\n  \"query\": \"cotton t-shirt\",\n  \"count\": 1,\n  \"usage\": {\n    \"requests_today\": 5,\n    \"limit_today\": 1000\n  }\n}"
+            }
+          ]
+        },
+        {
+          "name": "Get Commodity Code Details",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/v1/commodity-codes/6109100010",
+              "host": ["{{base_url}}"],
+              "path": ["api", "v1", "commodity-codes", "6109100010"]
+            },
+            "description": "Get detailed information about a specific commodity code including duty rates.\n\n**Response time:** ~200ms"
+          },
+          "response": [
+            {
+              "name": "Success",
+              "originalRequest": {
+                "method": "GET",
+                "url": {
+                  "raw": "{{base_url}}/api/v1/commodity-codes/6109100010"
+                }
+              },
+              "status": "OK",
+              "code": 200,
+              "_postman_previewlanguage": "json",
+              "body": "{\n  \"code\": \"6109100010\",\n  \"description\": \"T-shirts, singlets and other vests, of cotton\",\n  \"duty_rate\": \"12%\",\n  \"usage\": {\n    \"requests_today\": 6,\n    \"limit_today\": 1000\n  }\n}"
+            }
+          ]
+        },
+        {
+          "name": "Suggest Commodity Code (Sync)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"description\": \"Cotton t-shirt, blue, size M, made in Bangladesh\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/v1/commodity-codes/suggest",
+              "host": ["{{base_url}}"],
+              "path": ["api", "v1", "commodity-codes", "suggest"]
+            },
+            "description": "Get an AI-powered commodity code suggestion from a product description.\n\n**Response time:** 2-4 seconds (includes AI processing)\n\nThe AI analyzes your description, searches the UK Trade Tariff database, and returns the most appropriate HS code with confidence score and reasoning."
+          },
+          "response": [
+            {
+              "name": "Success",
+              "originalRequest": {
+                "method": "POST",
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"description\": \"Cotton t-shirt, blue, size M\"\n}"
+                }
+              },
+              "status": "OK",
+              "code": 200,
+              "_postman_previewlanguage": "json",
+              "body": "{\n  \"commodity_code\": \"6109100010\",\n  \"confidence\": 0.85,\n  \"reasoning\": \"Cotton t-shirt classified under HS 6109 - T-shirts, singlets and other vests, knitted or crocheted. Subheading 6109.10 for cotton.\",\n  \"category\": \"Apparel - T-shirts\",\n  \"validated\": true,\n  \"official_description\": \"T-shirts, singlets and other vests, of cotton\",\n  \"duty_rate\": \"12%\",\n  \"usage\": {\n    \"requests_today\": 7,\n    \"limit_today\": 1000\n  }\n}"
+            }
+          ]
+        },
+        {
+          "name": "Suggest from URL (Async)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"url\": \"https://www.asos.com/product/12345\",\n  \"webhook_url\": \"https://your-site.com/webhooks/tariffik\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/v1/commodity-codes/suggest-from-url",
+              "host": ["{{base_url}}"],
+              "path": ["api", "v1", "commodity-codes", "suggest-from-url"]
+            },
+            "description": "Scrape a product URL and get an AI commodity code suggestion.\n\n**This is an async operation.** The response returns a job_id that you can poll for results, or provide a webhook_url to receive results when complete.\n\n**Processing time:** 5-10 seconds (includes web scraping + AI)\n\nThe system will:\n1. Scrape the product page for title, description, brand, material\n2. Use AI to analyze the product data\n3. Return the best matching commodity code"
+          },
+          "response": [
+            {
+              "name": "Accepted",
+              "originalRequest": {
+                "method": "POST",
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"url\": \"https://www.asos.com/product/12345\"\n}"
+                }
+              },
+              "status": "Accepted",
+              "code": 202,
+              "_postman_previewlanguage": "json",
+              "body": "{\n  \"job_id\": \"batch_abc123xyz\",\n  \"status\": \"processing\",\n  \"poll_url\": \"/api/v1/batch-jobs/batch_abc123xyz\",\n  \"webhook_url\": null,\n  \"usage\": {\n    \"requests_today\": 8,\n    \"limit_today\": 1000\n  }\n}"
+            }
+          ]
+        },
+        {
+          "name": "Batch Processing",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "var jsonData = pm.response.json();",
+                  "if (jsonData.batch_id) {",
+                  "    pm.collectionVariables.set('batch_id', jsonData.batch_id);",
+                  "}"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"items\": [\n    {\n      \"id\": \"sku-001\",\n      \"description\": \"Cotton t-shirt, blue\"\n    },\n    {\n      \"id\": \"sku-002\",\n      \"description\": \"Leather wallet, brown\"\n    },\n    {\n      \"id\": \"sku-003\",\n      \"url\": \"https://www.amazon.co.uk/dp/B0123456\"\n    }\n  ],\n  \"webhook_url\": \"https://your-site.com/webhooks/tariffik\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/v1/commodity-codes/batch",
+              "host": ["{{base_url}}"],
+              "path": ["api", "v1", "commodity-codes", "batch"]
+            },
+            "description": "Process multiple items in a single batch request.\n\n**This is an async operation.** Results are delivered via webhook or polling.\n\n**Batch limits by tier:**\n- Trial: 5 items\n- Starter: 25 items\n- Professional: 100 items\n- Enterprise: 500 items\n\nEach item can be either:\n- `description`: Text description (processed in ~3s)\n- `url`: Product URL to scrape (processed in ~8s)\n\nThe batch_id is automatically saved to collection variables for use in polling."
+          },
+          "response": [
+            {
+              "name": "Accepted",
+              "originalRequest": {
+                "method": "POST",
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"items\": [\n    {\"id\": \"sku-001\", \"description\": \"Cotton t-shirt\"},\n    {\"id\": \"sku-002\", \"description\": \"Leather wallet\"}\n  ]\n}"
+                }
+              },
+              "status": "Accepted",
+              "code": 202,
+              "_postman_previewlanguage": "json",
+              "body": "{\n  \"batch_id\": \"batch_xyz789abc\",\n  \"status\": \"processing\",\n  \"total_items\": 2,\n  \"items_by_type\": {\n    \"description\": 2\n  },\n  \"estimated_seconds\": 6,\n  \"poll_url\": \"/api/v1/batch-jobs/batch_xyz789abc\",\n  \"usage\": {\n    \"requests_today\": 9,\n    \"limit_today\": 1000\n  }\n}"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Batch Jobs",
+      "description": "Poll for batch job status and results",
+      "item": [
+        {
+          "name": "List Batch Jobs",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/v1/batch-jobs?limit=10&offset=0",
+              "host": ["{{base_url}}"],
+              "path": ["api", "v1", "batch-jobs"],
+              "query": [
+                {
+                  "key": "limit",
+                  "value": "10",
+                  "description": "Number of jobs to return (default: 20)"
+                },
+                {
+                  "key": "offset",
+                  "value": "0",
+                  "description": "Offset for pagination"
+                }
+              ]
+            },
+            "description": "List all batch jobs for your API key, ordered by most recent first."
+          },
+          "response": [
+            {
+              "name": "Success",
+              "status": "OK",
+              "code": 200,
+              "_postman_previewlanguage": "json",
+              "body": "{\n  \"batch_jobs\": [\n    {\n      \"batch_id\": \"batch_xyz789abc\",\n      \"status\": \"completed\",\n      \"total_items\": 2,\n      \"completed_items\": 2,\n      \"failed_items\": 0,\n      \"created_at\": \"2026-01-18T12:00:00Z\",\n      \"completed_at\": \"2026-01-18T12:00:10Z\"\n    }\n  ],\n  \"total\": 1,\n  \"usage\": {\n    \"requests_today\": 10,\n    \"limit_today\": 1000\n  }\n}"
+            }
+          ]
+        },
+        {
+          "name": "Get Batch Job Status",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/v1/batch-jobs/{{batch_id}}",
+              "host": ["{{base_url}}"],
+              "path": ["api", "v1", "batch-jobs", "{{batch_id}}"]
+            },
+            "description": "Get the status and results of a specific batch job.\n\nPoll this endpoint until `status` is `completed` or `failed`.\n\nResults are included in the response once the job is complete."
+          },
+          "response": [
+            {
+              "name": "Processing",
+              "status": "OK",
+              "code": 200,
+              "_postman_previewlanguage": "json",
+              "body": "{\n  \"batch_id\": \"batch_xyz789abc\",\n  \"status\": \"processing\",\n  \"total_items\": 3,\n  \"completed_items\": 1,\n  \"failed_items\": 0,\n  \"progress_percentage\": 33.3,\n  \"poll_url\": \"/api/v1/batch-jobs/batch_xyz789abc\",\n  \"usage\": {\n    \"requests_today\": 11,\n    \"limit_today\": 1000\n  }\n}"
+            },
+            {
+              "name": "Completed",
+              "status": "OK",
+              "code": 200,
+              "_postman_previewlanguage": "json",
+              "body": "{\n  \"batch_id\": \"batch_xyz789abc\",\n  \"status\": \"completed\",\n  \"total_items\": 3,\n  \"completed_items\": 3,\n  \"failed_items\": 0,\n  \"progress_percentage\": 100.0,\n  \"poll_url\": \"/api/v1/batch-jobs/batch_xyz789abc\",\n  \"completed_at\": \"2026-01-18T12:00:30Z\",\n  \"results\": [\n    {\n      \"id\": \"sku-001\",\n      \"status\": \"success\",\n      \"commodity_code\": \"6109100010\",\n      \"confidence\": 0.85,\n      \"reasoning\": \"Cotton t-shirt\",\n      \"category\": \"Apparel\",\n      \"validated\": true\n    },\n    {\n      \"id\": \"sku-002\",\n      \"status\": \"success\",\n      \"commodity_code\": \"4202310000\",\n      \"confidence\": 0.82,\n      \"reasoning\": \"Leather wallet\",\n      \"category\": \"Leather goods\",\n      \"validated\": true\n    },\n    {\n      \"id\": \"sku-003\",\n      \"status\": \"success\",\n      \"commodity_code\": \"6402990000\",\n      \"confidence\": 0.78,\n      \"scraped_product\": {\n        \"title\": \"Nike Air Max 90\",\n        \"brand\": \"Nike\",\n        \"material\": \"Leather upper\"\n      }\n    }\n  ],\n  \"usage\": {\n    \"requests_today\": 12,\n    \"limit_today\": 1000\n  }\n}"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Webhooks",
+      "description": "Manage webhook endpoints for async notifications",
+      "item": [
+        {
+          "name": "List Webhooks",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/v1/webhooks",
+              "host": ["{{base_url}}"],
+              "path": ["api", "v1", "webhooks"]
+            },
+            "description": "List all webhooks configured for your account."
+          },
+          "response": [
+            {
+              "name": "Success",
+              "status": "OK",
+              "code": 200,
+              "_postman_previewlanguage": "json",
+              "body": "{\n  \"webhooks\": [\n    {\n      \"id\": 1,\n      \"url\": \"https://your-site.com/webhooks/tariffik\",\n      \"events\": [\"batch.completed\", \"batch.failed\"],\n      \"enabled\": true,\n      \"failure_count\": 0,\n      \"last_success_at\": \"2026-01-18T12:00:00Z\",\n      \"created_at\": \"2026-01-15T10:00:00Z\"\n    }\n  ],\n  \"supported_events\": [\n    \"batch.completed\",\n    \"batch.failed\",\n    \"suggestion.completed\"\n  ],\n  \"usage\": {\n    \"requests_today\": 13,\n    \"limit_today\": 1000\n  }\n}"
+            }
+          ]
+        },
+        {
+          "name": "Create Webhook",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "var jsonData = pm.response.json();",
+                  "if (jsonData.id) {",
+                  "    pm.collectionVariables.set('webhook_id', jsonData.id);",
+                  "}"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"url\": \"https://your-site.com/webhooks/tariffik\",\n  \"events\": [\"batch.completed\", \"batch.failed\"]\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/v1/webhooks",
+              "host": ["{{base_url}}"],
+              "path": ["api", "v1", "webhooks"]
+            },
+            "description": "Register a new webhook endpoint.\n\n**Important:** Save the `secret` from the response - you'll need it to verify webhook signatures.\n\n**Supported events:**\n- `batch.completed` - Batch job finished successfully\n- `batch.failed` - Batch job failed\n- `suggestion.completed` - Single URL suggestion completed\n\nLeave `events` empty to receive all events."
+          },
+          "response": [
+            {
+              "name": "Created",
+              "status": "Created",
+              "code": 201,
+              "_postman_previewlanguage": "json",
+              "body": "{\n  \"id\": 2,\n  \"url\": \"https://your-site.com/webhooks/tariffik\",\n  \"secret\": \"whsec_abc123def456...\",\n  \"events\": [\"batch.completed\", \"batch.failed\"],\n  \"enabled\": true,\n  \"failure_count\": 0,\n  \"created_at\": \"2026-01-18T12:00:00Z\",\n  \"usage\": {\n    \"requests_today\": 14,\n    \"limit_today\": 1000\n  }\n}"
+            }
+          ]
+        },
+        {
+          "name": "Get Webhook",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/v1/webhooks/{{webhook_id}}",
+              "host": ["{{base_url}}"],
+              "path": ["api", "v1", "webhooks", "{{webhook_id}}"]
+            },
+            "description": "Get details for a specific webhook, including the secret for signature verification."
+          },
+          "response": []
+        },
+        {
+          "name": "Update Webhook",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"url\": \"https://your-site.com/webhooks/tariffik-v2\",\n  \"events\": [\"batch.completed\"]\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/v1/webhooks/{{webhook_id}}",
+              "host": ["{{base_url}}"],
+              "path": ["api", "v1", "webhooks", "{{webhook_id}}"]
+            },
+            "description": "Update a webhook's URL or subscribed events."
+          },
+          "response": []
+        },
+        {
+          "name": "Delete Webhook",
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/v1/webhooks/{{webhook_id}}",
+              "host": ["{{base_url}}"],
+              "path": ["api", "v1", "webhooks", "{{webhook_id}}"]
+            },
+            "description": "Delete a webhook. This cannot be undone."
+          },
+          "response": []
+        },
+        {
+          "name": "Test Webhook",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/v1/webhooks/{{webhook_id}}/test",
+              "host": ["{{base_url}}"],
+              "path": ["api", "v1", "webhooks", "{{webhook_id}}", "test"]
+            },
+            "description": "Send a test webhook to verify your endpoint is receiving and processing webhooks correctly."
+          },
+          "response": [
+            {
+              "name": "Success",
+              "status": "OK",
+              "code": 200,
+              "_postman_previewlanguage": "json",
+              "body": "{\n  \"message\": \"Test webhook queued for delivery\",\n  \"usage\": {\n    \"requests_today\": 15,\n    \"limit_today\": 1000\n  }\n}"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Usage & Analytics",
+      "description": "Track your API usage and quota",
+      "item": [
+        {
+          "name": "Get Current Usage",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/v1/usage",
+              "host": ["{{base_url}}"],
+              "path": ["api", "v1", "usage"]
+            },
+            "description": "Get your current API usage statistics including:\n- Requests today and this month\n- Rate limits for your tier\n- Endpoint breakdown\n- Batch job counts\n- Average response time"
+          },
+          "response": [
+            {
+              "name": "Success",
+              "status": "OK",
+              "code": 200,
+              "_postman_previewlanguage": "json",
+              "body": "{\n  \"api_key\": {\n    \"name\": \"Production Key\",\n    \"tier\": \"starter\",\n    \"created_at\": \"2026-01-15T10:00:00Z\"\n  },\n  \"limits\": {\n    \"requests_today\": 45,\n    \"requests_this_month\": 500,\n    \"limit_today\": 1000,\n    \"limit_per_minute\": 30,\n    \"batch_size_limit\": 25\n  },\n  \"usage\": {\n    \"today\": 45,\n    \"this_month\": 500,\n    \"avg_response_time_ms\": 1250.5,\n    \"success_rate_percent\": 98.5\n  },\n  \"endpoints\": {\n    \"/api/v1/commodity-codes/search\": 20,\n    \"/api/v1/commodity-codes/suggest\": 15,\n    \"/api/v1/commodity-codes/batch\": 10\n  },\n  \"batch_jobs\": {\n    \"total\": 10,\n    \"pending\": 0,\n    \"processing\": 1\n  }\n}"
+            }
+          ]
+        },
+        {
+          "name": "Get Usage History",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/v1/usage/history?days=7",
+              "host": ["{{base_url}}"],
+              "path": ["api", "v1", "usage", "history"],
+              "query": [
+                {
+                  "key": "days",
+                  "value": "7",
+                  "description": "Number of days of history (1-30, default: 7)"
+                }
+              ]
+            },
+            "description": "Get daily usage statistics for the specified number of days."
+          },
+          "response": [
+            {
+              "name": "Success",
+              "status": "OK",
+              "code": 200,
+              "_postman_previewlanguage": "json",
+              "body": "{\n  \"days\": 7,\n  \"history\": [\n    {\n      \"date\": \"2026-01-12\",\n      \"total_requests\": 150,\n      \"successful_requests\": 148,\n      \"failed_requests\": 2,\n      \"avg_response_time_ms\": 1100.0\n    },\n    {\n      \"date\": \"2026-01-13\",\n      \"total_requests\": 200,\n      \"successful_requests\": 198,\n      \"failed_requests\": 2,\n      \"avg_response_time_ms\": 1050.5\n    }\n  ],\n  \"usage\": {\n    \"requests_today\": 16,\n    \"limit_today\": 1000\n  }\n}"
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}
