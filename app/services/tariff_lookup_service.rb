@@ -10,12 +10,16 @@ class TariffLookupService
   end
 
   # Search for commodity codes by keyword
+  # Falls back to searching individual terms if compound query returns no results
   def search(query)
-    response = @conn.get("search", q: query)
+    results = search_single(query)
 
-    return [] unless response.success?
+    # If no results and query has multiple words, try fallback search
+    if results.empty? && query.to_s.split.size > 1
+      results = search_with_fallback(query)
+    end
 
-    parse_search_results(response.body)
+    results
   rescue Faraday::Error => e
     Rails.logger.error("Tariff API search failed: #{e.message}")
     []
@@ -49,6 +53,39 @@ class TariffLookupService
   end
 
   private
+
+  # Perform a single search query against the API
+  def search_single(query)
+    response = @conn.get("search", q: query)
+    return [] unless response.success?
+
+    parse_search_results(response.body)
+  end
+
+  # Fallback search: try individual terms and combine results
+  def search_with_fallback(query)
+    words = query.to_s.downcase.split
+    stop_words = %w[a an the of for with in on and or]
+    meaningful_words = words.reject { |w| stop_words.include?(w) || w.length < 3 }
+
+    return [] if meaningful_words.empty?
+
+    all_results = []
+
+    # Search each meaningful term
+    meaningful_words.each do |term|
+      term_results = search_single(term)
+      all_results.concat(term_results)
+    end
+
+    # Deduplicate by code, keeping highest score
+    deduplicated = all_results.group_by { |r| r[:code] }.map do |_code, results|
+      results.max_by { |r| r[:score] || 0 }
+    end
+
+    # Sort by score descending and limit results
+    deduplicated.sort_by { |r| -(r[:score] || 0) }.first(20)
+  end
 
   def parse_search_results(body)
     results = []
@@ -107,19 +144,42 @@ class TariffLookupService
       response = @conn.get("headings/#{id}")
       return [] unless response.success?
 
-      # Get commodities under this heading from included data
+      # Try to get commodities under this heading from included data
       included = response.body["included"] || []
-      included.select { |i| i["type"] == "commodity" }.first(20).each do |item|
-        attrs = item["attributes"] || {}
+      commodities = included.select { |i| i["type"] == "commodity" }
+
+      if commodities.any?
+        commodities.first(20).each do |item|
+          attrs = item["attributes"] || {}
+          results << {
+            code: attrs["goods_nomenclature_item_id"],
+            description: attrs["formatted_description"] || attrs["description"],
+            score: 100 # Exact match
+          }
+        end
+      else
+        # API no longer includes commodities in response - return the heading itself
+        heading_attrs = response.body.dig("data", "attributes") || {}
         results << {
-          code: attrs["goods_nomenclature_item_id"],
-          description: attrs["formatted_description"] || attrs["description"],
+          code: heading_attrs["goods_nomenclature_item_id"],
+          description: heading_attrs["formatted_description"] || heading_attrs["description"],
           score: 100 # Exact match
         }
       end
 
     when "commodities"
       response = @conn.get("commodities/#{id}")
+      return [] unless response.success?
+
+      attrs = response.body.dig("data", "attributes") || {}
+      results << {
+        code: attrs["goods_nomenclature_item_id"],
+        description: attrs["formatted_description"] || attrs["description"],
+        score: 100
+      }
+
+    when "subheadings"
+      response = @conn.get("subheadings/#{id}")
       return [] unless response.success?
 
       attrs = response.body.dig("data", "attributes") || {}
