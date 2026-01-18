@@ -32,6 +32,9 @@ gem "faraday-follow_redirects"
 # API rate limiting
 gem "rack-attack"
 
+# CORS for browser extension
+gem "rack-cors"
+
 # API pagination
 gem "pagy"
 

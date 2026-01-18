@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2026_01_18_110530) do
+ActiveRecord::Schema[8.0].define(version: 2026_01_18_200002) do
   create_table "action_mailbox_inbound_emails", force: :cascade do |t|
     t.integer "status", default: 0, null: false
     t.string "message_id", null: false
@@ -162,6 +162,47 @@ ActiveRecord::Schema[8.0].define(version: 2026_01_18_110530) do
     t.index ["public_id"], name: "index_batch_jobs_on_public_id", unique: true
   end
 
+  create_table "extension_auth_codes", force: :cascade do |t|
+    t.integer "user_id", null: false
+    t.string "code_digest", null: false
+    t.string "extension_id", null: false
+    t.datetime "expires_at", null: false
+    t.datetime "used_at"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["code_digest"], name: "index_extension_auth_codes_on_code_digest", unique: true
+    t.index ["expires_at"], name: "index_extension_auth_codes_on_expires_at"
+    t.index ["user_id"], name: "index_extension_auth_codes_on_user_id"
+  end
+
+  create_table "extension_lookups", force: :cascade do |t|
+    t.string "extension_id", null: false
+    t.string "lookup_type", default: "url"
+    t.text "url"
+    t.string "commodity_code"
+    t.string "ip_address"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["extension_id", "created_at"], name: "index_extension_lookups_on_extension_id_and_created_at"
+    t.index ["extension_id"], name: "index_extension_lookups_on_extension_id"
+  end
+
+  create_table "extension_tokens", force: :cascade do |t|
+    t.integer "user_id", null: false
+    t.string "token_digest", null: false
+    t.string "token_prefix", null: false
+    t.string "extension_id"
+    t.string "name"
+    t.datetime "last_used_at"
+    t.datetime "revoked_at"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["token_digest"], name: "index_extension_tokens_on_token_digest", unique: true
+    t.index ["token_prefix"], name: "index_extension_tokens_on_token_prefix"
+    t.index ["user_id", "revoked_at"], name: "index_extension_tokens_on_user_id_and_revoked_at"
+    t.index ["user_id"], name: "index_extension_tokens_on_user_id"
+  end
+
   create_table "guest_lookups", force: :cascade do |t|
     t.string "guest_token", null: false
     t.string "lookup_type", null: false
@@ -301,6 +342,8 @@ ActiveRecord::Schema[8.0].define(version: 2026_01_18_110530) do
   add_foreign_key "api_requests", "api_keys"
   add_foreign_key "batch_job_items", "batch_jobs"
   add_foreign_key "batch_jobs", "api_keys"
+  add_foreign_key "extension_auth_codes", "users"
+  add_foreign_key "extension_tokens", "users"
   add_foreign_key "inbound_emails", "orders"
   add_foreign_key "inbound_emails", "users"
   add_foreign_key "order_items", "orders"

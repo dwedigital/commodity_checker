@@ -119,6 +119,76 @@
   <% end %>
 </div>
 
+<!-- Extension Tokens -->
+<div class="bg-white shadow rounded-lg mb-8">
+  <div class="px-4 py-5 sm:px-6 border-b border-gray-200">
+    <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+      <div>
+        <h3 class="text-base font-semibold leading-6 text-gray-900">Browser Extension</h3>
+        <p class="text-sm text-gray-500 mt-1">Manage connected browser extension devices</p>
+      </div>
+      <a href="https://chrome.google.com/webstore/detail/tariffik" target="_blank" class="inline-flex items-center rounded-md bg-gray-100 px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-200">
+        <svg class="mr-2 size-5" viewBox="0 0 24 24" fill="currentColor">
+          <path d="M12 0C5.373 0 0 5.373 0 12s5.373 12 12 12 12-5.373 12-12S18.627 0 12 0zm0 4.8a7.2 7.2 0 110 14.4 7.2 7.2 0 010-14.4z"/>
+          <circle cx="12" cy="12" r="3.6"/>
+        </svg>
+        Get Extension
+      </a>
+    </div>
+  </div>
+
+  <% if @extension_tokens.any? %>
+    <div class="overflow-x-auto">
+      <table class="min-w-full divide-y divide-gray-200">
+        <thead class="bg-gray-50">
+          <tr>
+            <th scope="col" class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Name</th>
+            <th scope="col" class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider hidden sm:table-cell">Created</th>
+            <th scope="col" class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider hidden md:table-cell">Last Used</th>
+            <th scope="col" class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Status</th>
+            <th scope="col" class="px-4 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
+          </tr>
+        </thead>
+        <tbody class="bg-white divide-y divide-gray-200">
+          <% @extension_tokens.each do |token| %>
+            <tr class="<%= token.active? ? '' : 'bg-gray-50 opacity-60' %>">
+              <td class="px-4 py-3 whitespace-nowrap text-sm font-medium text-gray-900"><%= token.name || "Chrome Extension" %></td>
+              <td class="px-4 py-3 whitespace-nowrap text-sm text-gray-500 hidden sm:table-cell"><%= token.created_at.strftime("%d %b %Y") %></td>
+              <td class="px-4 py-3 whitespace-nowrap text-sm text-gray-500 hidden md:table-cell">
+                <% if token.last_used_at %>
+                  <%= time_ago_in_words(token.last_used_at) %> ago
+                <% else %>
+                  Never
+                <% end %>
+              </td>
+              <td class="px-4 py-3 whitespace-nowrap">
+                <% if token.active? %>
+                  <span class="inline-flex items-center rounded-full bg-green-100 px-2 py-0.5 text-xs font-medium text-green-800">Active</span>
+                <% else %>
+                  <span class="inline-flex items-center rounded-full bg-red-100 px-2 py-0.5 text-xs font-medium text-red-800">Revoked</span>
+                <% end %>
+              </td>
+              <td class="px-4 py-3 whitespace-nowrap text-right text-sm">
+                <% if token.active? %>
+                  <%= button_to "Revoke", revoke_extension_token_path(token), method: :delete, data: { turbo_confirm: "This will sign out your browser extension. Continue?" }, class: "text-red-600 hover:text-red-900 font-medium" %>
+                <% end %>
+              </td>
+            </tr>
+          <% end %>
+        </tbody>
+      </table>
+    </div>
+  <% else %>
+    <div class="px-4 py-12 text-center">
+      <svg class="mx-auto size-12 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1" d="M13.5 16.875h3.375m0 0h3.375m-3.375 0V13.5m0 3.375v3.375M6 10.5h2.25a2.25 2.25 0 002.25-2.25V6a2.25 2.25 0 00-2.25-2.25H6A2.25 2.25 0 003.75 6v2.25A2.25 2.25 0 006 10.5zm0 9.75h2.25A2.25 2.25 0 0010.5 18v-2.25a2.25 2.25 0 00-2.25-2.25H6a2.25 2.25 0 00-2.25 2.25V18A2.25 2.25 0 006 20.25zm9.75-9.75H18a2.25 2.25 0 002.25-2.25V6A2.25 2.25 0 0018 3.75h-2.25A2.25 2.25 0 0013.5 6v2.25a2.25 2.25 0 002.25 2.25z" />
+      </svg>
+      <h3 class="mt-2 text-sm font-semibold text-gray-900">No extension connected</h3>
+      <p class="mt-1 text-sm text-gray-500">Install our browser extension to look up commodity codes while shopping.</p>
+    </div>
+  <% end %>
+</div>
+
 <!-- Recent API Requests -->
 <% if @api_keys.any? %>
   <div class="bg-white shadow rounded-lg">

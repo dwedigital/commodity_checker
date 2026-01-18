@@ -1,6 +1,14 @@
 class User < ApplicationRecord
   FREE_MONTHLY_LOOKUP_LIMIT = 5
 
+  # Extension lookup limits by tier (per month)
+  EXTENSION_LOOKUP_LIMITS = {
+    free: 5,
+    starter: 100,
+    professional: Float::INFINITY,
+    enterprise: Float::INFINITY
+  }.freeze
+
   # Include default devise modules. Others available are:
   # :confirmable, :lockable, :timeoutable, :trackable and :omniauthable
   devise :database_authenticatable, :registerable,
@@ -11,6 +19,8 @@ class User < ApplicationRecord
   has_many :product_lookups, dependent: :destroy
   has_many :api_keys, dependent: :destroy
   has_many :webhooks, dependent: :destroy
+  has_many :extension_tokens, dependent: :destroy
+  has_many :extension_auth_codes, dependent: :destroy
 
   enum :subscription_tier, {
     free: 0,
@@ -61,6 +71,31 @@ class User < ApplicationRecord
   def lookups_remaining
     return nil unless free?
     [ FREE_MONTHLY_LOOKUP_LIMIT - lookups_this_month, 0 ].max
+  end
+
+  # Extension lookup limits
+  def extension_lookup_limit
+    EXTENSION_LOOKUP_LIMITS[subscription_tier.to_sym] || EXTENSION_LOOKUP_LIMITS[:free]
+  end
+
+  def extension_lookups_this_month
+    product_lookups.where(created_at: Time.current.beginning_of_month..).count
+  end
+
+  def extension_lookups_remaining
+    limit = extension_lookup_limit
+    return nil if limit == Float::INFINITY
+    [ limit - extension_lookups_this_month, 0 ].max
+  end
+
+  def can_perform_extension_lookup?
+    limit = extension_lookup_limit
+    return true if limit == Float::INFINITY
+    extension_lookups_this_month < limit
+  end
+
+  def active_extension_tokens
+    extension_tokens.active
   end
 
   private

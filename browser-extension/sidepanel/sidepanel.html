@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Tariffik</title>
+  <link rel="stylesheet" href="sidepanel.css">
+</head>
+<body>
+  <div class="sidepanel">
+    <!-- Header -->
+    <header class="header">
+      <h1 class="logo">Tariffik</h1>
+      <div id="userStatus" class="user-status"></div>
+    </header>
+
+    <!-- Main content -->
+    <main class="main">
+      <!-- Loading state -->
+      <div id="loading" class="loading">
+        <div class="spinner"></div>
+        <p>Loading...</p>
+      </div>
+
+      <!-- Product info section -->
+      <div id="productSection" class="section hidden">
+        <h2 class="section-title">Product Detected</h2>
+        <div id="productInfo" class="product-info"></div>
+      </div>
+
+      <!-- Manual input section -->
+      <div id="manualSection" class="section hidden">
+        <h2 class="section-title">Enter Product Details</h2>
+        <textarea id="descriptionInput" class="input" placeholder="Describe the product (e.g., 'Cotton t-shirt, blue, men's size medium')"></textarea>
+      </div>
+
+      <!-- Lookup button -->
+      <div id="lookupSection" class="section hidden">
+        <button id="lookupBtn" class="btn btn-primary">
+          <span class="btn-text">Look Up Commodity Code</span>
+          <span class="btn-spinner hidden"></span>
+        </button>
+        <p id="usageInfo" class="usage-info"></p>
+      </div>
+
+      <!-- Result section -->
+      <div id="resultSection" class="section hidden">
+        <h2 class="section-title">Suggested Code</h2>
+        <div id="result" class="result"></div>
+      </div>
+
+      <!-- Error section -->
+      <div id="errorSection" class="section hidden">
+        <div id="errorMessage" class="error"></div>
+      </div>
+
+      <!-- No lookups remaining -->
+      <div id="noLookupsSection" class="section hidden">
+        <div class="no-lookups">
+          <p>You've used all your free lookups.</p>
+          <a href="#" id="signUpLink" target="_blank" class="btn btn-secondary">Sign Up for More</a>
+        </div>
+      </div>
+
+      <!-- Sign in section -->
+      <div id="signInSection" class="section hidden">
+        <div class="sign-in">
+          <p>Sign in to save lookups and get more monthly searches.</p>
+          <button id="signInBtn" class="btn btn-secondary">Sign In to Tariffik</button>
+        </div>
+      </div>
+
+      <!-- Lookup history section -->
+      <div id="historySection" class="section hidden">
+        <h2 class="section-title">Recent Lookups</h2>
+        <div id="historyList" class="history-list"></div>
+      </div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="footer">
+      <a href="#" id="footerLink" target="_blank">tariffik.com</a>
+      <span class="divider">|</span>
+      <a href="#" id="signOutLink" class="hidden">Sign Out</a>
+    </footer>
+  </div>
+
+  <script src="sidepanel.js" type="module"></script>
+</body>
+</html>
