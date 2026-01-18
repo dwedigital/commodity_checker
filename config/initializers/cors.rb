@@ -5,14 +5,13 @@ Rails.application.config.middleware.insert_before 0, Rack::Cors do
   allow do
     # Chrome extension origins use the chrome-extension:// protocol
     # The extension ID is generated when the extension is loaded
-    # In development, use chrome-extension://* to allow any extension
-    # In production, restrict to the specific published extension ID
-    if Rails.env.production?
-      # Replace with actual extension ID after publishing to Chrome Web Store
-      extension_id = ENV.fetch("CHROME_EXTENSION_ID", "*")
+    # In production with a specific extension ID set, restrict to that ID
+    # Otherwise, allow any chrome extension (required for testing/staging)
+    extension_id = ENV["CHROME_EXTENSION_ID"]
+    if extension_id.present?
       origins "chrome-extension://#{extension_id}"
     else
-      # Allow any extension in development
+      # Allow any extension (use regex for wildcard matching)
       origins(/chrome-extension:\/\/.*/)
     end
 
@@ -25,8 +24,8 @@ Rails.application.config.middleware.insert_before 0, Rack::Cors do
 
   # Also allow the extension auth callback
   allow do
-    if Rails.env.production?
-      extension_id = ENV.fetch("CHROME_EXTENSION_ID", "*")
+    extension_id = ENV["CHROME_EXTENSION_ID"]
+    if extension_id.present?
       origins "chrome-extension://#{extension_id}"
     else
       origins(/chrome-extension:\/\/.*/)
