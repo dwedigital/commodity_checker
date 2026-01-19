@@ -92,17 +92,7 @@ class LlmCommoditySuggester
   end
 
   def parse_llm_response(response)
-    content = response.content.first&.text
-    return nil unless content
-
-    # Extract JSON from response (handle markdown code blocks)
-    json_match = content.match(/\{[^{}]*\}/m)
-    return nil unless json_match
-
-    JSON.parse(json_match[0]).symbolize_keys
-  rescue JSON::ParserError => e
-    Rails.logger.error("Failed to parse LLM response: #{e.message}")
-    nil
+    LlmResponseParser.extract_json_from_response(response)
   end
 
   def validate_and_enrich(suggestion)

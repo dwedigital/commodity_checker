@@ -1,32 +1,28 @@
 module Api
   module V1
     class UsageController < BaseController
-      before_action :set_request_start_time
-
       # GET /api/v1/usage
       # Get current usage statistics
       def show
         stats = current_api_key.usage_stats
 
-        # Add historical data
-        today_requests = current_api_key.api_requests.today.count
+        # Load today's requests once to avoid N+1 queries
+        today_requests_relation = current_api_key.api_requests.today
+        today_requests_count = today_requests_relation.count
         month_requests = current_api_key.api_requests.this_month.count
 
-        # Response time averages
-        avg_response_time = current_api_key.api_requests
-                                           .today
+        # Response time averages (computed from loaded relation)
+        avg_response_time = today_requests_relation
                                            .where.not(response_time_ms: nil)
                                            .average(:response_time_ms)
                                            &.round(1)
 
-        # Success rate
-        total_today = current_api_key.api_requests.today.count
-        successful_today = current_api_key.api_requests.today.successful.count
-        success_rate = total_today > 0 ? (successful_today.to_f / total_today * 100).round(1) : 100.0
+        # Success rate (use cached count)
+        successful_today = today_requests_relation.successful.count
+        success_rate = today_requests_count > 0 ? (successful_today.to_f / today_requests_count * 100).round(1) : 100.0
 
         # Endpoint breakdown
-        endpoint_stats = current_api_key.api_requests
-                                        .today
+        endpoint_stats = today_requests_relation
                                         .group(:endpoint)
                                         .count
 
@@ -38,7 +34,7 @@ module Api
           },
           limits: stats,
           usage: {
-            today: today_requests,
+            today: today_requests_count,
             this_month: month_requests,
             avg_response_time_ms: avg_response_time,
             success_rate_percent: success_rate
