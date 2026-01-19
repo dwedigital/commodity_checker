@@ -7,11 +7,11 @@
 Rails.application.configure do
   config.content_security_policy do |policy|
     policy.default_src :self
-    policy.font_src    :self, :data
+    policy.font_src    :self, :data, "https://fonts.gstatic.com"
     policy.img_src     :self, :https, :http, :data, :blob, "http://localhost:3000", "http://127.0.0.1:3000"
     policy.object_src  :none
     policy.script_src  :self
-    policy.style_src   :self, :unsafe_inline  # Tailwind CSS requires unsafe-inline
+    policy.style_src   :self, :unsafe_inline, "https://fonts.googleapis.com"  # Tailwind CSS + Google Fonts
     policy.connect_src :self
     policy.frame_ancestors :none
     policy.base_uri    :self

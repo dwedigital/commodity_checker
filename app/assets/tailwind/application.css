@@ -1,1 +1,27 @@
 @import "tailwindcss";
+
+/* Custom fonts */
+@theme {
+  --font-body: "Plus Jakarta Sans", sans-serif;
+  --font-heading: "Space Grotesk", sans-serif;
+}
+
+/* Set default body font */
+body {
+  font-family: var(--font-body);
+}
+
+/* Apply Space Grotesk to headings and large text */
+h1, h2, h3, h4, h5, h6,
+.text-3xl, .text-4xl, .text-5xl, .text-6xl, .text-7xl, .text-8xl, .text-9xl {
+  font-family: var(--font-heading);
+}
+
+/* Utility classes */
+.font-body {
+  font-family: var(--font-body);
+}
+
+.font-heading {
+  font-family: var(--font-heading);
+}
