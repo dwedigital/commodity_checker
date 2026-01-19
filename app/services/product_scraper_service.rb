@@ -28,6 +28,23 @@ class ProductScraperService
     "Connection failed"
   ].freeze
 
+  # Errors from premium proxy that should trigger stealth proxy fallback
+  STEALTH_FALLBACK_ERRORS = [
+    "ScrapingBee HTTP 500",
+    "ScrapingBee HTTP 403",
+    "ScrapingBee HTTP 401"
+  ].freeze
+
+  # Tracking parameters to strip from URLs before scraping
+  TRACKING_PARAMS = %w[
+    utm_source utm_medium utm_campaign utm_term utm_content
+    gclid gbraid gad_source gad_campaignid
+    fbclid fb_action_ids fb_action_types fb_source
+    mc_cid mc_eid
+    ref ref_src ref_url
+    _ga _gl
+  ].freeze
+
   SCRAPINGBEE_API_URL = "https://app.scrapingbee.com/api/v1/".freeze
 
   def initialize
@@ -51,18 +68,47 @@ class ProductScraperService
   def scrape(url)
     return error_result("URL is blank") if url.blank?
 
-    retailer = detect_retailer(url)
+    # Clean URL by removing tracking parameters
+    clean_url = strip_tracking_params(url)
+    retailer = detect_retailer(clean_url)
+
+    # Track fetch attempts for user feedback
+    fetch_attempts = []
 
     # Try direct fetch first
-    response = fetch_page(url)
+    fetch_attempts << { method: "direct", status: "attempting", message: "Fetching page..." }
+    response = fetch_page(clean_url)
 
-    # If direct fetch failed with a recoverable error, try ScrapingBee
+    # If direct fetch failed with a recoverable error, try ScrapingBee with premium proxy
     if response[:error] && should_use_fallback?(response[:error])
-      Rails.logger.info("ProductScraperService: Direct fetch failed (#{response[:error]}), trying ScrapingBee for #{url}")
-      response = fetch_via_scrapingbee(url)
+      fetch_attempts.last[:status] = "failed"
+      fetch_attempts.last[:message] = "Direct fetch blocked (#{response[:error]})"
+
+      fetch_attempts << { method: "premium_proxy", status: "attempting", message: "Trying with proxy..." }
+      Rails.logger.info("ProductScraperService: Direct fetch failed (#{response[:error]}), trying ScrapingBee premium proxy")
+      response = fetch_via_scrapingbee(clean_url, stealth: false)
+
+      # If premium proxy failed, try stealth proxy as last resort
+      if response[:error] && should_use_stealth_fallback?(response[:error])
+        fetch_attempts.last[:status] = "failed"
+        fetch_attempts.last[:message] = "Premium proxy blocked (#{response[:error]})"
+
+        fetch_attempts << { method: "stealth_proxy", status: "attempting", message: "Site has strong protection, using stealth mode..." }
+        Rails.logger.info("ProductScraperService: Premium proxy failed (#{response[:error]}), trying ScrapingBee stealth proxy")
+        response = fetch_via_scrapingbee(clean_url, stealth: true)
+      end
     end
 
-    return error_result("Failed to fetch page: #{response[:error]}") if response[:error]
+    if response[:error]
+      fetch_attempts.last[:status] = "failed"
+      fetch_attempts.last[:message] = response[:error]
+      result = error_result("Failed to fetch page: #{response[:error]}")
+      result[:fetch_attempts] = fetch_attempts
+      return result
+    end
+
+    fetch_attempts.last[:status] = "success"
+    fetch_attempts.last[:message] = "Page fetched successfully"
 
     html = response[:body]
     result = extract_product_data(html, url)
@@ -70,13 +116,16 @@ class ProductScraperService
     result[:url] = url
     result[:scraped_at] = Time.current
     result[:fetched_via] = response[:fetched_via] || :direct
+    result[:fetch_attempts] = fetch_attempts
 
     # Determine scrape status based on quality
     result[:status] = determine_status(result)
     result
   rescue => e
     Rails.logger.error("ProductScraperService error for #{url}: #{e.message}")
-    error_result(e.message)
+    result = error_result(e.message)
+    result[:fetch_attempts] = fetch_attempts if defined?(fetch_attempts)
+    result
   end
 
   def detect_retailer(url)
@@ -104,7 +153,7 @@ class ProductScraperService
     { error: e.message }
   end
 
-  def fetch_via_scrapingbee(url)
+  def fetch_via_scrapingbee(url, stealth: false)
     api_key = ENV["SCRAPINGBEE_API_KEY"]
 
     unless api_key.present?
@@ -112,19 +161,29 @@ class ProductScraperService
       return { error: "ScrapingBee not configured" }
     end
 
+    # Detect country from URL for better proxy selection
+    country = detect_country_from_url(url)
+    proxy_type = stealth ? "stealth" : "premium"
+
     params = {
       api_key: api_key,
       url: url,
       render_js: "true",           # Render JavaScript for SPAs
-      premium_proxy: "true",       # Use premium proxies for better success rate
-      country_code: "gb"           # UK proxy for UK-specific content
+      country_code: country
     }
+
+    # Use either stealth_proxy (residential IPs, 75 credits) or premium_proxy (datacenter, 25 credits)
+    if stealth
+      params[:stealth_proxy] = "true"
+    else
+      params[:premium_proxy] = "true"
+    end
 
     response = @scrapingbee_conn.get(SCRAPINGBEE_API_URL, params)
 
     if response.success?
-      Rails.logger.info("ProductScraperService: ScrapingBee succeeded for #{url}")
-      { body: response.body, status: response.status, fetched_via: :scrapingbee }
+      Rails.logger.info("ProductScraperService: ScrapingBee #{proxy_type} proxy succeeded for #{url}")
+      { body: response.body, status: response.status, fetched_via: stealth ? :scrapingbee_stealth : :scrapingbee }
     else
       # ScrapingBee returns error details in the response body
       error_msg = "ScrapingBee HTTP #{response.status}"
@@ -134,7 +193,7 @@ class ProductScraperService
       rescue JSON::ParserError
         # Use default error message
       end
-      Rails.logger.error("ProductScraperService: ScrapingBee failed for #{url}: #{error_msg}")
+      Rails.logger.error("ProductScraperService: ScrapingBee #{proxy_type} proxy failed for #{url}: #{error_msg}")
       { error: error_msg }
     end
   rescue Faraday::TimeoutError
@@ -149,6 +208,43 @@ class ProductScraperService
     return false unless ENV["SCRAPINGBEE_API_KEY"].present?
 
     FALLBACK_ERRORS.any? { |fallback_error| error.to_s.include?(fallback_error) }
+  end
+
+  def should_use_stealth_fallback?(error)
+    return false unless ENV["SCRAPINGBEE_API_KEY"].present?
+
+    STEALTH_FALLBACK_ERRORS.any? { |fallback_error| error.to_s.include?(fallback_error) }
+  end
+
+  def strip_tracking_params(url)
+    uri = URI.parse(url)
+    return url unless uri.query
+
+    params = URI.decode_www_form(uri.query)
+    clean_params = params.reject { |key, _| TRACKING_PARAMS.include?(key) }
+
+    if clean_params.empty?
+      uri.query = nil
+    else
+      uri.query = URI.encode_www_form(clean_params)
+    end
+
+    uri.to_s
+  rescue URI::InvalidURIError
+    url
+  end
+
+  def detect_country_from_url(url)
+    # Extract country from URL patterns like .co.uk, /ie/, /de/, etc.
+    return "gb" if url.match?(/\.co\.uk|\/uk\/|\/en-gb/i)
+    return "ie" if url.match?(/\/ie\/|\/en-ie/i)
+    return "de" if url.match?(/\.de\/|\/de\/|\/de-de/i)
+    return "fr" if url.match?(/\.fr\/|\/fr\/|\/fr-fr/i)
+    return "es" if url.match?(/\.es\/|\/es\/|\/es-es/i)
+    return "it" if url.match?(/\.it\/|\/it\/|\/it-it/i)
+    return "us" if url.match?(/\.com(?!\.)|\/us\/|\/en-us/i)
+
+    "gb"  # Default to UK
   end
 
   def extract_product_data(html, url)

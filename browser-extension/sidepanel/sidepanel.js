@@ -7,6 +7,7 @@ const elements = {
   loading: document.getElementById('loading'),
   productSection: document.getElementById('productSection'),
   productInfo: document.getElementById('productInfo'),
+  clearProductLink: document.getElementById('clearProductLink'),
   manualSection: document.getElementById('manualSection'),
   descriptionInput: document.getElementById('descriptionInput'),
   lookupSection: document.getElementById('lookupSection'),
@@ -23,6 +24,7 @@ const elements = {
   signOutLink: document.getElementById('signOutLink'),
   historySection: document.getElementById('historySection'),
   historyList: document.getElementById('historyList'),
+  clearHistoryLink: document.getElementById('clearHistoryLink'),
   signUpLink: document.getElementById('signUpLink'),
   footerLink: document.getElementById('footerLink')
 };
@@ -35,6 +37,8 @@ elements.footerLink.href = SITE_BASE_URL;
 let currentProduct = null;
 let authStatus = null;
 let lookupHistory = [];
+let isLookupInProgress = false;  // Lock to prevent UI updates during lookup
+let hasActiveResult = false;      // Track if we're showing a result
 
 // Initialize side panel
 async function init() {
@@ -187,6 +191,12 @@ function showManualInput() {
   elements.productSection.classList.add('hidden');
 }
 
+// Clear detected product and switch to manual input
+function clearDetectedProduct() {
+  currentProduct = null;
+  showManualInput();
+}
+
 // Load lookup history from local storage
 async function loadHistory() {
   try {
@@ -255,23 +265,82 @@ async function saveToHistory(title, code) {
   }
 }
 
+// Clear all lookup history
+async function clearHistory() {
+  try {
+    await chrome.storage.local.remove('lookupHistory');
+    lookupHistory = [];
+    displayHistory();
+  } catch (error) {
+    console.error('Failed to clear history:', error);
+  }
+}
+
+// Progress messages for URL-based lookups
+const PROGRESS_MESSAGES = [
+  { delay: 0, message: 'Fetching product page...' },
+  { delay: 3000, message: 'Analyzing page content...' },
+  { delay: 6000, message: 'Trying enhanced fetch methods...' },
+  { delay: 10000, message: 'Using advanced techniques...' },
+  { delay: 15000, message: 'Almost there, please wait...' }
+];
+
+// Update button text with progress message
+function updateProgressMessage(message) {
+  const btnText = elements.lookupBtn.querySelector('.btn-text');
+  if (btnText) {
+    btnText.textContent = message;
+  }
+}
+
+// Start progress message rotation
+function startProgressMessages(isUrlLookup) {
+  const timers = [];
+
+  if (isUrlLookup) {
+    // For URL lookups, show progressive messages
+    PROGRESS_MESSAGES.forEach(({ delay, message }) => {
+      const timer = setTimeout(() => updateProgressMessage(message), delay);
+      timers.push(timer);
+    });
+  } else {
+    // For description lookups, just show analyzing
+    updateProgressMessage('Analyzing description...');
+  }
+
+  return timers;
+}
+
+// Clear progress timers
+function clearProgressTimers(timers) {
+  timers.forEach(timer => clearTimeout(timer));
+}
+
 // Perform lookup
 async function performLookup() {
+  // Lock to prevent navigation from updating product info during lookup
+  isLookupInProgress = true;
+  hasActiveResult = false;
+
   // Show loading state on button
   elements.lookupBtn.disabled = true;
-  elements.lookupBtn.querySelector('.btn-text').textContent = 'Looking up...';
+  elements.lookupBtn.querySelector('.btn-text').textContent = 'Starting lookup...';
   elements.lookupBtn.querySelector('.btn-spinner').classList.remove('hidden');
 
   // Hide previous results/errors
   elements.resultSection.classList.add('hidden');
   elements.errorSection.classList.add('hidden');
 
+  let progressTimers = [];
+
   try {
     const lookupData = {};
+    let isUrlLookup = false;
 
     // Use product URL if available, otherwise use description
     if (currentProduct?.url) {
       lookupData.url = currentProduct.url;
+      isUrlLookup = true;
       if (currentProduct.title) {
         lookupData.product = {
           title: currentProduct.title,
@@ -287,11 +356,17 @@ async function performLookup() {
       lookupData.description = description;
     }
 
+    // Start progress message rotation
+    progressTimers = startProgressMessages(isUrlLookup);
+
     // Perform lookup via service worker
     const result = await chrome.runtime.sendMessage({
       type: 'LOOKUP',
       data: lookupData
     });
+
+    // Clear progress timers
+    clearProgressTimers(progressTimers);
 
     if (result.error) {
       if (result.status === 402) {
@@ -306,6 +381,7 @@ async function performLookup() {
       }
     } else {
       showResult(result);
+      hasActiveResult = true;  // Mark that we have an active result
 
       // Save to local history
       const title = currentProduct?.title || elements.descriptionInput.value.trim();
@@ -318,13 +394,27 @@ async function performLookup() {
       updateUsageUI(usageData);
     }
   } catch (error) {
+    clearProgressTimers(progressTimers);
     showError(error.message || 'An unexpected error occurred');
   } finally {
+    // Unlock - allow navigation updates again
+    isLookupInProgress = false;
+
     // Reset button state
     elements.lookupBtn.disabled = false;
     elements.lookupBtn.querySelector('.btn-text').textContent = 'Look Up Commodity Code';
     elements.lookupBtn.querySelector('.btn-spinner').classList.add('hidden');
   }
+}
+
+// Format fetch method for display
+function formatFetchMethod(method) {
+  const methodLabels = {
+    'direct': 'Direct fetch',
+    'premium_proxy': 'Enhanced proxy',
+    'stealth_proxy': 'Advanced stealth mode'
+  };
+  return methodLabels[method] || method;
 }
 
 // Show result
@@ -334,14 +424,22 @@ function showResult(result) {
   const confidenceText = confidence >= 0.8 ? 'High confidence' : confidence >= 0.5 ? 'Medium confidence' : 'Low confidence';
   const commodityCode = result.commodity_code || 'N/A';
 
+  // Build fetch method info if available
+  let fetchInfo = '';
+  const scrapedProduct = result.scraped_product;
+  if (scrapedProduct?.fetched_via) {
+    fetchInfo = `<div class="fetch-info">Fetched via: ${escapeHtml(formatFetchMethod(scrapedProduct.fetched_via))}</div>`;
+  }
+
   elements.result.innerHTML = `
     <div class="code">${escapeHtml(commodityCode)}</div>
     <div class="confidence ${confidenceClass}">${confidenceText} (${Math.round(confidence * 100)}%)</div>
     <div class="reasoning">${escapeHtml(result.reasoning || 'No additional details available')}</div>
     ${result.category ? `<div class="category">Category: ${escapeHtml(result.category)}</div>` : ''}
+    ${fetchInfo}
     <div class="actions">
       <button class="btn btn-secondary" id="copyCodeBtn">Copy Code</button>
-      <a href="${SITE_BASE_URL}/product_lookups" target="_blank" class="btn btn-secondary">View History</a>
+      <a href="${SITE_BASE_URL}/dashboard/product_lookups" target="_blank" class="btn btn-secondary">View History</a>
     </div>
   `;
 
@@ -405,6 +503,14 @@ elements.signOutLink.addEventListener('click', (e) => {
   e.preventDefault();
   signOut();
 });
+elements.clearHistoryLink.addEventListener('click', (e) => {
+  e.preventDefault();
+  clearHistory();
+});
+elements.clearProductLink.addEventListener('click', (e) => {
+  e.preventDefault();
+  clearDetectedProduct();
+});
 
 // Allow Enter key in textarea to trigger lookup
 elements.descriptionInput.addEventListener('keydown', (e) => {
@@ -446,12 +552,22 @@ chrome.tabs.onUpdated.addListener(async (tabId, changeInfo, tab) => {
 
 // Refresh product info from current tab
 async function refreshProductInfo() {
+  // If lookup is in progress, don't update anything - keep product info locked
+  if (isLookupInProgress) {
+    return;
+  }
+
   try {
+    // If there was an active result, clear it since we navigated away
+    if (hasActiveResult) {
+      hasActiveResult = false;
+      elements.resultSection.classList.add('hidden');
+    }
+
     // Show loading state briefly
     elements.loading.classList.remove('hidden');
     elements.productSection.classList.add('hidden');
     elements.manualSection.classList.add('hidden');
-    elements.resultSection.classList.add('hidden');
     elements.errorSection.classList.add('hidden');
 
     const [tab] = await chrome.tabs.query({ active: true, currentWindow: true });

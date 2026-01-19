@@ -29,8 +29,9 @@ class ApiCommodityService
     if scraped[:status] == :failed
       return {
         error: scraped[:error] || "Failed to scrape product page",
-        url: url
-      }
+        url: url,
+        fetch_attempts: scraped[:fetch_attempts]
+      }.compact
     end
 
     # Build description from scraped data
@@ -98,7 +99,9 @@ class ApiCommodityService
       currency: scraped[:currency],
       image_url: scraped[:image_url],
       retailer: scraped[:retailer_name],
-      url: scraped[:url]
+      url: scraped[:url],
+      fetched_via: scraped[:fetched_via],
+      fetch_attempts: scraped[:fetch_attempts]
     }.compact
   end
 end
