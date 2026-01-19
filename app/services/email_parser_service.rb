@@ -1,4 +1,12 @@
 class EmailParserService
+  # Configuration constants
+  MIN_PRODUCT_DESCRIPTION_LENGTH = 4
+  MAX_PRODUCT_DESCRIPTION_LENGTH = 150
+  MAX_LINE_LENGTH_FOR_PRODUCT = 80
+  MAX_PRODUCT_DESCRIPTIONS = 10
+  MAX_PRODUCT_IMAGES = 10
+  MIN_IMAGE_DIMENSION = 50
+
   # Common tracking URL patterns for major carriers
   TRACKING_PATTERNS = {
     royal_mail: [
@@ -113,30 +121,32 @@ class EmailParserService
   def extract_tracking_urls
     urls = []
 
+    extract_carrier_tracking_urls(urls)
+    extract_generic_tracking_urls(urls)
+    extract_tracking_links_from_html(urls)
+
+    urls.uniq { |u| u[:url] }
+  end
+
+  def extract_carrier_tracking_urls(urls)
     TRACKING_PATTERNS.each do |carrier, patterns|
       patterns.each do |pattern|
-        matches = @text.scan(pattern)
-        matches.each do |match|
+        @text.scan(pattern).each do |match|
           url = match.is_a?(Array) ? match.first : match
           url = "https://#{url}" unless url.start_with?("http")
           urls << { carrier: carrier.to_s, url: clean_url(url) }
         end
       end
     end
+  end
 
-    # Also extract any URLs that look like tracking links
-    generic_urls = @text.scan(%r{https?://[^\s"'<>]+})
-    generic_urls.each do |url|
+  def extract_generic_tracking_urls(urls)
+    @text.scan(%r{https?://[^\s"'<>]+}).each do |url|
       next if urls.any? { |u| u[:url] == url }
       next unless url.match?(/track|delivery|shipment|parcel/i)
 
       urls << { carrier: "unknown", url: clean_url(url) }
     end
-
-    # Extract tracking links from HTML where text mentions "tracking" even if URL is a redirect
-    extract_tracking_links_from_html(urls)
-
-    urls.uniq { |u| u[:url] }
   end
 
   def extract_tracking_links_from_html(urls)
@@ -257,15 +267,20 @@ class EmailParserService
     # Strategy 3: Quantity patterns (2x Widget, Qty: 1 Widget)
     extract_quantity_patterns(descriptions)
 
-    # Clean up and deduplicate
-    descriptions = descriptions
+    clean_and_deduplicate_descriptions(descriptions)
+  end
+
+  def clean_and_deduplicate_descriptions(descriptions)
+    descriptions
       .map { |d| clean_product_description(d) }
       .compact
-      .reject { |d| d.length < 4 || d.length > 150 }
-      .uniq { |d| d.downcase.gsub(/[^a-z0-9]/, "") }
-      .first(10)
+      .reject { |d| d.length < MIN_PRODUCT_DESCRIPTION_LENGTH || d.length > MAX_PRODUCT_DESCRIPTION_LENGTH }
+      .uniq { |d| normalize_for_dedup(d) }
+      .first(MAX_PRODUCT_DESCRIPTIONS)
+  end
 
-    descriptions
+  def normalize_for_dedup(text)
+    text.downcase.gsub(/[^a-z0-9]/, "")
   end
 
   def extract_products_before_attributes(descriptions)
@@ -273,13 +288,7 @@ class EmailParserService
     seen = Set.new
 
     lines.each_with_index do |line, index|
-      # Skip if this line IS an attribute or header
-      next if line.match?(/^(Color|Size|Qty|Quantity|Article|SKU|Item\s*#|Price|Total|Subtotal|Shipping|Discount|Order|Payment|Delivery|Thank|Info|Subscribe|Follow)[\s:]/i)
-      next if line.match?(/^\d+[\s]*(USD|GBP|EUR|£|\$|x\s)/i)
-      next if line.match?(/^[\d\s.,£$€]+$/)
-      next if line.length < 4 || line.length > 80
-      # Skip lines that are just bracketed text (often image alt text)
-      next if line.match?(/^\[.+\]$/)
+      next if skip_line_for_product_extraction?(line)
 
       # Check if followed by product attributes
       next_lines = lines[index + 1, 6] || []
@@ -365,8 +374,8 @@ class EmailParserService
       height = height_match ? height_match[1].to_i : nil
 
       # Skip very small images (likely icons/pixels)
-      next if width && width < 50
-      next if height && height < 50
+      next if width && width < MIN_IMAGE_DIMENSION
+      next if height && height < MIN_IMAGE_DIMENSION
 
       images << {
         url: src,
@@ -376,11 +385,14 @@ class EmailParserService
       }
     end
 
+    sort_and_limit_images(images)
+  end
+
+  def sort_and_limit_images(images)
     # Sort by size (larger images first, as they're more likely to be product images)
-    # Return full image data including alt text for matching
     images.sort_by { |img| -(img[:width] || 0) * (img[:height] || 0) }
           .uniq { |img| img[:url] }
-          .first(10)  # Limit to 10 images
+          .first(MAX_PRODUCT_IMAGES)
   end
 
   # Match extracted images to product descriptions using alt text
@@ -479,6 +491,21 @@ class EmailParserService
     NON_PRODUCT_IMAGE_PATTERNS.any? { |pattern| url.match?(pattern) }
   end
 
+  def skip_line_for_product_extraction?(line)
+    # Skip attribute or header lines
+    return true if line.match?(/^(Color|Size|Qty|Quantity|Article|SKU|Item\s*#|Price|Total|Subtotal|Shipping|Discount|Order|Payment|Delivery|Thank|Info|Subscribe|Follow)[\s:]/i)
+    # Skip price lines
+    return true if line.match?(/^\d+[\s]*(USD|GBP|EUR|£|\$|x\s)/i)
+    # Skip numeric-only lines
+    return true if line.match?(/^[\d\s.,£$€]+$/)
+    # Skip lines that are too short or too long
+    return true if line.length < MIN_PRODUCT_DESCRIPTION_LENGTH || line.length > MAX_LINE_LENGTH_FOR_PRODUCT
+    # Skip lines that are just bracketed text (often image alt text)
+    return true if line.match?(/^\[.+\]$/)
+
+    false
+  end
+
   def clean_product_description(desc)
     return nil unless desc.is_a?(String)
 
@@ -491,11 +518,15 @@ class EmailParserService
                .strip
 
     # Filter out non-products
-    return nil if desc.length < 4
+    return nil if desc.length < MIN_PRODUCT_DESCRIPTION_LENGTH
     return nil if desc.match?(/^[\d\s.,]+$/)
-    return nil if desc.match?(/^(Total|Subtotal|Shipping|Tax|Discount|Order|Thank|Subscribe|Follow|View|Copyright|Color|Size|Qty|Your order|Order details|Payment method|Delivery|Next step)/i)
+    return nil if non_product_pattern?(desc)
 
     desc.presence
+  end
+
+  def non_product_pattern?(text)
+    text.match?(/^(Total|Subtotal|Shipping|Tax|Discount|Order|Thank|Subscribe|Follow|View|Copyright|Color|Size|Qty|Your order|Order details|Payment method|Delivery|Next step)/i)
   end
 
   def clean_url(url)
