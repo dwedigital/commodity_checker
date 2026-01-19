@@ -1,168 +1,179 @@
 <% content_for(:title) { "Terms & Conditions - Tariffik" } %>
 
-<div class="bg-white">
-  <div class="mx-auto max-w-3xl py-12">
-    <h1 class="text-3xl font-bold tracking-tight text-gray-900 mb-8">Terms & Conditions</h1>
+<div class="mx-auto max-w-3xl">
+  <!-- Header -->
+  <div class="mb-12">
+    <span class="inline-flex items-center rounded-full bg-brand-mint/50 px-4 py-1.5 text-sm font-semibold text-brand-dark mb-4">
+      LEGAL
+    </span>
+    <h1 class="text-4xl font-bold tracking-tight text-brand-dark mb-4">Terms & Conditions</h1>
+    <p class="text-gray-500">
+      Last updated: <%= Date.current.strftime("%d %B %Y") %>
+    </p>
+  </div>
 
-    <div class="prose prose-indigo max-w-none">
-      <p class="text-gray-600 text-lg mb-8">
-        Last updated: <%= Date.current.strftime("%d %B %Y") %>
-      </p>
+  <div class="prose-custom">
+    <p class="text-gray-700 text-lg mb-8">
+      Please read these terms and conditions carefully before using Tariffik. By accessing or using the service, you agree to be bound by these terms.
+    </p>
 
-      <p class="text-gray-700 mb-6">
-        Please read these terms and conditions carefully before using Tariffik. By accessing or using the service, you agree to be bound by these terms.
-      </p>
+    <h2>1. About the Service</h2>
+    <p>
+      Tariffik is a commodity code lookup tool operated from Jersey, Channel Islands. The service uses artificial intelligence to analyse product information and suggest Harmonized System (HS) tariff codes for customs purposes.
+    </p>
 
-      <h2 class="text-xl font-semibold text-gray-900 mt-8 mb-4">1. About the Service</h2>
-      <p class="text-gray-700 mb-6">
-        Tariffik is a commodity code lookup tool operated from Jersey, Channel Islands. The service uses artificial intelligence to analyse product information and suggest Harmonized System (HS) tariff codes for customs purposes.
-      </p>
-
-      <h2 class="text-xl font-semibold text-gray-900 mt-8 mb-4">2. Important Disclaimer About Commodity Codes</h2>
-      <div class="bg-amber-50 border border-amber-200 rounded-lg p-4 mb-6">
-        <p class="text-amber-800 font-medium mb-2">Please read this section carefully:</p>
-        <ul class="list-disc list-inside text-amber-700 space-y-2">
-          <li>Commodity codes provided by Tariffik are <strong>suggestions only</strong> and should not be treated as definitive classifications.</li>
-          <li>The ultimate responsibility for declaring the correct commodity code rests with the importer or their customs agent.</li>
-          <li>AI-generated suggestions may be incorrect. Always verify codes against official sources before use in customs declarations.</li>
-          <li>We strongly recommend consulting with a qualified customs broker or HMRC for high-value or complex imports.</li>
-          <li>Tariffik is not a licensed customs broker and does not provide customs brokerage services.</li>
-        </ul>
-      </div>
-      <p class="text-gray-700 mb-6">
-        You acknowledge that using an incorrect commodity code may result in:
-      </p>
-      <ul class="list-disc list-inside text-gray-700 mb-6 space-y-1">
-        <li>Customs delays or seizure of goods</li>
-        <li>Incorrect duty rates being applied</li>
-        <li>Penalties or fines from customs authorities</li>
-        <li>Additional charges or assessments</li>
+    <h2>2. Important Disclaimer About Commodity Codes</h2>
+    <div class="rounded-xl border-2 border-brand-orange bg-brand-orange/10 p-6 my-6">
+      <p class="text-brand-dark font-semibold mb-3">Please read this section carefully:</p>
+      <ul class="space-y-2 mb-0">
+        <li>Commodity codes provided by Tariffik are <strong>suggestions only</strong> and should not be treated as definitive classifications.</li>
+        <li>The ultimate responsibility for declaring the correct commodity code rests with the importer or their customs agent.</li>
+        <li>AI-generated suggestions may be incorrect. Always verify codes against official sources before use in customs declarations.</li>
+        <li>We strongly recommend consulting with a qualified customs broker or HMRC for high-value or complex imports.</li>
+        <li>Tariffik is not a licensed customs broker and does not provide customs brokerage services.</li>
       </ul>
-      <p class="text-gray-700 mb-6">
-        Tariffik is not liable for any consequences arising from the use of suggested commodity codes.
-      </p>
+    </div>
+    <p>
+      You acknowledge that using an incorrect commodity code may result in:
+    </p>
+    <ul>
+      <li>Customs delays or seizure of goods</li>
+      <li>Incorrect duty rates being applied</li>
+      <li>Penalties or fines from customs authorities</li>
+      <li>Additional charges or assessments</li>
+    </ul>
+    <p>
+      Tariffik is not liable for any consequences arising from the use of suggested commodity codes.
+    </p>
 
-      <h2 class="text-xl font-semibold text-gray-900 mt-8 mb-4">3. User Accounts</h2>
-      <h3 class="text-lg font-medium text-gray-900 mt-6 mb-3">3.1 Account Creation</h3>
-      <p class="text-gray-700 mb-4">
-        To access certain features, you must create an account. You agree to:
-      </p>
-      <ul class="list-disc list-inside text-gray-700 mb-6 space-y-1">
-        <li>Provide accurate and complete information</li>
-        <li>Maintain the security of your password</li>
-        <li>Accept responsibility for all activity under your account</li>
-        <li>Notify us immediately of any unauthorised use</li>
-      </ul>
+    <h2>3. User Accounts</h2>
+    <h3>3.1 Account Creation</h3>
+    <p>
+      To access certain features, you must create an account. You agree to:
+    </p>
+    <ul>
+      <li>Provide accurate and complete information</li>
+      <li>Maintain the security of your password</li>
+      <li>Accept responsibility for all activity under your account</li>
+      <li>Notify us immediately of any unauthorised use</li>
+    </ul>
 
-      <h3 class="text-lg font-medium text-gray-900 mt-6 mb-3">3.2 Account Termination</h3>
-      <p class="text-gray-700 mb-6">
-        We reserve the right to suspend or terminate accounts that violate these terms or are used for abusive purposes. You may delete your account at any time.
-      </p>
+    <h3>3.2 Account Termination</h3>
+    <p>
+      We reserve the right to suspend or terminate accounts that violate these terms or are used for abusive purposes. You may delete your account at any time.
+    </p>
 
-      <h2 class="text-xl font-semibold text-gray-900 mt-8 mb-4">4. Acceptable Use</h2>
-      <p class="text-gray-700 mb-4">You agree not to:</p>
-      <ul class="list-disc list-inside text-gray-700 mb-6 space-y-1">
-        <li>Use the service for any unlawful purpose</li>
-        <li>Attempt to circumvent rate limits or access restrictions</li>
-        <li>Interfere with or disrupt the service or its infrastructure</li>
-        <li>Use automated scripts or bots to access the service (except via official APIs, if provided)</li>
-        <li>Impersonate another person or entity</li>
-        <li>Submit false, misleading, or fraudulent information</li>
-        <li>Use the service to facilitate customs fraud or evasion</li>
-      </ul>
+    <h2>4. Acceptable Use</h2>
+    <p>You agree not to:</p>
+    <ul>
+      <li>Use the service for any unlawful purpose</li>
+      <li>Attempt to circumvent rate limits or access restrictions</li>
+      <li>Interfere with or disrupt the service or its infrastructure</li>
+      <li>Use automated scripts or bots to access the service (except via official APIs, if provided)</li>
+      <li>Impersonate another person or entity</li>
+      <li>Submit false, misleading, or fraudulent information</li>
+      <li>Use the service to facilitate customs fraud or evasion</li>
+    </ul>
 
-      <h2 class="text-xl font-semibold text-gray-900 mt-8 mb-4">5. Email Forwarding</h2>
-      <p class="text-gray-700 mb-6">
-        When you forward emails to your unique Tariffik address, you confirm that:
-      </p>
-      <ul class="list-disc list-inside text-gray-700 mb-6 space-y-1">
-        <li>You have the right to share the email content with us</li>
-        <li>The emails relate to your own orders or orders you are authorised to manage</li>
-        <li>You will not forward emails containing sensitive personal information about third parties without their consent</li>
-      </ul>
+    <h2>5. Email Forwarding</h2>
+    <p>
+      When you forward emails to your unique Tariffik address, you confirm that:
+    </p>
+    <ul>
+      <li>You have the right to share the email content with us</li>
+      <li>The emails relate to your own orders or orders you are authorised to manage</li>
+      <li>You will not forward emails containing sensitive personal information about third parties without their consent</li>
+    </ul>
 
-      <h2 class="text-xl font-semibold text-gray-900 mt-8 mb-4">6. Intellectual Property</h2>
-      <p class="text-gray-700 mb-6">
-        The Tariffik service, including its design, features, and content (excluding user-submitted data), is owned by us and protected by intellectual property laws. You may not copy, modify, distribute, or create derivative works from our service without permission.
-      </p>
-      <p class="text-gray-700 mb-6">
-        You retain ownership of any data you submit to the service. By using Tariffik, you grant us a limited licence to process your data solely for the purpose of providing the service.
-      </p>
+    <h2>6. Intellectual Property</h2>
+    <p>
+      The Tariffik service, including its design, features, and content (excluding user-submitted data), is owned by us and protected by intellectual property laws. You may not copy, modify, distribute, or create derivative works from our service without permission.
+    </p>
+    <p>
+      You retain ownership of any data you submit to the service. By using Tariffik, you grant us a limited licence to process your data solely for the purpose of providing the service.
+    </p>
 
-      <h2 class="text-xl font-semibold text-gray-900 mt-8 mb-4">7. Third-Party Services and Data</h2>
-      <p class="text-gray-700 mb-6">
-        Tariffik uses data from third-party sources, including:
-      </p>
-      <ul class="list-disc list-inside text-gray-700 mb-6 space-y-1">
-        <li><strong>UK Trade Tariff API</strong> - Official HMRC tariff data</li>
-        <li><strong>Retailer websites</strong> - Product information scraped from URLs you submit</li>
-        <li><strong>AI services</strong> - For generating commodity code suggestions</li>
-      </ul>
-      <p class="text-gray-700 mb-6">
-        We are not responsible for the accuracy of data from third-party sources.
-      </p>
+    <h2>7. Third-Party Services and Data</h2>
+    <p>
+      Tariffik uses data from third-party sources, including:
+    </p>
+    <ul>
+      <li><strong>UK Trade Tariff API</strong> - Official HMRC tariff data</li>
+      <li><strong>Retailer websites</strong> - Product information scraped from URLs you submit</li>
+      <li><strong>AI services</strong> - For generating commodity code suggestions</li>
+    </ul>
+    <p>
+      We are not responsible for the accuracy of data from third-party sources.
+    </p>
 
-      <h2 class="text-xl font-semibold text-gray-900 mt-8 mb-4">8. Service Availability</h2>
-      <p class="text-gray-700 mb-6">
-        We strive to maintain service availability but do not guarantee uninterrupted access. The service may be temporarily unavailable due to:
-      </p>
-      <ul class="list-disc list-inside text-gray-700 mb-6 space-y-1">
-        <li>Scheduled maintenance</li>
-        <li>Technical issues or outages</li>
-        <li>Third-party service disruptions</li>
-        <li>Circumstances beyond our control</li>
-      </ul>
+    <h2>8. Service Availability</h2>
+    <p>
+      We strive to maintain service availability but do not guarantee uninterrupted access. The service may be temporarily unavailable due to:
+    </p>
+    <ul>
+      <li>Scheduled maintenance</li>
+      <li>Technical issues or outages</li>
+      <li>Third-party service disruptions</li>
+      <li>Circumstances beyond our control</li>
+    </ul>
 
-      <h2 class="text-xl font-semibold text-gray-900 mt-8 mb-4">9. Limitation of Liability</h2>
-      <p class="text-gray-700 mb-6">
-        To the fullest extent permitted by law:
-      </p>
-      <ul class="list-disc list-inside text-gray-700 mb-6 space-y-1">
-        <li>The service is provided "as is" without warranties of any kind, express or implied</li>
-        <li>We do not warrant that commodity code suggestions will be accurate, complete, or suitable for your purposes</li>
-        <li>We shall not be liable for any indirect, incidental, special, consequential, or punitive damages</li>
-        <li>Our total liability shall not exceed the amount you paid to use the service (currently zero, as the service is free)</li>
-      </ul>
-      <p class="text-gray-700 mb-6">
-        Nothing in these terms excludes or limits liability for death or personal injury caused by negligence, fraud, or any other liability that cannot be excluded by law.
-      </p>
+    <h2>9. Limitation of Liability</h2>
+    <p>
+      To the fullest extent permitted by law:
+    </p>
+    <ul>
+      <li>The service is provided "as is" without warranties of any kind, express or implied</li>
+      <li>We do not warrant that commodity code suggestions will be accurate, complete, or suitable for your purposes</li>
+      <li>We shall not be liable for any indirect, incidental, special, consequential, or punitive damages</li>
+      <li>Our total liability shall not exceed the amount you paid to use the service (currently zero, as the service is free)</li>
+    </ul>
+    <p>
+      Nothing in these terms excludes or limits liability for death or personal injury caused by negligence, fraud, or any other liability that cannot be excluded by law.
+    </p>
 
-      <h2 class="text-xl font-semibold text-gray-900 mt-8 mb-4">10. Indemnification</h2>
-      <p class="text-gray-700 mb-6">
-        You agree to indemnify and hold harmless Tariffik and its operators from any claims, damages, losses, or expenses (including legal fees) arising from:
-      </p>
-      <ul class="list-disc list-inside text-gray-700 mb-6 space-y-1">
-        <li>Your use of the service</li>
-        <li>Your violation of these terms</li>
-        <li>Your use of commodity codes in customs declarations</li>
-        <li>Any claim that your use of the service infringes third-party rights</li>
-      </ul>
+    <h2>10. Indemnification</h2>
+    <p>
+      You agree to indemnify and hold harmless Tariffik and its operators from any claims, damages, losses, or expenses (including legal fees) arising from:
+    </p>
+    <ul>
+      <li>Your use of the service</li>
+      <li>Your violation of these terms</li>
+      <li>Your use of commodity codes in customs declarations</li>
+      <li>Any claim that your use of the service infringes third-party rights</li>
+    </ul>
 
-      <h2 class="text-xl font-semibold text-gray-900 mt-8 mb-4">11. Changes to Terms</h2>
-      <p class="text-gray-700 mb-6">
-        We may modify these terms at any time. Continued use of the service after changes constitutes acceptance of the new terms. We will make reasonable efforts to notify users of significant changes.
-      </p>
+    <h2>11. Changes to Terms</h2>
+    <p>
+      We may modify these terms at any time. Continued use of the service after changes constitutes acceptance of the new terms. We will make reasonable efforts to notify users of significant changes.
+    </p>
 
-      <h2 class="text-xl font-semibold text-gray-900 mt-8 mb-4">12. Governing Law and Jurisdiction</h2>
-      <p class="text-gray-700 mb-6">
-        These terms are governed by the laws of Jersey, Channel Islands. Any disputes arising from these terms or your use of the service shall be subject to the exclusive jurisdiction of the courts of Jersey.
-      </p>
+    <h2>12. Governing Law and Jurisdiction</h2>
+    <p>
+      These terms are governed by the laws of Jersey, Channel Islands. Any disputes arising from these terms or your use of the service shall be subject to the exclusive jurisdiction of the courts of Jersey.
+    </p>
 
-      <h2 class="text-xl font-semibold text-gray-900 mt-8 mb-4">13. Severability</h2>
-      <p class="text-gray-700 mb-6">
-        If any provision of these terms is found to be unenforceable, the remaining provisions shall continue in full force and effect.
-      </p>
+    <h2>13. Severability</h2>
+    <p>
+      If any provision of these terms is found to be unenforceable, the remaining provisions shall continue in full force and effect.
+    </p>
 
-      <h2 class="text-xl font-semibold text-gray-900 mt-8 mb-4">14. Contact</h2>
-      <p class="text-gray-700 mb-6">
-        For questions about these terms, please contact us at:
-      </p>
-      <p class="text-gray-700 mb-6">
-        <strong>Email:</strong> legal@tariffik.com
-      </p>
-      <p class="text-gray-700 mb-6">
-        <strong>Location:</strong> Jersey, Channel Islands
-      </p>
+    <h2>14. Contact</h2>
+    <p>
+      For questions about these terms, please contact us at:
+    </p>
+    <div class="rounded-xl border border-gray-200 bg-white p-6 my-6">
+      <p class="mb-2"><strong>Email:</strong> <a href="mailto:legal@tariffik.com" class="text-primary hover:text-primary-hover">legal@tariffik.com</a></p>
+      <p class="mb-0"><strong>Location:</strong> Jersey, Channel Islands</p>
     </div>
   </div>
 </div>
+
+<style>
+  .prose-custom h2 { margin-top: 2.5rem; margin-bottom: 1rem; font-size: 1.5rem; font-weight: 600; color: #2D1E2F; }
+  .prose-custom h3 { margin-top: 2rem; margin-bottom: 0.75rem; font-size: 1.25rem; font-weight: 600; color: #2D1E2F; }
+  .prose-custom p { margin-bottom: 1rem; color: #374151; line-height: 1.75; }
+  .prose-custom ul { margin-bottom: 1rem; padding-left: 1.5rem; list-style-type: disc; }
+  .prose-custom li { margin-bottom: 0.5rem; color: #374151; }
+  .prose-custom a { color: #E3170A; text-decoration: underline; }
+  .prose-custom a:hover { color: #c91409; }
+</style>

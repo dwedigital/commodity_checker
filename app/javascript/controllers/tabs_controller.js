@@ -8,12 +8,12 @@ export default class extends Controller {
 
     // Update tab buttons
     this.tabTargets.forEach(btn => {
-      btn.classList.remove("border-indigo-500", "text-indigo-600")
+      btn.classList.remove("border-primary", "text-primary")
       btn.classList.add("border-transparent", "text-gray-500")
     })
 
     event.currentTarget.classList.remove("border-transparent", "text-gray-500")
-    event.currentTarget.classList.add("border-indigo-500", "text-indigo-600")
+    event.currentTarget.classList.add("border-primary", "text-primary")
 
     // Update content panels
     this.contentTargets.forEach(content => {
