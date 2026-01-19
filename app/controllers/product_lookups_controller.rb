@@ -43,25 +43,10 @@ class ProductLookupsController < ApplicationController
       return render :new, status: :unprocessable_entity
     end
 
-    # Scrape synchronously for guest users
-    scraper = ProductScraperService.new
-    @scrape_result = scraper.scrape(url)
-
-    # Get commodity code suggestion if scraping succeeded
-    if @scrape_result[:status] == :completed || @scrape_result[:status] == :partial
-      description = [
-        @scrape_result[:title],
-        @scrape_result[:description],
-        @scrape_result[:brand],
-        @scrape_result[:category],
-        @scrape_result[:material]
-      ].compact.reject(&:blank?).join(". ")
-
-      if description.present?
-        suggester = LlmCommoditySuggester.new
-        @suggestion = suggester.suggest(description)
-      end
-    end
+    # Use service for synchronous guest lookup
+    result = GuestProductLookupService.new(url).call
+    @scrape_result = result[:scrape_result]
+    @suggestion = result[:suggestion]
 
     @product_lookup = ProductLookup.new(url: url)
     render :quick_result

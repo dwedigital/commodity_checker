@@ -45,8 +45,6 @@ class ProductScraperService
     _ga _gl
   ].freeze
 
-  SCRAPINGBEE_API_URL = "https://app.scrapingbee.com/api/v1/".freeze
-
   def initialize
     @conn = Faraday.new do |f|
       f.options.timeout = 20
@@ -58,11 +56,7 @@ class ProductScraperService
       f.adapter Faraday.default_adapter
     end
 
-    @scrapingbee_conn = Faraday.new do |f|
-      f.options.timeout = 60  # ScrapingBee can take longer
-      f.options.open_timeout = 30
-      f.adapter Faraday.default_adapter
-    end
+    @scrapingbee = ScrapingbeeClient.new
   end
 
   def scrape(url)
@@ -154,64 +148,18 @@ class ProductScraperService
   end
 
   def fetch_via_scrapingbee(url, stealth: false)
-    api_key = ENV["SCRAPINGBEE_API_KEY"]
-
-    unless api_key.present?
-      Rails.logger.warn("ProductScraperService: SCRAPINGBEE_API_KEY not configured, cannot use fallback")
-      return { error: "ScrapingBee not configured" }
-    end
-
-    # Detect country from URL for better proxy selection
     country = detect_country_from_url(url)
-    proxy_type = stealth ? "stealth" : "premium"
-
-    params = {
-      api_key: api_key,
-      url: url,
-      render_js: "true",           # Render JavaScript for SPAs
-      country_code: country
-    }
-
-    # Use either stealth_proxy (residential IPs, 75 credits) or premium_proxy (datacenter, 25 credits)
-    if stealth
-      params[:stealth_proxy] = "true"
-    else
-      params[:premium_proxy] = "true"
-    end
-
-    response = @scrapingbee_conn.get(SCRAPINGBEE_API_URL, params)
-
-    if response.success?
-      Rails.logger.info("ProductScraperService: ScrapingBee #{proxy_type} proxy succeeded for #{url}")
-      { body: response.body, status: response.status, fetched_via: stealth ? :scrapingbee_stealth : :scrapingbee }
-    else
-      # ScrapingBee returns error details in the response body
-      error_msg = "ScrapingBee HTTP #{response.status}"
-      begin
-        error_data = JSON.parse(response.body)
-        error_msg = "ScrapingBee: #{error_data['message']}" if error_data["message"]
-      rescue JSON::ParserError
-        # Use default error message
-      end
-      Rails.logger.error("ProductScraperService: ScrapingBee #{proxy_type} proxy failed for #{url}: #{error_msg}")
-      { error: error_msg }
-    end
-  rescue Faraday::TimeoutError
-    Rails.logger.error("ProductScraperService: ScrapingBee timed out for #{url}")
-    { error: "ScrapingBee request timed out" }
-  rescue Faraday::Error => e
-    Rails.logger.error("ProductScraperService: ScrapingBee error for #{url}: #{e.message}")
-    { error: "ScrapingBee error: #{e.message}" }
+    @scrapingbee.fetch(url, stealth: stealth, country_code: country)
   end
 
   def should_use_fallback?(error)
-    return false unless ENV["SCRAPINGBEE_API_KEY"].present?
+    return false unless ScrapingbeeClient.configured?
 
     FALLBACK_ERRORS.any? { |fallback_error| error.to_s.include?(fallback_error) }
   end
 
   def should_use_stealth_fallback?(error)
-    return false unless ENV["SCRAPINGBEE_API_KEY"].present?
+    return false unless ScrapingbeeClient.configured?
 
     STEALTH_FALLBACK_ERRORS.any? { |fallback_error| error.to_s.include?(fallback_error) }
   end

@@ -62,7 +62,7 @@ class ScrapeProductPageJob < ApplicationJob
           item.update!(
             suggested_commodity_code: suggestion[:commodity_code],
             commodity_code_confidence: suggestion[:confidence],
-            llm_reasoning: build_reasoning(suggestion)
+            llm_reasoning: CommoditySuggestionFormatter.build_reasoning(suggestion)
           )
         end
       end
@@ -100,7 +100,7 @@ class ScrapeProductPageJob < ApplicationJob
       lookup.update!(
         suggested_commodity_code: suggestion[:commodity_code],
         commodity_code_confidence: suggestion[:confidence],
-        llm_reasoning: build_reasoning(suggestion)
+        llm_reasoning: CommoditySuggestionFormatter.build_reasoning(suggestion)
       )
 
       Rails.logger.info("Suggested #{suggestion[:commodity_code]} for product lookup #{lookup.id} (confidence: #{suggestion[:confidence]})")
@@ -120,17 +120,6 @@ class ScrapeProductPageJob < ApplicationJob
     parts << "Material: #{result[:material]}" if result[:material].present?
 
     parts.join(". ")
-  end
-
-  def build_reasoning(suggestion)
-    parts = []
-    parts << suggestion[:reasoning] if suggestion[:reasoning].present?
-    parts << "Category: #{suggestion[:category]}" if suggestion[:category].present?
-    parts << "Official: #{suggestion[:official_description]}" if suggestion[:official_description].present?
-    parts << "(Validated)" if suggestion[:validated]
-    parts << "(Unvalidated - code may need verification)" if suggestion[:validated] == false
-
-    parts.join(" | ")
   end
 
   def broadcast_update(lookup)

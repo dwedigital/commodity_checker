@@ -28,7 +28,7 @@ class SuggestCommodityCodesJob < ApplicationJob
       item.update!(
         suggested_commodity_code: suggestion[:commodity_code],
         commodity_code_confidence: suggestion[:confidence],
-        llm_reasoning: build_reasoning(suggestion)
+        llm_reasoning: CommoditySuggestionFormatter.build_reasoning(suggestion)
       )
 
       # Track commodity code suggestion
@@ -44,17 +44,6 @@ class SuggestCommodityCodesJob < ApplicationJob
     end
   rescue => e
     Rails.logger.error("Failed to suggest code for item #{item.id}: #{e.message}")
-  end
-
-  def build_reasoning(suggestion)
-    parts = []
-    parts << suggestion[:reasoning] if suggestion[:reasoning].present?
-    parts << "Category: #{suggestion[:category]}" if suggestion[:category].present?
-    parts << "Official: #{suggestion[:official_description]}" if suggestion[:official_description].present?
-    parts << "(Validated)" if suggestion[:validated]
-    parts << "(Unvalidated - code may need verification)" if suggestion[:validated] == false
-
-    parts.join(" | ")
   end
 
   def track_analytics(user, event_name, properties = {})

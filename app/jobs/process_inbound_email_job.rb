@@ -230,7 +230,7 @@ class ProcessInboundEmailJob < ApplicationJob
           item.update!(
             suggested_commodity_code: suggestion[:commodity_code],
             commodity_code_confidence: suggestion[:confidence],
-            llm_reasoning: build_suggestion_reasoning(suggestion)
+            llm_reasoning: CommoditySuggestionFormatter.build_reasoning(suggestion)
           )
           Rails.logger.info("Updated commodity code for '#{item.description}': #{suggestion[:commodity_code]}")
         end
@@ -241,17 +241,6 @@ class ProcessInboundEmailJob < ApplicationJob
   rescue => e
     Rails.logger.error("Error searching for product info: #{e.message}")
     # Don't fail the job, just continue without enhanced info
-  end
-
-  def build_suggestion_reasoning(suggestion)
-    parts = []
-    parts << suggestion[:reasoning] if suggestion[:reasoning].present?
-    parts << "Category: #{suggestion[:category]}" if suggestion[:category].present?
-    parts << "Official: #{suggestion[:official_description]}" if suggestion[:official_description].present?
-    parts << "(Validated)" if suggestion[:validated]
-    parts << "(Unvalidated - code may need verification)" if suggestion[:validated] == false
-
-    parts.join(" | ")
   end
 
   def looks_like_product_description?(description)
