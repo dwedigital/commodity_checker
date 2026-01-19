@@ -196,58 +196,70 @@ class ProductScraperService
   end
 
   def extract_product_data(html, url)
-    result = {}
-
     # Try extraction methods in priority order
-    json_ld_data = extract_json_ld(html)
-    og_data = extract_open_graph(html)
-    meta_data = extract_meta_tags(html)
-    html_data = extract_from_html(html)
+    sources = {
+      json_ld: extract_json_ld(html),
+      og: extract_open_graph(html),
+      meta: extract_meta_tags(html),
+      html: extract_from_html(html)
+    }
 
-    # Merge data, preferring structured sources
-    result[:structured_data] = json_ld_data if json_ld_data.present?
+    result = {}
+    result[:structured_data] = sources[:json_ld] if sources[:json_ld].present?
 
-    # Title: JSON-LD > OG > Meta > HTML
-    result[:title] = clean_text(
-      json_ld_data&.dig("name") ||
-      og_data[:title] ||
-      meta_data[:title] ||
-      html_data[:title]
-    )
+    # Merge data, preferring structured sources (JSON-LD > OG > Meta > HTML)
+    result[:title] = clean_text(first_available(
+      sources[:json_ld]&.dig("name"),
+      sources[:og][:title],
+      sources[:meta][:title],
+      sources[:html][:title]
+    ))
 
-    # Description: JSON-LD > OG > Meta > HTML
-    result[:description] = clean_text(
-      json_ld_data&.dig("description") ||
-      og_data[:description] ||
-      meta_data[:description] ||
-      html_data[:description]
-    )
+    result[:description] = clean_text(first_available(
+      sources[:json_ld]&.dig("description"),
+      sources[:og][:description],
+      sources[:meta][:description],
+      sources[:html][:description]
+    ))
 
-    # Brand
-    result[:brand] = clean_text(extract_brand(json_ld_data) || html_data[:brand])
+    result[:brand] = clean_text(first_available(
+      extract_brand(sources[:json_ld]),
+      sources[:html][:brand]
+    ))
 
-    # Category
-    result[:category] = clean_text(
-      json_ld_data&.dig("category") ||
-      extract_breadcrumb_category(html) ||
-      html_data[:category]
-    )
+    result[:category] = clean_text(first_available(
+      sources[:json_ld]&.dig("category"),
+      extract_breadcrumb_category(html),
+      sources[:html][:category]
+    ))
 
-    # Price
-    price_data = extract_price(json_ld_data, og_data, html)
+    price_data = extract_price(sources[:json_ld], sources[:og], html)
     result[:price] = price_data[:price]
     result[:currency] = price_data[:currency]
 
-    # Material (often in description or specific fields)
-    result[:material] = clean_text(extract_material(json_ld_data, html))
+    result[:material] = clean_text(extract_material(sources[:json_ld], html))
 
-    # Image - handle both string and array formats
-    image = json_ld_data&.dig("image") || og_data[:image] || extract_product_image(html)
-    image = image.first if image.is_a?(Array)
-    image = image["url"] if image.is_a?(Hash) && image["url"]
-    result[:image_url] = normalize_image_url(image, url) if image.present?
+    result[:image_url] = extract_and_normalize_image(sources, html, url)
 
     result
+  end
+
+  def first_available(*values)
+    values.find(&:present?)
+  end
+
+  def extract_and_normalize_image(sources, html, url)
+    image = first_available(
+      sources[:json_ld]&.dig("image"),
+      sources[:og][:image],
+      extract_product_image(html)
+    )
+
+    # Handle array and hash formats
+    image = image.first if image.is_a?(Array)
+    image = image["url"] if image.is_a?(Hash) && image["url"]
+
+    normalize_image_url(image, url) if image.present?
   end
 
   def extract_json_ld(html)

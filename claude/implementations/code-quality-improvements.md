@@ -69,8 +69,9 @@ No migrations required. All changes are at the application code level.
 | `app/services/llm_commodity_suggester.rb` | Updated to use `LlmResponseParser` |
 | `app/services/product_info_finder_service.rb` | Updated to use `LlmResponseParser` |
 | `app/services/product_vision_service.rb` | Updated to use `LlmResponseParser` |
-| `app/services/product_scraper_service.rb` | Updated to use `ScrapingbeeClient`; removed duplicate code |
+| `app/services/product_scraper_service.rb` | Updated to use `ScrapingbeeClient`; refactored `extract_product_data` with `first_available` helper |
 | `app/services/product_url_finder_service.rb` | Updated to use `ScrapingbeeClient`; removed duplicate code |
+| `app/services/email_parser_service.rb` | Refactored complex methods; added constants for magic numbers; extracted helper methods |
 
 ### Tests
 
@@ -147,16 +148,24 @@ Manual verification:
 
 ### Phase 3: Refactoring
 - [x] Extracted `GuestProductLookupService` from controller
+- [x] Refactored `EmailParserService` complex methods:
+  - Extracted `extract_carrier_tracking_urls` and `extract_generic_tracking_urls` from `extract_tracking_urls`
+  - Extracted `clean_and_deduplicate_descriptions` and `normalize_for_dedup` from `extract_product_descriptions`
+  - Extracted `skip_line_for_product_extraction?` helper for line filtering
+  - Extracted `sort_and_limit_images` from `extract_product_images`
+  - Extracted `non_product_pattern?` from `clean_product_description`
+  - Added constants: `MIN_PRODUCT_DESCRIPTION_LENGTH`, `MAX_PRODUCT_DESCRIPTION_LENGTH`, `MAX_LINE_LENGTH_FOR_PRODUCT`, `MAX_PRODUCT_DESCRIPTIONS`, `MAX_PRODUCT_IMAGES`, `MIN_IMAGE_DIMENSION`
+- [x] Refactored `ProductScraperService#extract_product_data`:
+  - Extracted `first_available` helper for cascading fallback logic
+  - Extracted `extract_and_normalize_image` for image handling
+  - Organized data sources into a single hash for cleaner access
 
 ## Limitations & Future Improvements
 
 ### Not Implemented (Out of Scope for This PR)
 - Test coverage improvements (new service/job tests)
-- `EmailParserService` complex method refactoring
-- `ProductScraperService` fallback logic refactoring
 - HTTP client factory extraction
 - Anthropic model name centralization
-- Magic number constants in EmailParserService
 
 ### Future Considerations
 - Consider adding tests for new services (LlmResponseParser, ScrapingbeeClient, etc.)
