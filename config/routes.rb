@@ -2,6 +2,13 @@ Rails.application.routes.draw do
   # Resend inbound email webhook endpoint
   mount ActionMailbox::Resend::Engine, at: "/rails/action_mailbox/resend"
 
+  # Admin-only routes (PgHero only available in production with PostgreSQL)
+  if Rails.env.production?
+    authenticate :user, ->(user) { user.admin? } do
+      mount PgHero::Engine, at: "admin/pghero"
+    end
+  end
+
   # API v1 endpoints
   namespace :api do
     namespace :v1 do
@@ -43,37 +50,40 @@ Rails.application.routes.draw do
 
   devise_for :users
 
-  # Dashboard (authenticated)
-  get "dashboard", to: "dashboard#index"
+  # Dashboard routes (authenticated user area)
+  scope "/dashboard" do
+    # Dashboard index
+    get "", to: "dashboard#index", as: :dashboard
 
-  # Developer / API Dashboard
-  get "developer", to: "developer#index", as: :developer
-  post "developer/api-keys", to: "developer#create_api_key", as: :create_api_key
-  delete "developer/api-keys/:id", to: "developer#revoke_api_key", as: :revoke_api_key
-  delete "developer/extension-tokens/:id", to: "developer#revoke_extension_token", as: :revoke_extension_token
+    # Developer / API Dashboard
+    get "developer", to: "developer#index", as: :developer
+    post "developer/api-keys", to: "developer#create_api_key", as: :create_api_key
+    delete "developer/api-keys/:id", to: "developer#revoke_api_key", as: :revoke_api_key
+    delete "developer/extension-tokens/:id", to: "developer#revoke_extension_token", as: :revoke_extension_token
 
-  # Orders
-  resources :orders, only: [ :index, :show, :new, :create ] do
-    member do
-      post :confirm_commodity_code
-      post :refresh_tracking
+    # Orders
+    resources :orders, only: [ :index, :show, :new, :create ] do
+      member do
+        post :confirm_commodity_code
+        post :refresh_tracking
+      end
+      collection do
+        get :export
+      end
     end
-    collection do
-      get :export
-    end
-  end
 
-  # Simulate email forwarding (for testing)
-  resources :test_emails, only: [ :new, :create ]
+    # Simulate email forwarding (for testing)
+    resources :test_emails, only: [ :new, :create ]
 
-  # Product URL lookups
-  resources :product_lookups, only: [ :new, :create, :show, :index ] do
-    collection do
-      post :create_from_photo
-    end
-    member do
-      post :confirm_commodity_code
-      post :add_to_order
+    # Product URL lookups
+    resources :product_lookups, only: [ :new, :create, :show, :index ] do
+      collection do
+        post :create_from_photo
+      end
+      member do
+        post :confirm_commodity_code
+        post :add_to_order
+      end
     end
   end
 

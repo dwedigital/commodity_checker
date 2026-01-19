@@ -166,7 +166,7 @@ For Render:
 
 For local development, use the built-in test email feature:
 
-1. Visit `/test_emails/new` in your browser
+1. Visit `/dashboard/test_emails/new` in your browser
 2. Paste email content to simulate forwarding
 3. No Resend setup required for testing
 

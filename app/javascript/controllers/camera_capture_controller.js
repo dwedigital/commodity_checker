@@ -22,7 +22,7 @@ export default class extends Controller {
 
   static values = {
     facingMode: { type: String, default: "environment" }, // environment = back camera, user = front
-    submitUrl: { type: String, default: "/product_lookups/create_from_photo" }
+    submitUrl: { type: String, default: "/dashboard/product_lookups/create_from_photo" }
   }
 
   connect() {
@@ -202,7 +202,7 @@ export default class extends Controller {
             window.location.href = response.headers.get("Location")
           } else {
             // Reload the page or redirect to index
-            window.location.href = "/product_lookups"
+            window.location.href = "/dashboard/product_lookups"
           }
         } else {
           throw new Error("Upload failed")
