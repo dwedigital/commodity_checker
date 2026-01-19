@@ -1,305 +1,320 @@
 <% content_for(:title) { "Privacy Policy - Tariffik" } %>
 
-<div class="bg-white">
-  <div class="mx-auto max-w-3xl py-12">
-    <h1 class="text-3xl font-bold tracking-tight text-gray-900 mb-8">Privacy Policy</h1>
+<div class="mx-auto max-w-3xl">
+  <!-- Header -->
+  <div class="mb-12">
+    <span class="inline-flex items-center rounded-full bg-brand-mint/50 px-4 py-1.5 text-sm font-semibold text-brand-dark mb-4">
+      LEGAL
+    </span>
+    <h1 class="text-4xl font-bold tracking-tight text-brand-dark mb-4">Privacy Policy</h1>
+    <p class="text-gray-500">
+      Last updated: <%= Date.current.strftime("%d %B %Y") %>
+    </p>
+  </div>
 
-    <div class="prose prose-indigo max-w-none">
-      <p class="text-gray-600 text-lg mb-8">
-        Last updated: <%= Date.current.strftime("%d %B %Y") %>
-      </p>
+  <div class="prose-custom">
+    <p class="text-gray-700 text-lg mb-8">
+      Tariffik is operated from Jersey, Channel Islands. We are committed to protecting your privacy and being transparent about how we handle your data. This policy explains what information we collect, why we collect it, and how it is processed.
+    </p>
 
-      <p class="text-gray-700 mb-6">
-        Tariffik is operated from Jersey, Channel Islands. We are committed to protecting your privacy and being transparent about how we handle your data. This policy explains what information we collect, why we collect it, and how it is processed.
-      </p>
+    <h2>1. Who We Are</h2>
+    <p>
+      Tariffik provides commodity code lookup services to help individuals and businesses importing goods to the UK and Channel Islands identify the correct HS (Harmonized System) tariff codes for customs declarations.
+    </p>
 
-      <h2 class="text-xl font-semibold text-gray-900 mt-8 mb-4">1. Who We Are</h2>
-      <p class="text-gray-700 mb-6">
-        Tariffik provides commodity code lookup services to help individuals and businesses importing goods to the UK and Channel Islands identify the correct HS (Harmonized System) tariff codes for customs declarations.
-      </p>
+    <h2>2. Data We Collect</h2>
 
-      <h2 class="text-xl font-semibold text-gray-900 mt-8 mb-4">2. Data We Collect</h2>
+    <h3>2.1 Chrome Extension Data</h3>
+    <p>
+      The Tariffik Chrome Extension helps you look up commodity codes while browsing online stores. This section specifically addresses data collection by the extension, as required by the Chrome Web Store.
+    </p>
 
-      <h3 class="text-lg font-medium text-gray-900 mt-6 mb-3">2.1 Chrome Extension Data</h3>
-      <p class="text-gray-700 mb-4">
-        The Tariffik Chrome Extension helps you look up commodity codes while browsing online stores. This section specifically addresses data collection by the extension, as required by the Chrome Web Store.
-      </p>
+    <h4>What the Extension Collects</h4>
+    <ul>
+      <li><strong>Product page URLs</strong> - The URL of product pages you choose to look up</li>
+      <li><strong>Product information</strong> - Title, description, price, and brand extracted from the current page when you initiate a lookup</li>
+      <li><strong>Extension ID</strong> - A randomly generated identifier stored locally to track anonymous usage limits</li>
+      <li><strong>IP address</strong> - Used solely for rate limiting and abuse prevention</li>
+    </ul>
 
-      <h4 class="text-base font-medium text-gray-800 mt-4 mb-2">What the Extension Collects</h4>
-      <ul class="list-disc list-inside text-gray-700 mb-4 space-y-1">
-        <li><strong>Product page URLs</strong> - The URL of product pages you choose to look up</li>
-        <li><strong>Product information</strong> - Title, description, price, and brand extracted from the current page when you initiate a lookup</li>
-        <li><strong>Extension ID</strong> - A randomly generated identifier stored locally to track anonymous usage limits</li>
-        <li><strong>IP address</strong> - Used solely for rate limiting and abuse prevention</li>
-      </ul>
+    <h4>What the Extension Does NOT Collect</h4>
+    <ul>
+      <li>Browsing history or pages you visit (we only see pages where you actively click the extension)</li>
+      <li>Personal information from web pages (passwords, form data, payment details)</li>
+      <li>Data from pages other than the active tab when you click the extension</li>
+      <li>Any data when the extension is not actively being used</li>
+    </ul>
 
-      <h4 class="text-base font-medium text-gray-800 mt-4 mb-2">What the Extension Does NOT Collect</h4>
-      <ul class="list-disc list-inside text-gray-700 mb-4 space-y-1">
-        <li>Browsing history or pages you visit (we only see pages where you actively click the extension)</li>
-        <li>Personal information from web pages (passwords, form data, payment details)</li>
-        <li>Data from pages other than the active tab when you click the extension</li>
-        <li>Any data when the extension is not actively being used</li>
-      </ul>
+    <h4>Extension Permissions Explained</h4>
+    <div class="overflow-x-auto my-6">
+      <table>
+        <thead>
+          <tr>
+            <th>Permission</th>
+            <th>Why It's Needed</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><strong>activeTab</strong></td>
+            <td>To read product information from the current page when you click the extension icon</td>
+          </tr>
+          <tr>
+            <td><strong>storage</strong></td>
+            <td>To store your authentication token locally and remember your preferences</td>
+          </tr>
+          <tr>
+            <td><strong>identity</strong></td>
+            <td>To enable secure sign-in to your Tariffik account</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
 
-      <h4 class="text-base font-medium text-gray-800 mt-4 mb-2">Extension Permissions Explained</h4>
-      <div class="overflow-x-auto mb-4">
-        <table class="min-w-full divide-y divide-gray-200 border border-gray-200 rounded-lg">
-          <thead class="bg-gray-50">
-            <tr>
-              <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Permission</th>
-              <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Why It's Needed</th>
-            </tr>
-          </thead>
-          <tbody class="bg-white divide-y divide-gray-200">
-            <tr>
-              <td class="px-4 py-3 text-sm font-medium text-gray-900">activeTab</td>
-              <td class="px-4 py-3 text-sm text-gray-600">To read product information from the current page when you click the extension icon</td>
-            </tr>
-            <tr>
-              <td class="px-4 py-3 text-sm font-medium text-gray-900">storage</td>
-              <td class="px-4 py-3 text-sm text-gray-600">To store your authentication token locally and remember your preferences</td>
-            </tr>
-            <tr>
-              <td class="px-4 py-3 text-sm font-medium text-gray-900">identity</td>
-              <td class="px-4 py-3 text-sm text-gray-600">To enable secure sign-in to your Tariffik account</td>
-            </tr>
-          </tbody>
-        </table>
-      </div>
+    <h4>How Extension Data is Processed</h4>
+    <p>
+      When you perform a lookup, the extension sends product information to our servers via HTTPS. The data is processed by:
+    </p>
+    <ul>
+      <li><strong>Tariffik servers</strong> - To coordinate the lookup and return results</li>
+      <li><strong>Anthropic (Claude AI)</strong> - To analyse product descriptions and suggest commodity codes</li>
+      <li><strong>UK Trade Tariff API</strong> - To validate codes against official government data</li>
+    </ul>
 
-      <h4 class="text-base font-medium text-gray-800 mt-4 mb-2">How Extension Data is Processed</h4>
-      <p class="text-gray-700 mb-4">
-        When you perform a lookup, the extension sends product information to our servers via HTTPS. The data is processed by:
-      </p>
-      <ul class="list-disc list-inside text-gray-700 mb-4 space-y-1">
-        <li><strong>Tariffik servers</strong> - To coordinate the lookup and return results</li>
-        <li><strong>Anthropic (Claude AI)</strong> - To analyse product descriptions and suggest commodity codes</li>
-        <li><strong>UK Trade Tariff API</strong> - To validate codes against official government data</li>
-      </ul>
+    <h4>Anonymous vs. Authenticated Usage</h4>
+    <p>
+      <strong>Anonymous users</strong> (not signed in) receive 3 free lifetime lookups. We track this using a randomly generated extension ID stored locally in your browser - no personal information is required.
+    </p>
+    <p>
+      <strong>Signed-in users</strong> can optionally save lookups to their account for future reference. You control whether each lookup is saved via the extension settings.
+    </p>
 
-      <h4 class="text-base font-medium text-gray-800 mt-4 mb-2">Anonymous vs. Authenticated Usage</h4>
-      <p class="text-gray-700 mb-4">
-        <strong>Anonymous users</strong> (not signed in) receive 3 free lifetime lookups. We track this using a randomly generated extension ID stored locally in your browser - no personal information is required.
-      </p>
-      <p class="text-gray-700 mb-6">
-        <strong>Signed-in users</strong> can optionally save lookups to their account for future reference. You control whether each lookup is saved via the extension settings.
-      </p>
+    <h3>2.2 Account Information</h3>
+    <p>When you create an account, we collect:</p>
+    <ul>
+      <li><strong>Email address</strong> - Used for account identification and authentication</li>
+      <li><strong>Password</strong> - Stored using secure one-way hashing (we cannot see your actual password)</li>
+      <li><strong>Unique email forwarding address</strong> - Generated automatically for your account</li>
+    </ul>
 
-      <h3 class="text-lg font-medium text-gray-900 mt-6 mb-3">2.2 Account Information</h3>
-      <p class="text-gray-700 mb-4">When you create an account, we collect:</p>
-      <ul class="list-disc list-inside text-gray-700 mb-6 space-y-1">
-        <li><strong>Email address</strong> - Used for account identification and authentication</li>
-        <li><strong>Password</strong> - Stored using secure one-way hashing (we cannot see your actual password)</li>
-        <li><strong>Unique email forwarding address</strong> - Generated automatically for your account</li>
-      </ul>
+    <h3>2.3 Order and Product Data</h3>
+    <p>When you use our service, we collect:</p>
+    <ul>
+      <li><strong>Product URLs</strong> - Links you submit for commodity code lookup</li>
+      <li><strong>Product descriptions</strong> - Extracted from URLs or provided by you</li>
+      <li><strong>Product images</strong> - Extracted from product pages or emails for identification</li>
+      <li><strong>Order reference numbers</strong> - From forwarded order confirmation emails</li>
+      <li><strong>Retailer names</strong> - Identified from emails or URLs</li>
+      <li><strong>Commodity codes</strong> - Both AI-suggested and user-confirmed codes</li>
+    </ul>
 
-      <h3 class="text-lg font-medium text-gray-900 mt-6 mb-3">2.3 Order and Product Data</h3>
-      <p class="text-gray-700 mb-4">When you use our service, we collect:</p>
-      <ul class="list-disc list-inside text-gray-700 mb-6 space-y-1">
-        <li><strong>Product URLs</strong> - Links you submit for commodity code lookup</li>
-        <li><strong>Product descriptions</strong> - Extracted from URLs or provided by you</li>
-        <li><strong>Product images</strong> - Extracted from product pages or emails for identification</li>
-        <li><strong>Order reference numbers</strong> - From forwarded order confirmation emails</li>
-        <li><strong>Retailer names</strong> - Identified from emails or URLs</li>
-        <li><strong>Commodity codes</strong> - Both AI-suggested and user-confirmed codes</li>
-      </ul>
-
-      <h3 class="text-lg font-medium text-gray-900 mt-6 mb-3">2.4 Email Forwarding Data</h3>
-      <p class="text-gray-700 mb-4">When you forward emails to your unique Tariffik address, we process:</p>
-      <ul class="list-disc list-inside text-gray-700 mb-6 space-y-1">
-        <li><strong>Email subject line</strong></li>
-        <li><strong>Sender address</strong></li>
-        <li><strong>Email body content</strong> - Both plain text and HTML versions</li>
-        <li><strong>Tracking URLs</strong> - Extracted from shipping notification emails</li>
-      </ul>
-      <p class="text-gray-700 mb-6">
+    <h3>2.4 Email Forwarding Data</h3>
+    <p>When you forward emails to your unique Tariffik address, we process:</p>
+    <ul>
+      <li><strong>Email subject line</strong></li>
+      <li><strong>Sender address</strong></li>
+      <li><strong>Email body content</strong> - Both plain text and HTML versions</li>
+      <li><strong>Tracking URLs</strong> - Extracted from shipping notification emails</li>
+    </ul>
+    <div class="rounded-xl border border-brand-dark/20 bg-highlight/30 p-4 my-6">
+      <p class="text-brand-dark font-medium mb-0">
         <strong>Important:</strong> We only process emails sent to your unique Tariffik forwarding address. We do not have access to your email inbox or any other emails.
       </p>
+    </div>
 
-      <h3 class="text-lg font-medium text-gray-900 mt-6 mb-3">2.5 Guest User Data</h3>
-      <p class="text-gray-700 mb-4">For users without an account, we collect minimal data for rate limiting:</p>
-      <ul class="list-disc list-inside text-gray-700 mb-6 space-y-1">
-        <li><strong>Anonymous session token</strong> - Stored as a cookie to track lookup limits</li>
-        <li><strong>URLs searched</strong> - To prevent abuse of free lookups</li>
-        <li><strong>IP address</strong> - For rate limiting and abuse prevention only</li>
-      </ul>
-      <p class="text-gray-700 mb-6">
-        Guest lookup data is automatically deleted after 7 days.
-      </p>
+    <h3>2.5 Guest User Data</h3>
+    <p>For users without an account, we collect minimal data for rate limiting:</p>
+    <ul>
+      <li><strong>Anonymous session token</strong> - Stored as a cookie to track lookup limits</li>
+      <li><strong>URLs searched</strong> - To prevent abuse of free lookups</li>
+      <li><strong>IP address</strong> - For rate limiting and abuse prevention only</li>
+    </ul>
+    <p>Guest lookup data is automatically deleted after 7 days.</p>
 
-      <h3 class="text-lg font-medium text-gray-900 mt-6 mb-3">2.6 Usage Analytics</h3>
-      <p class="text-gray-700 mb-4">To improve our service, we collect anonymised usage data:</p>
-      <ul class="list-disc list-inside text-gray-700 mb-6 space-y-1">
-        <li><strong>Pages visited</strong> - Which pages you view on Tariffik</li>
-        <li><strong>Features used</strong> - Lookups performed, codes confirmed, orders created</li>
-        <li><strong>Timestamps</strong> - When actions occurred</li>
-        <li><strong>Browser and device type</strong> - For compatibility improvements</li>
-      </ul>
-      <p class="text-gray-700 mb-6">
-        <strong>Privacy-first approach:</strong> All analytics data is stored in our own database - we do not use third-party analytics services like Google Analytics. We use cookieless tracking, meaning no analytics cookies are placed on your device. For logged-in users, usage data is associated with your account to provide a better experience. IP addresses are masked for privacy.
-      </p>
+    <h3>2.6 Usage Analytics</h3>
+    <p>To improve our service, we collect anonymised usage data:</p>
+    <ul>
+      <li><strong>Pages visited</strong> - Which pages you view on Tariffik</li>
+      <li><strong>Features used</strong> - Lookups performed, codes confirmed, orders created</li>
+      <li><strong>Timestamps</strong> - When actions occurred</li>
+      <li><strong>Browser and device type</strong> - For compatibility improvements</li>
+    </ul>
+    <p>
+      <strong>Privacy-first approach:</strong> All analytics data is stored in our own database - we do not use third-party analytics services like Google Analytics. We use cookieless tracking, meaning no analytics cookies are placed on your device. For logged-in users, usage data is associated with your account to provide a better experience. IP addresses are masked for privacy.
+    </p>
 
-      <h2 class="text-xl font-semibold text-gray-900 mt-8 mb-4">3. Data We Do NOT Collect</h2>
-      <p class="text-gray-700 mb-4">We want to be clear about what we do not collect or store:</p>
-      <ul class="list-disc list-inside text-gray-700 mb-6 space-y-1">
-        <li><strong>Payment or financial information</strong> - Tariffik is currently a free service</li>
-        <li><strong>Precise geolocation data</strong></li>
-        <li><strong>Social media profiles or connections</strong></li>
-        <li><strong>Contacts or address books</strong></li>
-        <li><strong>Browsing history on other websites</strong> - We only track your activity on Tariffik itself</li>
-        <li><strong>Biometric data</strong></li>
-        <li><strong>Data from your email inbox</strong> - We only see emails you explicitly forward to us</li>
-      </ul>
+    <h2>3. Data We Do NOT Collect</h2>
+    <p>We want to be clear about what we do not collect or store:</p>
+    <ul>
+      <li><strong>Payment or financial information</strong> - Tariffik is currently a free service</li>
+      <li><strong>Precise geolocation data</strong></li>
+      <li><strong>Social media profiles or connections</strong></li>
+      <li><strong>Contacts or address books</strong></li>
+      <li><strong>Browsing history on other websites</strong> - We only track your activity on Tariffik itself</li>
+      <li><strong>Biometric data</strong></li>
+      <li><strong>Data from your email inbox</strong> - We only see emails you explicitly forward to us</li>
+    </ul>
 
-      <h2 class="text-xl font-semibold text-gray-900 mt-8 mb-4">4. How We Use Your Data</h2>
-      <p class="text-gray-700 mb-4">Your data is used exclusively for:</p>
-      <ul class="list-disc list-inside text-gray-700 mb-6 space-y-1">
-        <li><strong>Providing commodity code suggestions</strong> - The core service functionality</li>
-        <li><strong>Processing forwarded emails</strong> - To extract order and tracking information</li>
-        <li><strong>Maintaining your order history</strong> - So you can reference past lookups</li>
-        <li><strong>Account authentication</strong> - To secure your account</li>
-        <li><strong>Service improvement</strong> - Understanding how the service is used to make it better</li>
-      </ul>
-      <p class="text-gray-700 mb-6">
-        We do <strong>not</strong> sell your data, use it for advertising, or share it with third parties for marketing purposes.
-      </p>
+    <h2>4. How We Use Your Data</h2>
+    <p>Your data is used exclusively for:</p>
+    <ul>
+      <li><strong>Providing commodity code suggestions</strong> - The core service functionality</li>
+      <li><strong>Processing forwarded emails</strong> - To extract order and tracking information</li>
+      <li><strong>Maintaining your order history</strong> - So you can reference past lookups</li>
+      <li><strong>Account authentication</strong> - To secure your account</li>
+      <li><strong>Service improvement</strong> - Understanding how the service is used to make it better</li>
+    </ul>
+    <p>
+      We do <strong>not</strong> sell your data, use it for advertising, or share it with third parties for marketing purposes.
+    </p>
 
-      <h2 class="text-xl font-semibold text-gray-900 mt-8 mb-4">5. Sub-Processors and Third-Party Services</h2>
-      <p class="text-gray-700 mb-4">
-        To provide our service, we use the following third-party providers who may process your data:
-      </p>
+    <h2>5. Sub-Processors and Third-Party Services</h2>
+    <p>
+      To provide our service, we use the following third-party providers who may process your data:
+    </p>
 
-      <div class="overflow-x-auto mb-6">
-        <table class="min-w-full divide-y divide-gray-200 border border-gray-200 rounded-lg">
-          <thead class="bg-gray-50">
-            <tr>
-              <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Provider</th>
-              <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Location</th>
-              <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Purpose</th>
-              <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Data Processed</th>
-            </tr>
-          </thead>
-          <tbody class="bg-white divide-y divide-gray-200">
-            <tr>
-              <td class="px-4 py-3 text-sm font-medium text-gray-900">Anthropic (Claude AI)</td>
-              <td class="px-4 py-3 text-sm text-gray-600">United States</td>
-              <td class="px-4 py-3 text-sm text-gray-600">AI-powered commodity code suggestions and email classification</td>
-              <td class="px-4 py-3 text-sm text-gray-600">Product descriptions, email content (anonymised where possible)</td>
-            </tr>
-            <tr>
-              <td class="px-4 py-3 text-sm font-medium text-gray-900">Render</td>
-              <td class="px-4 py-3 text-sm text-gray-600">United States</td>
-              <td class="px-4 py-3 text-sm text-gray-600">Application hosting and database</td>
-              <td class="px-4 py-3 text-sm text-gray-600">All application data (encrypted at rest)</td>
-            </tr>
-            <tr>
-              <td class="px-4 py-3 text-sm font-medium text-gray-900">Resend</td>
-              <td class="px-4 py-3 text-sm text-gray-600">United States</td>
-              <td class="px-4 py-3 text-sm text-gray-600">Inbound email processing</td>
-              <td class="px-4 py-3 text-sm text-gray-600">Forwarded emails (subject, sender, body)</td>
-            </tr>
-            <tr>
-              <td class="px-4 py-3 text-sm font-medium text-gray-900">Cloudflare R2</td>
-              <td class="px-4 py-3 text-sm text-gray-600">Global (nearest region)</td>
-              <td class="px-4 py-3 text-sm text-gray-600">Product image storage</td>
-              <td class="px-4 py-3 text-sm text-gray-600">Product images extracted from emails/pages</td>
-            </tr>
-            <tr>
-              <td class="px-4 py-3 text-sm font-medium text-gray-900">Tavily</td>
-              <td class="px-4 py-3 text-sm text-gray-600">United States</td>
-              <td class="px-4 py-3 text-sm text-gray-600">Web search for product information</td>
-              <td class="px-4 py-3 text-sm text-gray-600">Search queries (product descriptions only)</td>
-            </tr>
-            <tr>
-              <td class="px-4 py-3 text-sm font-medium text-gray-900">ScrapingBee</td>
-              <td class="px-4 py-3 text-sm text-gray-600">European Union</td>
-              <td class="px-4 py-3 text-sm text-gray-600">Product page scraping (fallback)</td>
-              <td class="px-4 py-3 text-sm text-gray-600">Product URLs only</td>
-            </tr>
-            <tr>
-              <td class="px-4 py-3 text-sm font-medium text-gray-900">UK Trade Tariff API</td>
-              <td class="px-4 py-3 text-sm text-gray-600">United Kingdom</td>
-              <td class="px-4 py-3 text-sm text-gray-600">Official tariff code database lookups</td>
-              <td class="px-4 py-3 text-sm text-gray-600">Product search terms only (no personal data)</td>
-            </tr>
-          </tbody>
-        </table>
-      </div>
+    <div class="overflow-x-auto my-6">
+      <table>
+        <thead>
+          <tr>
+            <th>Provider</th>
+            <th>Location</th>
+            <th>Purpose</th>
+            <th>Data Processed</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><strong>Anthropic (Claude AI)</strong></td>
+            <td>United States</td>
+            <td>AI-powered commodity code suggestions and email classification</td>
+            <td>Product descriptions, email content (anonymised where possible)</td>
+          </tr>
+          <tr>
+            <td><strong>Render</strong></td>
+            <td>United States</td>
+            <td>Application hosting and database</td>
+            <td>All application data (encrypted at rest)</td>
+          </tr>
+          <tr>
+            <td><strong>Resend</strong></td>
+            <td>United States</td>
+            <td>Inbound email processing</td>
+            <td>Forwarded emails (subject, sender, body)</td>
+          </tr>
+          <tr>
+            <td><strong>Cloudflare R2</strong></td>
+            <td>Global (nearest region)</td>
+            <td>Product image storage</td>
+            <td>Product images extracted from emails/pages</td>
+          </tr>
+          <tr>
+            <td><strong>Tavily</strong></td>
+            <td>United States</td>
+            <td>Web search for product information</td>
+            <td>Search queries (product descriptions only)</td>
+          </tr>
+          <tr>
+            <td><strong>ScrapingBee</strong></td>
+            <td>European Union</td>
+            <td>Product page scraping (fallback)</td>
+            <td>Product URLs only</td>
+          </tr>
+          <tr>
+            <td><strong>UK Trade Tariff API</strong></td>
+            <td>United Kingdom</td>
+            <td>Official tariff code database lookups</td>
+            <td>Product search terms only (no personal data)</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
 
-      <p class="text-gray-700 mb-6">
-        All sub-processors are bound by data processing agreements and are required to protect your data in accordance with applicable data protection laws.
-      </p>
+    <p>
+      All sub-processors are bound by data processing agreements and are required to protect your data in accordance with applicable data protection laws.
+    </p>
 
-      <h2 class="text-xl font-semibold text-gray-900 mt-8 mb-4">6. Data Retention</h2>
-      <ul class="list-disc list-inside text-gray-700 mb-6 space-y-1">
-        <li><strong>Account data</strong> - Retained until you delete your account</li>
-        <li><strong>Order and product data</strong> - Retained until you delete your account or the specific order</li>
-        <li><strong>Forwarded emails</strong> - Retained for service functionality; you may request deletion</li>
-        <li><strong>Guest lookup data</strong> - Automatically deleted after 7 days</li>
-        <li><strong>Usage analytics</strong> - Retained for service improvement; deleted upon account deletion</li>
-      </ul>
+    <h2>6. Data Retention</h2>
+    <ul>
+      <li><strong>Account data</strong> - Retained until you delete your account</li>
+      <li><strong>Order and product data</strong> - Retained until you delete your account or the specific order</li>
+      <li><strong>Forwarded emails</strong> - Retained for service functionality; you may request deletion</li>
+      <li><strong>Guest lookup data</strong> - Automatically deleted after 7 days</li>
+      <li><strong>Usage analytics</strong> - Retained for service improvement; deleted upon account deletion</li>
+    </ul>
 
-      <h2 class="text-xl font-semibold text-gray-900 mt-8 mb-4">7. Your Rights</h2>
-      <p class="text-gray-700 mb-4">You have the right to:</p>
-      <ul class="list-disc list-inside text-gray-700 mb-6 space-y-1">
-        <li><strong>Access</strong> - Request a copy of all data we hold about you</li>
-        <li><strong>Rectification</strong> - Correct any inaccurate data</li>
-        <li><strong>Erasure</strong> - Request deletion of your data ("right to be forgotten")</li>
-        <li><strong>Data portability</strong> - Receive your data in a machine-readable format</li>
-        <li><strong>Object</strong> - Object to certain types of processing</li>
-        <li><strong>Withdraw consent</strong> - Where processing is based on consent</li>
-      </ul>
-      <p class="text-gray-700 mb-6">
-        To exercise any of these rights, please contact us at the email address below.
-      </p>
+    <h2>7. Your Rights</h2>
+    <p>You have the right to:</p>
+    <ul>
+      <li><strong>Access</strong> - Request a copy of all data we hold about you</li>
+      <li><strong>Rectification</strong> - Correct any inaccurate data</li>
+      <li><strong>Erasure</strong> - Request deletion of your data ("right to be forgotten")</li>
+      <li><strong>Data portability</strong> - Receive your data in a machine-readable format</li>
+      <li><strong>Object</strong> - Object to certain types of processing</li>
+      <li><strong>Withdraw consent</strong> - Where processing is based on consent</li>
+    </ul>
+    <p>
+      To exercise any of these rights, please contact us at the email address below.
+    </p>
 
-      <h2 class="text-xl font-semibold text-gray-900 mt-8 mb-4">8. Data Security</h2>
-      <p class="text-gray-700 mb-6">
-        We implement appropriate technical and organisational measures to protect your data, including:
-      </p>
-      <ul class="list-disc list-inside text-gray-700 mb-6 space-y-1">
-        <li>Encryption of data in transit (HTTPS/TLS)</li>
-        <li>Encryption of data at rest</li>
-        <li>Secure password hashing</li>
-        <li>Regular security updates and monitoring</li>
-        <li>Access controls limiting who can view data</li>
-      </ul>
+    <h2>8. Data Security</h2>
+    <p>
+      We implement appropriate technical and organisational measures to protect your data, including:
+    </p>
+    <ul>
+      <li>Encryption of data in transit (HTTPS/TLS)</li>
+      <li>Encryption of data at rest</li>
+      <li>Secure password hashing</li>
+      <li>Regular security updates and monitoring</li>
+      <li>Access controls limiting who can view data</li>
+    </ul>
 
-      <h2 class="text-xl font-semibold text-gray-900 mt-8 mb-4">9. International Data Transfers</h2>
-      <p class="text-gray-700 mb-6">
-        Some of our sub-processors are located in the United States. Where data is transferred outside the UK/EEA, we ensure appropriate safeguards are in place, such as Standard Contractual Clauses or reliance on adequacy decisions.
-      </p>
+    <h2>9. International Data Transfers</h2>
+    <p>
+      Some of our sub-processors are located in the United States. Where data is transferred outside the UK/EEA, we ensure appropriate safeguards are in place, such as Standard Contractual Clauses or reliance on adequacy decisions.
+    </p>
 
-      <h2 class="text-xl font-semibold text-gray-900 mt-8 mb-4">10. Cookies and Analytics</h2>
-      <p class="text-gray-700 mb-6">
-        We use only essential cookies required for the service to function:
-      </p>
-      <ul class="list-disc list-inside text-gray-700 mb-6 space-y-1">
-        <li><strong>Session cookie</strong> - Maintains your logged-in state</li>
-        <li><strong>Guest token cookie</strong> - Tracks free lookup limits for non-registered users</li>
-      </ul>
-      <p class="text-gray-700 mb-6">
-        We do not use advertising or tracking cookies. We do not use third-party analytics services (such as Google Analytics).
-      </p>
-      <p class="text-gray-700 mb-6">
-        Our usage analytics (see Section 2.6) are collected server-side without placing any cookies on your device. This privacy-first approach means we can improve our service while respecting your privacy.
-      </p>
+    <h2>10. Cookies and Analytics</h2>
+    <p>
+      We use only essential cookies required for the service to function:
+    </p>
+    <ul>
+      <li><strong>Session cookie</strong> - Maintains your logged-in state</li>
+      <li><strong>Guest token cookie</strong> - Tracks free lookup limits for non-registered users</li>
+    </ul>
+    <p>
+      We do not use advertising or tracking cookies. We do not use third-party analytics services (such as Google Analytics).
+    </p>
+    <p>
+      Our usage analytics (see Section 2.6) are collected server-side without placing any cookies on your device. This privacy-first approach means we can improve our service while respecting your privacy.
+    </p>
 
-      <h2 class="text-xl font-semibold text-gray-900 mt-8 mb-4">11. Changes to This Policy</h2>
-      <p class="text-gray-700 mb-6">
-        We may update this privacy policy from time to time. We will notify you of any significant changes by posting the new policy on this page and updating the "Last updated" date.
-      </p>
+    <h2>11. Changes to This Policy</h2>
+    <p>
+      We may update this privacy policy from time to time. We will notify you of any significant changes by posting the new policy on this page and updating the "Last updated" date.
+    </p>
 
-      <h2 class="text-xl font-semibold text-gray-900 mt-8 mb-4">12. Contact Us</h2>
-      <p class="text-gray-700 mb-6">
-        If you have any questions about this privacy policy or how we handle your data, please contact us at:
-      </p>
-      <p class="text-gray-700 mb-6">
-        <strong>Email:</strong> privacy@tariffik.com
-      </p>
-      <p class="text-gray-700 mb-6">
-        <strong>Location:</strong> Jersey, Channel Islands
-      </p>
+    <h2>12. Contact Us</h2>
+    <p>
+      If you have any questions about this privacy policy or how we handle your data, please contact us at:
+    </p>
+    <div class="rounded-xl border border-gray-200 bg-white p-6 my-6">
+      <p class="mb-2"><strong>Email:</strong> <a href="mailto:privacy@tariffik.com" class="text-primary hover:text-primary-hover">privacy@tariffik.com</a></p>
+      <p class="mb-0"><strong>Location:</strong> Jersey, Channel Islands</p>
     </div>
   </div>
 </div>
+
+<style>
+  .prose-custom h2 { margin-top: 2.5rem; margin-bottom: 1rem; font-size: 1.5rem; font-weight: 600; color: #2D1E2F; }
+  .prose-custom h3 { margin-top: 2rem; margin-bottom: 0.75rem; font-size: 1.25rem; font-weight: 600; color: #2D1E2F; }
+  .prose-custom h4 { margin-top: 1.5rem; margin-bottom: 0.5rem; font-size: 1rem; font-weight: 600; color: #2D1E2F; }
+  .prose-custom p { margin-bottom: 1rem; color: #374151; line-height: 1.75; }
+  .prose-custom ul { margin-bottom: 1rem; padding-left: 1.5rem; list-style-type: disc; }
+  .prose-custom li { margin-bottom: 0.5rem; color: #374151; }
+  .prose-custom table { width: 100%; border-collapse: collapse; border-radius: 0.75rem; overflow: hidden; border: 1px solid #e5e7eb; }
+  .prose-custom th { background-color: #FCF6B1; padding: 0.75rem 1rem; text-align: left; font-weight: 600; color: #2D1E2F; font-size: 0.875rem; }
+  .prose-custom td { padding: 0.75rem 1rem; border-top: 1px solid #e5e7eb; font-size: 0.875rem; color: #374151; }
+  .prose-custom a { color: #E3170A; text-decoration: underline; }
+  .prose-custom a:hover { color: #c91409; }
+</style>

@@ -1,9 +1,27 @@
 @import "tailwindcss";
 
-/* Custom fonts */
+/* Custom theme */
 @theme {
+  /* Fonts */
   --font-body: "Plus Jakarta Sans", sans-serif;
   --font-heading: "Space Grotesk", sans-serif;
+
+  /* Brand colors */
+  --color-brand-red: #E3170A;
+  --color-brand-mint: #A9E5BB;
+  --color-brand-yellow: #FCF6B1;
+  --color-brand-orange: #F7B32B;
+  --color-brand-dark: #2D1E2F;
+
+  /* Semantic aliases */
+  --color-primary: #E3170A;
+  --color-primary-hover: #c91409;
+  --color-secondary: #F7B32B;
+  --color-secondary-hover: #e5a526;
+  --color-success: #A9E5BB;
+  --color-highlight: #FCF6B1;
+  --color-dark: #2D1E2F;
+  --color-dark-hover: #3d2e40;
 }
 
 /* Set default body font */
