@@ -55,6 +55,13 @@ gem "resend"
 gem "ahoy_matey"
 gem "device_detector"
 
+# Structured logging
+gem "lograge"
+
+# PostgreSQL monitoring (production)
+gem "pghero"
+gem "pg_query", ">= 2"
+
 # Windows does not include zoneinfo files, so bundle the tzinfo-data gem
 gem "tzinfo-data", platforms: %i[ windows jruby ]
 

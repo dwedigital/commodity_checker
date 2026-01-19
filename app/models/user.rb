@@ -59,6 +59,10 @@ class User < ApplicationRecord
     subscription_tier.in?(%w[starter professional enterprise]) && subscription_active?
   end
 
+  def admin?
+    admin == true
+  end
+
   def can_perform_lookup?
     return true unless free?
     lookups_this_month < FREE_MONTHLY_LOOKUP_LIMIT

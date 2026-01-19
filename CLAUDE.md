@@ -234,7 +234,7 @@ curl -I https://tariffik.com | grep -E "(Content-Security|X-Frame|X-Content-Type
 ### Improving email parsing
 - Edit `EmailParserService#extract_product_descriptions`
 - Use multiple strategies, avoid overfitting to one email format
-- Test with `/test_emails/new` interface
+- Test with `/dashboard/test_emails/new` interface
 
 ### Modifying commodity code suggestions
 - Edit `LlmCommoditySuggester::SYSTEM_PROMPT` for different AI behavior
@@ -442,7 +442,7 @@ All API requests require a Bearer token: `Authorization: Bearer tk_live_...`
 | Enterprise | 500 | Unlimited | 500 |
 
 ### Developer Dashboard
-- Route: `/developer`
+- Route: `/dashboard/developer`
 - Free users see upsell page
 - Subscribers see usage stats, API key management, recent requests
 
@@ -461,7 +461,7 @@ See `claude/implementations/api-layer-premium-feature.md` for full implementatio
 
 ## Testing Without External Services
 
-1. **Without Resend**: Use `/test_emails/new` to paste email content
+1. **Without Resend**: Use `/dashboard/test_emails/new` to paste email content
 2. **Without Claude API**: Remove API key, suggestions will return nil
 3. **Without Tariff API**: Service returns empty array on failure
 

@@ -16,7 +16,7 @@ A Rails application for tracking online orders and suggesting EU/UK commodity ta
 - **Photo Lookup**: Upload product photos for AI-powered identification
 - **Blog**: Markdown-based blog for SEO content about commodity codes
 - **Premium API**: REST API for programmatic commodity code lookups (Starter+ plans)
-- **Developer Dashboard**: API key management and usage monitoring at `/developer`
+- **Developer Dashboard**: API key management and usage monitoring at `/dashboard/developer`
 
 ## Tech Stack
 
@@ -148,7 +148,7 @@ curl -X POST https://tariffik.com/api/v1/commodity-codes/suggest \
 
 ### Developer Dashboard
 
-Manage API keys and monitor usage at `/developer`. Free users see an upsell page.
+Manage API keys and monitor usage at `/dashboard/developer`. Free users see an upsell page.
 
 ### Postman Collection
 
@@ -179,7 +179,7 @@ Import `docs/Tariffik_API.postman_collection.json` for ready-to-use API requests
 
 Without Resend setup, use the test interface:
 
-1. Visit `/test_emails/new`
+1. Visit `/dashboard/test_emails/new`
 2. Paste email content
 3. Submit to process
 

@@ -64,7 +64,7 @@ mail.multipart?   # true/false
 ## Testing Locally
 
 ### Option 1: Test Emails Controller
-Use the test emails controller at `/test_emails/new` to paste email content.
+Use the test emails controller at `/dashboard/test_emails/new` to paste email content.
 
 ### Option 2: Action Mailbox Conductor
 ```
