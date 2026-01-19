@@ -20,7 +20,72 @@
 
       <h2 class="text-xl font-semibold text-gray-900 mt-8 mb-4">2. Data We Collect</h2>
 
-      <h3 class="text-lg font-medium text-gray-900 mt-6 mb-3">2.1 Account Information</h3>
+      <h3 class="text-lg font-medium text-gray-900 mt-6 mb-3">2.1 Chrome Extension Data</h3>
+      <p class="text-gray-700 mb-4">
+        The Tariffik Chrome Extension helps you look up commodity codes while browsing online stores. This section specifically addresses data collection by the extension, as required by the Chrome Web Store.
+      </p>
+
+      <h4 class="text-base font-medium text-gray-800 mt-4 mb-2">What the Extension Collects</h4>
+      <ul class="list-disc list-inside text-gray-700 mb-4 space-y-1">
+        <li><strong>Product page URLs</strong> - The URL of product pages you choose to look up</li>
+        <li><strong>Product information</strong> - Title, description, price, and brand extracted from the current page when you initiate a lookup</li>
+        <li><strong>Extension ID</strong> - A randomly generated identifier stored locally to track anonymous usage limits</li>
+        <li><strong>IP address</strong> - Used solely for rate limiting and abuse prevention</li>
+      </ul>
+
+      <h4 class="text-base font-medium text-gray-800 mt-4 mb-2">What the Extension Does NOT Collect</h4>
+      <ul class="list-disc list-inside text-gray-700 mb-4 space-y-1">
+        <li>Browsing history or pages you visit (we only see pages where you actively click the extension)</li>
+        <li>Personal information from web pages (passwords, form data, payment details)</li>
+        <li>Data from pages other than the active tab when you click the extension</li>
+        <li>Any data when the extension is not actively being used</li>
+      </ul>
+
+      <h4 class="text-base font-medium text-gray-800 mt-4 mb-2">Extension Permissions Explained</h4>
+      <div class="overflow-x-auto mb-4">
+        <table class="min-w-full divide-y divide-gray-200 border border-gray-200 rounded-lg">
+          <thead class="bg-gray-50">
+            <tr>
+              <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Permission</th>
+              <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Why It's Needed</th>
+            </tr>
+          </thead>
+          <tbody class="bg-white divide-y divide-gray-200">
+            <tr>
+              <td class="px-4 py-3 text-sm font-medium text-gray-900">activeTab</td>
+              <td class="px-4 py-3 text-sm text-gray-600">To read product information from the current page when you click the extension icon</td>
+            </tr>
+            <tr>
+              <td class="px-4 py-3 text-sm font-medium text-gray-900">storage</td>
+              <td class="px-4 py-3 text-sm text-gray-600">To store your authentication token locally and remember your preferences</td>
+            </tr>
+            <tr>
+              <td class="px-4 py-3 text-sm font-medium text-gray-900">identity</td>
+              <td class="px-4 py-3 text-sm text-gray-600">To enable secure sign-in to your Tariffik account</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <h4 class="text-base font-medium text-gray-800 mt-4 mb-2">How Extension Data is Processed</h4>
+      <p class="text-gray-700 mb-4">
+        When you perform a lookup, the extension sends product information to our servers via HTTPS. The data is processed by:
+      </p>
+      <ul class="list-disc list-inside text-gray-700 mb-4 space-y-1">
+        <li><strong>Tariffik servers</strong> - To coordinate the lookup and return results</li>
+        <li><strong>Anthropic (Claude AI)</strong> - To analyse product descriptions and suggest commodity codes</li>
+        <li><strong>UK Trade Tariff API</strong> - To validate codes against official government data</li>
+      </ul>
+
+      <h4 class="text-base font-medium text-gray-800 mt-4 mb-2">Anonymous vs. Authenticated Usage</h4>
+      <p class="text-gray-700 mb-4">
+        <strong>Anonymous users</strong> (not signed in) receive 3 free lifetime lookups. We track this using a randomly generated extension ID stored locally in your browser - no personal information is required.
+      </p>
+      <p class="text-gray-700 mb-6">
+        <strong>Signed-in users</strong> can optionally save lookups to their account for future reference. You control whether each lookup is saved via the extension settings.
+      </p>
+
+      <h3 class="text-lg font-medium text-gray-900 mt-6 mb-3">2.2 Account Information</h3>
       <p class="text-gray-700 mb-4">When you create an account, we collect:</p>
       <ul class="list-disc list-inside text-gray-700 mb-6 space-y-1">
         <li><strong>Email address</strong> - Used for account identification and authentication</li>
@@ -28,7 +93,7 @@
         <li><strong>Unique email forwarding address</strong> - Generated automatically for your account</li>
       </ul>
 
-      <h3 class="text-lg font-medium text-gray-900 mt-6 mb-3">2.2 Order and Product Data</h3>
+      <h3 class="text-lg font-medium text-gray-900 mt-6 mb-3">2.3 Order and Product Data</h3>
       <p class="text-gray-700 mb-4">When you use our service, we collect:</p>
       <ul class="list-disc list-inside text-gray-700 mb-6 space-y-1">
         <li><strong>Product URLs</strong> - Links you submit for commodity code lookup</li>
@@ -39,7 +104,7 @@
         <li><strong>Commodity codes</strong> - Both AI-suggested and user-confirmed codes</li>
       </ul>
 
-      <h3 class="text-lg font-medium text-gray-900 mt-6 mb-3">2.3 Email Forwarding Data</h3>
+      <h3 class="text-lg font-medium text-gray-900 mt-6 mb-3">2.4 Email Forwarding Data</h3>
       <p class="text-gray-700 mb-4">When you forward emails to your unique Tariffik address, we process:</p>
       <ul class="list-disc list-inside text-gray-700 mb-6 space-y-1">
         <li><strong>Email subject line</strong></li>
@@ -51,7 +116,7 @@
         <strong>Important:</strong> We only process emails sent to your unique Tariffik forwarding address. We do not have access to your email inbox or any other emails.
       </p>
 
-      <h3 class="text-lg font-medium text-gray-900 mt-6 mb-3">2.4 Guest User Data</h3>
+      <h3 class="text-lg font-medium text-gray-900 mt-6 mb-3">2.5 Guest User Data</h3>
       <p class="text-gray-700 mb-4">For users without an account, we collect minimal data for rate limiting:</p>
       <ul class="list-disc list-inside text-gray-700 mb-6 space-y-1">
         <li><strong>Anonymous session token</strong> - Stored as a cookie to track lookup limits</li>
@@ -62,7 +127,7 @@
         Guest lookup data is automatically deleted after 7 days.
       </p>
 
-      <h3 class="text-lg font-medium text-gray-900 mt-6 mb-3">2.5 Usage Analytics</h3>
+      <h3 class="text-lg font-medium text-gray-900 mt-6 mb-3">2.6 Usage Analytics</h3>
       <p class="text-gray-700 mb-4">To improve our service, we collect anonymised usage data:</p>
       <ul class="list-disc list-inside text-gray-700 mb-6 space-y-1">
         <li><strong>Pages visited</strong> - Which pages you view on Tariffik</li>
@@ -217,7 +282,7 @@
         We do not use advertising or tracking cookies. We do not use third-party analytics services (such as Google Analytics).
       </p>
       <p class="text-gray-700 mb-6">
-        Our usage analytics (see Section 2.5) are collected server-side without placing any cookies on your device. This privacy-first approach means we can improve our service while respecting your privacy.
+        Our usage analytics (see Section 2.6) are collected server-side without placing any cookies on your device. This privacy-first approach means we can improve our service while respecting your privacy.
       </p>
 
       <h2 class="text-xl font-semibold text-gray-900 mt-8 mb-4">11. Changes to This Policy</h2>
