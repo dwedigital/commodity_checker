@@ -10,7 +10,8 @@
  */
 
 /* Turbo frame loading indicator */
-turbo-frame[aria-busy="true"]::before {
+/* Skip frames with .no-loading-indicator class (they have custom progress UI) */
+turbo-frame[aria-busy="true"]:not(.no-loading-indicator)::before {
   content: "";
   display: block;
   margin: 1.5rem auto;
@@ -22,7 +23,7 @@ turbo-frame[aria-busy="true"]::before {
   animation: spin 0.8s linear infinite;
 }
 
-turbo-frame[aria-busy="true"]::after {
+turbo-frame[aria-busy="true"]:not(.no-loading-indicator)::after {
   content: "Fetching product details...";
   display: block;
   text-align: center;

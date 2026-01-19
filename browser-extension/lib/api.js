@@ -5,7 +5,7 @@
 // - 'local': http://localhost:3000 (for development)
 // - 'staging': https://tariffik-staging.onrender.com
 // - 'production': https://tariffik.com
-const ENVIRONMENT = 'local';
+const ENVIRONMENT = 'production';
 
 const HOSTS = {
   local: 'http://localhost:3000',

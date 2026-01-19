@@ -3,6 +3,7 @@ class OrderItem < ApplicationRecord
   belongs_to :product_lookup, optional: true
 
   validates :description, presence: true
+  validates :quantity, presence: true, numericality: { greater_than: 0 }
 
   def commodity_code_confirmed?
     confirmed_commodity_code.present?

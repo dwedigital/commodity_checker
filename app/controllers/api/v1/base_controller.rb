@@ -3,6 +3,7 @@ module Api
     class BaseController < ActionController::API
       include ActionController::HttpAuthentication::Token::ControllerMethods
 
+      before_action :set_request_start_time
       before_action :authenticate_api_key!
       before_action :check_rate_limit!
       after_action :log_request

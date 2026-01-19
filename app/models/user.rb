@@ -82,9 +82,8 @@ class User < ApplicationRecord
     EXTENSION_LOOKUP_LIMITS[subscription_tier.to_sym] || EXTENSION_LOOKUP_LIMITS[:free]
   end
 
-  def extension_lookups_this_month
-    product_lookups.where(created_at: Time.current.beginning_of_month..).count
-  end
+  # Uses the same count as lookups_this_month since they track the same thing
+  alias_method :extension_lookups_this_month, :lookups_this_month
 
   def extension_lookups_remaining
     limit = extension_lookup_limit

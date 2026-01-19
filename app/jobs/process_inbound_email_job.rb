@@ -82,11 +82,12 @@ class ProcessInboundEmailJob < ApplicationJob
     # Filter to only real product descriptions
     real_products = parsed_data[:product_descriptions].select { |d| looks_like_product_description?(d) }
 
-    # Get product images from email (if available)
+    # Get product images from email and match them to products using alt text
     email_images = parsed_data[:product_images] || []
+    matched_images = match_images_to_products(email_images, real_products, inbound_email)
 
     # Add new product descriptions (avoid duplicates)
-    add_new_items(order, real_products, email_images)
+    add_new_items(order, real_products, matched_images)
 
     # Add new tracking URLs (avoid duplicates)
     add_new_tracking_urls(order, parsed_data[:tracking_urls])
@@ -124,14 +125,15 @@ class ProcessInboundEmailJob < ApplicationJob
     # Filter to only real product descriptions
     real_products = parsed_data[:product_descriptions].select { |d| looks_like_product_description?(d) }
 
-    # Get product images from email (if available)
+    # Get product images from email and match them to products using alt text
     email_images = parsed_data[:product_images] || []
+    matched_images = match_images_to_products(email_images, real_products, inbound_email)
 
     # Create order items from product descriptions
     if real_products.any?
       real_products.each_with_index do |description, index|
-        # Assign image from email if available (assumes images appear in same order as products)
-        image_url = email_images[index]
+        # Assign image matched by alt text comparison
+        image_url = matched_images[index]
         order.order_items.create!(
           description: description,
           quantity: 1,
@@ -228,7 +230,7 @@ class ProcessInboundEmailJob < ApplicationJob
           item.update!(
             suggested_commodity_code: suggestion[:commodity_code],
             commodity_code_confidence: suggestion[:confidence],
-            llm_reasoning: build_suggestion_reasoning(suggestion)
+            llm_reasoning: CommoditySuggestionFormatter.build_reasoning(suggestion)
           )
           Rails.logger.info("Updated commodity code for '#{item.description}': #{suggestion[:commodity_code]}")
         end
@@ -239,17 +241,6 @@ class ProcessInboundEmailJob < ApplicationJob
   rescue => e
     Rails.logger.error("Error searching for product info: #{e.message}")
     # Don't fail the job, just continue without enhanced info
-  end
-
-  def build_suggestion_reasoning(suggestion)
-    parts = []
-    parts << suggestion[:reasoning] if suggestion[:reasoning].present?
-    parts << "Category: #{suggestion[:category]}" if suggestion[:category].present?
-    parts << "Official: #{suggestion[:official_description]}" if suggestion[:official_description].present?
-    parts << "(Validated)" if suggestion[:validated]
-    parts << "(Unvalidated - code may need verification)" if suggestion[:validated] == false
-
-    parts.join(" | ")
   end
 
   def looks_like_product_description?(description)
@@ -418,6 +409,24 @@ class ProcessInboundEmailJob < ApplicationJob
       UpdateTrackingJob.perform_later(order.id)
       Rails.logger.info("Created tracking-only order #{order.id}")
     end
+  end
+
+  # Match images to products using alt text comparison
+  # Falls back to position-based matching if no alt text matches found
+  def match_images_to_products(images, product_descriptions, inbound_email)
+    return [] if images.blank? || product_descriptions.blank?
+
+    # Use EmailParserService to match images to products
+    parser = EmailParserService.new(inbound_email)
+    matched = parser.match_images_to_products(images, product_descriptions)
+
+    # If smart matching found no results, fall back to position-based
+    if matched.all?(&:nil?)
+      Rails.logger.info("No alt text matches found, falling back to position-based image assignment")
+      return images.first(product_descriptions.length).map { |img| img[:url] }
+    end
+
+    matched
   end
 
   def track_analytics(user, event_name, properties = {})

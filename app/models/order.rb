@@ -8,6 +8,7 @@ class Order < ApplicationRecord
 
   enum :status, { pending: 0, in_transit: 1, delivered: 2 }, default: :pending
 
+  validates :user_id, presence: true
   validates :status, presence: true
 
   def needs_commodity_codes?

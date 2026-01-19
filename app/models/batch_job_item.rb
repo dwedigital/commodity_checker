@@ -14,6 +14,7 @@ class BatchJobItem < ApplicationRecord
   }
 
   validates :input_type, presence: true
+  validates :confidence, numericality: { in: 0..1 }, allow_nil: true
   validate :has_input
 
   serialize :scraped_product, coder: JSON

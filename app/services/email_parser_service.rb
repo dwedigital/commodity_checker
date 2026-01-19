@@ -339,15 +339,27 @@ class EmailParserService
 
     images = []
 
-    # Extract all img src URLs from HTML
-    @html.scan(/<img[^>]+src=["']([^"']+)["'][^>]*>/i).flatten.each do |src|
+    # Extract img tags with src and optional alt text
+    # Pattern captures: full img tag, src URL, and alt text (if present)
+    @html.scan(/<img[^>]*>/i).each do |img_tag|
+      src_match = img_tag.match(/src=["']([^"']+)["']/i)
+      next unless src_match
+
+      src = src_match[1]
       next if src.blank?
       next unless src.start_with?("http")  # Only absolute URLs
       next if likely_non_product_image?(src)
 
+      # Extract alt text
+      alt_match = img_tag.match(/alt=["']([^"']*)["']/i)
+      alt_text = alt_match ? alt_match[1].strip : nil
+
+      # Skip if alt text indicates non-product image
+      next if alt_text && likely_non_product_alt_text?(alt_text)
+
       # Check for size hints - very small images are likely icons
-      width_match = @html.match(/<img[^>]+src=["']#{Regexp.escape(src)}["'][^>]*width=["']?(\d+)/i)
-      height_match = @html.match(/<img[^>]+src=["']#{Regexp.escape(src)}["'][^>]*height=["']?(\d+)/i)
+      width_match = img_tag.match(/width=["']?(\d+)/i)
+      height_match = img_tag.match(/height=["']?(\d+)/i)
 
       width = width_match ? width_match[1].to_i : nil
       height = height_match ? height_match[1].to_i : nil
@@ -358,16 +370,109 @@ class EmailParserService
 
       images << {
         url: src,
+        alt_text: alt_text,
         width: width,
         height: height
       }
     end
 
     # Sort by size (larger images first, as they're more likely to be product images)
+    # Return full image data including alt text for matching
     images.sort_by { |img| -(img[:width] || 0) * (img[:height] || 0) }
-          .map { |img| img[:url] }
-          .uniq
+          .uniq { |img| img[:url] }
           .first(10)  # Limit to 10 images
+  end
+
+  # Match extracted images to product descriptions using alt text
+  # Returns array of image URLs in the order matching the products
+  def match_images_to_products(images, product_descriptions)
+    return [] if images.blank? || product_descriptions.blank?
+
+    matched_images = []
+
+    product_descriptions.each do |product_desc|
+      best_match = find_best_image_match(images, product_desc)
+      matched_images << (best_match ? best_match[:url] : nil)
+    end
+
+    matched_images
+  end
+
+  private
+
+  def find_best_image_match(images, product_desc)
+    return nil if images.blank? || product_desc.blank?
+
+    product_words = extract_keywords(product_desc)
+    return nil if product_words.empty?
+
+    best_match = nil
+    best_score = 0
+
+    images.each do |img|
+      next if img[:alt_text].blank?
+
+      alt_words = extract_keywords(img[:alt_text])
+      next if alt_words.empty?
+
+      # Calculate match score based on keyword overlap
+      score = calculate_match_score(product_words, alt_words)
+
+      if score > best_score
+        best_score = score
+        best_match = img
+      end
+    end
+
+    # Only return match if score meets minimum threshold
+    best_score >= 0.3 ? best_match : nil
+  end
+
+  def extract_keywords(text)
+    return [] if text.blank?
+
+    # Normalize and extract meaningful words
+    text.downcase
+        .gsub(/[^a-z0-9\s-]/, " ")
+        .split(/\s+/)
+        .reject { |w| w.length < 3 }
+        .reject { |w| stop_words.include?(w) }
+        .uniq
+  end
+
+  def stop_words
+    %w[the and for with from color size qty quantity item product order your]
+  end
+
+  def calculate_match_score(product_words, alt_words)
+    return 0 if product_words.empty? || alt_words.empty?
+
+    # Count how many product words appear in alt text
+    matches = (product_words & alt_words).length
+
+    # Score is proportion of product words found in alt text
+    matches.to_f / product_words.length
+  end
+
+  def likely_non_product_alt_text?(alt_text)
+    return false if alt_text.blank?
+
+    non_product_alt_patterns = [
+      /^logo$/i,
+      /\blogo\b/i,
+      /^icon$/i,
+      /^brand$/i,
+      /^company/i,
+      /facebook|twitter|instagram|pinterest|linkedin/i,
+      /social/i,
+      /payment|visa|mastercard|amex|paypal/i,
+      /header|footer|banner/i,
+      /spacer|pixel|tracking/i,
+      /button|cta/i,
+      /^$/  # Empty alt text
+    ]
+
+    non_product_alt_patterns.any? { |pattern| alt_text.match?(pattern) }
   end
 
   def likely_non_product_image?(url)
@@ -392,8 +497,6 @@ class EmailParserService
 
     desc.presence
   end
-
-  private
 
   def clean_url(url)
     # Remove trailing punctuation and clean up

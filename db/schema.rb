@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2026_01_19_093854) do
+ActiveRecord::Schema[8.0].define(version: 2026_01_19_142731) do
   create_table "action_mailbox_inbound_emails", force: :cascade do |t|
     t.integer "status", default: 0, null: false
     t.string "message_id", null: false
@@ -107,7 +107,6 @@ ActiveRecord::Schema[8.0].define(version: 2026_01_19_093854) do
     t.index ["key_digest"], name: "index_api_keys_on_key_digest", unique: true
     t.index ["key_prefix"], name: "index_api_keys_on_key_prefix"
     t.index ["user_id", "revoked_at"], name: "index_api_keys_on_user_id_and_revoked_at"
-    t.index ["user_id"], name: "index_api_keys_on_user_id"
   end
 
   create_table "api_requests", force: :cascade do |t|
@@ -121,7 +120,6 @@ ActiveRecord::Schema[8.0].define(version: 2026_01_19_093854) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.index ["api_key_id", "created_at"], name: "index_api_requests_on_api_key_id_and_created_at"
-    t.index ["api_key_id"], name: "index_api_requests_on_api_key_id"
     t.index ["created_at"], name: "index_api_requests_on_created_at"
   end
 
@@ -143,7 +141,6 @@ ActiveRecord::Schema[8.0].define(version: 2026_01_19_093854) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.index ["batch_job_id", "status"], name: "index_batch_job_items_on_batch_job_id_and_status"
-    t.index ["batch_job_id"], name: "index_batch_job_items_on_batch_job_id"
   end
 
   create_table "batch_jobs", force: :cascade do |t|
@@ -158,7 +155,6 @@ ActiveRecord::Schema[8.0].define(version: 2026_01_19_093854) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.index ["api_key_id", "status"], name: "index_batch_jobs_on_api_key_id_and_status"
-    t.index ["api_key_id"], name: "index_batch_jobs_on_api_key_id"
     t.index ["public_id"], name: "index_batch_jobs_on_public_id", unique: true
   end
 
@@ -184,7 +180,6 @@ ActiveRecord::Schema[8.0].define(version: 2026_01_19_093854) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.index ["extension_id", "created_at"], name: "index_extension_lookups_on_extension_id_and_created_at"
-    t.index ["extension_id"], name: "index_extension_lookups_on_extension_id"
   end
 
   create_table "extension_tokens", force: :cascade do |t|
@@ -200,7 +195,6 @@ ActiveRecord::Schema[8.0].define(version: 2026_01_19_093854) do
     t.index ["token_digest"], name: "index_extension_tokens_on_token_digest", unique: true
     t.index ["token_prefix"], name: "index_extension_tokens_on_token_prefix"
     t.index ["user_id", "revoked_at"], name: "index_extension_tokens_on_user_id_and_revoked_at"
-    t.index ["user_id"], name: "index_extension_tokens_on_user_id"
   end
 
   create_table "guest_lookups", force: :cascade do |t|
@@ -213,7 +207,6 @@ ActiveRecord::Schema[8.0].define(version: 2026_01_19_093854) do
     t.datetime "updated_at", null: false
     t.index ["created_at"], name: "index_guest_lookups_on_created_at"
     t.index ["guest_token", "created_at"], name: "index_guest_lookups_on_guest_token_and_created_at"
-    t.index ["guest_token"], name: "index_guest_lookups_on_guest_token"
   end
 
   create_table "inbound_emails", force: :cascade do |t|
@@ -289,7 +282,6 @@ ActiveRecord::Schema[8.0].define(version: 2026_01_19_093854) do
     t.index ["order_item_id"], name: "index_product_lookups_on_order_item_id"
     t.index ["url"], name: "index_product_lookups_on_url"
     t.index ["user_id", "created_at"], name: "index_product_lookups_on_user_id_and_created_at"
-    t.index ["user_id"], name: "index_product_lookups_on_user_id"
   end
 
   create_table "tracking_events", force: :cascade do |t|
@@ -340,7 +332,6 @@ ActiveRecord::Schema[8.0].define(version: 2026_01_19_093854) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.index ["user_id", "enabled"], name: "index_webhooks_on_user_id_and_enabled"
-    t.index ["user_id"], name: "index_webhooks_on_user_id"
   end
 
   add_foreign_key "active_storage_attachments", "active_storage_blobs", column: "blob_id"

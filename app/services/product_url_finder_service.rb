@@ -29,11 +29,7 @@ class ProductUrlFinderService
       f.adapter Faraday.default_adapter
     end
 
-    @scrapingbee_conn = Faraday.new do |f|
-      f.options.timeout = 45
-      f.options.open_timeout = 20
-      f.adapter Faraday.default_adapter
-    end
+    @scrapingbee = ScrapingbeeClient.new
   end
 
   # Find product URL given retailer info and product name
@@ -110,9 +106,9 @@ class ProductUrlFinderService
 
   def fetch_search_page(url)
     # Most e-commerce sites need JS rendering - try ScrapingBee first if available
-    if ENV["SCRAPINGBEE_API_KEY"].present?
-      html = fetch_via_scrapingbee(url, wait_for_results: true)
-      return html if html && has_product_content?(html)
+    if ScrapingbeeClient.configured?
+      result = @scrapingbee.fetch(url, wait: "3000", wait_for: "a[href]")
+      return result[:body] if result[:body] && has_product_content?(result[:body])
     end
 
     # Fallback to direct fetch (works for simpler sites)
@@ -128,31 +124,6 @@ class ProductUrlFinderService
   def has_product_content?(html)
     # Check if the page has actual product links (not just a JS shell)
     html.scan(/href=["'][^"']*["']/i).length > 20
-  end
-
-  def fetch_via_scrapingbee(url, wait_for_results: false)
-    api_key = ENV["SCRAPINGBEE_API_KEY"]
-    return nil unless api_key.present?
-
-    params = {
-      api_key: api_key,
-      url: url,
-      render_js: "true",
-      premium_proxy: "true",
-      country_code: "gb"
-    }
-
-    # Wait longer for search results to load
-    if wait_for_results
-      params[:wait] = "3000"  # Wait 3 seconds for JS to render
-      params[:wait_for] = "a[href]"  # Wait for links to appear
-    end
-
-    response = @scrapingbee_conn.get("https://app.scrapingbee.com/api/v1/", params)
-    response.success? ? response.body : nil
-  rescue Faraday::Error => e
-    Rails.logger.warn("ProductUrlFinderService: ScrapingBee failed: #{e.message}")
-    nil
   end
 
   def extract_best_product_url(html, domain, product_name)

@@ -331,8 +331,8 @@ class EmailParserServiceTest < ActiveSupport::TestCase
     email = build_email(
       body_html: <<~HTML
         <html>
-          <img src="https://example.com/products/shirt.jpg" width="200" height="200">
-          <img src="https://example.com/products/pants.jpg" width="150" height="150">
+          <img src="https://example.com/products/shirt.jpg" width="200" height="200" alt="Blue Shirt">
+          <img src="https://example.com/products/pants.jpg" width="150" height="150" alt="Black Pants">
         </html>
       HTML
     )
@@ -341,8 +341,12 @@ class EmailParserServiceTest < ActiveSupport::TestCase
     images = parser.extract_product_images
 
     assert_equal 2, images.length
-    assert images.any? { |url| url.include?("shirt.jpg") }
-    assert images.any? { |url| url.include?("pants.jpg") }
+    # Images now return objects with url, alt_text, width, height
+    assert images.any? { |img| img[:url].include?("shirt.jpg") }
+    assert images.any? { |img| img[:url].include?("pants.jpg") }
+    # Alt text is extracted
+    shirt_img = images.find { |img| img[:url].include?("shirt.jpg") }
+    assert_equal "Blue Shirt", shirt_img[:alt_text]
   end
 
   test "filters out logo images" do
@@ -356,8 +360,8 @@ class EmailParserServiceTest < ActiveSupport::TestCase
 
     images = parser.extract_product_images
 
-    refute images.any? { |url| url.include?("logo") }
-    assert images.any? { |url| url.include?("item.jpg") }
+    refute images.any? { |img| img[:url].include?("logo") }
+    assert images.any? { |img| img[:url].include?("item.jpg") }
   end
 
   test "filters out social media icons" do
@@ -374,7 +378,7 @@ class EmailParserServiceTest < ActiveSupport::TestCase
     images = parser.extract_product_images
 
     assert_equal 1, images.length
-    assert images.first.include?("dress.jpg")
+    assert images.first[:url].include?("dress.jpg")
   end
 
   test "filters out tracking pixels" do
@@ -389,7 +393,7 @@ class EmailParserServiceTest < ActiveSupport::TestCase
 
     images = parser.extract_product_images
 
-    refute images.any? { |url| url.include?("pixel") || url.include?("beacon") }
+    refute images.any? { |img| img[:url].include?("pixel") || img[:url].include?("beacon") }
   end
 
   test "filters out small images by dimension" do
@@ -404,7 +408,7 @@ class EmailParserServiceTest < ActiveSupport::TestCase
     images = parser.extract_product_images
 
     assert_equal 1, images.length
-    assert images.first.include?("bag.jpg")
+    assert images.first[:url].include?("bag.jpg")
   end
 
   test "sorts images by size descending" do
@@ -419,7 +423,7 @@ class EmailParserServiceTest < ActiveSupport::TestCase
 
     images = parser.extract_product_images
 
-    assert_equal "https://example.com/large.jpg", images.first
+    assert_equal "https://example.com/large.jpg", images.first[:url]
   end
 
   test "returns empty array when no HTML body" do
@@ -439,6 +443,75 @@ class EmailParserServiceTest < ActiveSupport::TestCase
     images = parser.extract_product_images
 
     assert images.length <= 10
+  end
+
+  # =============================================================================
+  # Image to Product Matching
+  # =============================================================================
+
+  test "matches images to products using alt text" do
+    email = build_email(
+      body_html: <<~HTML
+        <html>
+          <img src="https://example.com/sandal.jpg" width="200" height="200" alt="Area Sandal - Beige">
+          <img src="https://example.com/sneaker.jpg" width="200" height="200" alt="Dice Lo Sneaker - Green">
+          <img src="https://example.com/logo.png" width="100" height="100" alt="Brand Logo">
+        </html>
+      HTML
+    )
+    parser = EmailParserService.new(email)
+    images = parser.extract_product_images
+
+    products = [
+      "Dice Lo Sneaker - Color: Light Green/Off White",
+      "Area Sandal - Color: Beige/Beige"
+    ]
+
+    matched = parser.match_images_to_products(images, products)
+
+    assert_equal 2, matched.length
+    # Dice Lo Sneaker should match the sneaker image
+    assert matched[0].include?("sneaker.jpg")
+    # Area Sandal should match the sandal image
+    assert matched[1].include?("sandal.jpg")
+  end
+
+  test "returns nil for unmatched products" do
+    email = build_email(
+      body_html: <<~HTML
+        <html>
+          <img src="https://example.com/shirt.jpg" width="200" height="200" alt="Blue Shirt">
+        </html>
+      HTML
+    )
+    parser = EmailParserService.new(email)
+    images = parser.extract_product_images
+
+    products = [ "Blue Shirt", "Red Pants" ]  # Red Pants has no matching image
+
+    matched = parser.match_images_to_products(images, products)
+
+    assert_equal 2, matched.length
+    assert matched[0].include?("shirt.jpg")  # Shirt matched
+    assert_nil matched[1]                     # Pants not matched
+  end
+
+  test "filters images with non-product alt text like logo" do
+    email = build_email(
+      body_html: <<~HTML
+        <html>
+          <img src="https://example.com/brand.png" width="100" height="100" alt="Company Logo">
+          <img src="https://example.com/shirt.jpg" width="200" height="200" alt="Cotton T-Shirt">
+        </html>
+      HTML
+    )
+    parser = EmailParserService.new(email)
+
+    images = parser.extract_product_images
+
+    # Only the shirt should be extracted, logo filtered by alt text
+    assert_equal 1, images.length
+    assert images.first[:url].include?("shirt.jpg")
   end
 
   # =============================================================================

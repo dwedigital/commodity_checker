@@ -71,7 +71,8 @@ class OrderMatcherServiceTest < ActiveSupport::TestCase
     TrackingEvent.create!(
       order: order,
       carrier: "royal_mail",
-      tracking_url: "https://www.royalmail.com/track?id=ABC123"
+      tracking_url: "https://www.royalmail.com/track?id=ABC123",
+      status: "Tracking link found"
     )
 
     parsed_data = {
@@ -93,7 +94,8 @@ class OrderMatcherServiceTest < ActiveSupport::TestCase
     TrackingEvent.create!(
       order: order,
       carrier: "dhl",
-      tracking_url: "https://www.dhl.com/track?id=DHL456"
+      tracking_url: "https://www.dhl.com/track?id=DHL456",
+      status: "Tracking link found"
     )
 
     parsed_data = {
@@ -119,7 +121,8 @@ class OrderMatcherServiceTest < ActiveSupport::TestCase
     TrackingEvent.create!(
       order: other_order,
       carrier: "ups",
-      tracking_url: "https://www.ups.com/track?id=UPS789"
+      tracking_url: "https://www.ups.com/track?id=UPS789",
+      status: "Tracking link found"
     )
 
     parsed_data = {
@@ -141,7 +144,8 @@ class OrderMatcherServiceTest < ActiveSupport::TestCase
     TrackingEvent.create!(
       order: order,
       carrier: "fedex",
-      tracking_url: "https://www.fedex.com/track?id=FX123"
+      tracking_url: "https://www.fedex.com/track?id=FX123",
+      status: "Tracking link found"
     )
 
     parsed_data = { order_reference: nil, tracking_urls: [], retailer_name: nil }
@@ -192,7 +196,8 @@ class OrderMatcherServiceTest < ActiveSupport::TestCase
     TrackingEvent.create!(
       order: order,
       carrier: "evri",
-      tracking_url: "https://www.evri.com/track?id=EV123"
+      tracking_url: "https://www.evri.com/track?id=EV123",
+      status: "Tracking link found"
     )
 
     parsed_data = { order_reference: nil, tracking_urls: [], retailer_name: "ASOS" }
@@ -268,7 +273,8 @@ class OrderMatcherServiceTest < ActiveSupport::TestCase
     TrackingEvent.create!(
       order: order_by_track,
       carrier: "dpd",
-      tracking_url: "https://track.dpd.co.uk/track?id=DPD123"
+      tracking_url: "https://track.dpd.co.uk/track?id=DPD123",
+      status: "Tracking link found"
     )
 
     parsed_data = {
@@ -291,7 +297,8 @@ class OrderMatcherServiceTest < ActiveSupport::TestCase
     TrackingEvent.create!(
       order: order_by_track,
       carrier: "yodel",
-      tracking_url: "https://www.yodel.co.uk/track?id=YDL123"
+      tracking_url: "https://www.yodel.co.uk/track?id=YDL123",
+      status: "Tracking link found"
     )
 
     order_by_retailer = Order.create!(

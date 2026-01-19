@@ -197,16 +197,6 @@ class ProductInfoFinderService
   end
 
   def parse_extraction_response(response)
-    content = response.content.first&.text
-    return nil unless content
-
-    # Extract JSON from response
-    json_match = content.match(/\{.*\}/m)
-    return nil unless json_match
-
-    JSON.parse(json_match[0]).deep_symbolize_keys
-  rescue JSON::ParserError => e
-    Rails.logger.error("ProductInfoFinderService: Failed to parse AI response - #{e.message}")
-    nil
+    LlmResponseParser.extract_json_from_response(response)
   end
 end

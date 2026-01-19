@@ -23,13 +23,16 @@ class DeveloperController < ApplicationController
     all_key_ids = @api_keys.pluck(:id)
 
     if all_key_ids.any?
+      # Cache first active key to avoid multiple queries
+      first_active_key = @active_keys.first
+
       # Aggregate usage stats across all keys
       @usage_stats = {
         requests_today: @active_keys.sum(:requests_today),
         requests_this_month: @active_keys.sum(:requests_this_month),
-        limit_today: @active_keys.first&.requests_per_day_limit,
-        limit_per_minute: @active_keys.first&.requests_per_minute_limit,
-        batch_size_limit: @active_keys.first&.batch_size_limit
+        limit_today: first_active_key&.requests_per_day_limit,
+        limit_per_minute: first_active_key&.requests_per_minute_limit,
+        batch_size_limit: first_active_key&.batch_size_limit
       }
 
       # Recent requests - filter by key if selected, otherwise show all

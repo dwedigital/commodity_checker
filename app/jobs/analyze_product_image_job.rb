@@ -64,7 +64,7 @@ class AnalyzeProductImageJob < ApplicationJob
       lookup.update!(
         suggested_commodity_code: suggestion[:commodity_code],
         commodity_code_confidence: suggestion[:confidence],
-        llm_reasoning: build_reasoning(suggestion)
+        llm_reasoning: CommoditySuggestionFormatter.build_reasoning(suggestion)
       )
 
       Rails.logger.info("Suggested #{suggestion[:commodity_code]} for photo lookup #{lookup.id} (confidence: #{suggestion[:confidence]})")
@@ -73,17 +73,6 @@ class AnalyzeProductImageJob < ApplicationJob
     end
   rescue => e
     Rails.logger.error("Failed to suggest code for photo lookup #{lookup.id}: #{e.message}")
-  end
-
-  def build_reasoning(suggestion)
-    parts = []
-    parts << suggestion[:reasoning] if suggestion[:reasoning].present?
-    parts << "Category: #{suggestion[:category]}" if suggestion[:category].present?
-    parts << "Official: #{suggestion[:official_description]}" if suggestion[:official_description].present?
-    parts << "(Validated)" if suggestion[:validated]
-    parts << "(Unvalidated - code may need verification)" if suggestion[:validated] == false
-
-    parts.join(" | ")
   end
 
   def broadcast_update(lookup)
