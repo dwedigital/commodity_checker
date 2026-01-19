@@ -7,6 +7,14 @@ class ApplicationController < ActionController::Base
   # Track page views for HTML requests
   after_action :track_page_view, if: :trackable_request?
 
+  # Add custom data to Lograge logs
+  def append_info_to_payload(payload)
+    super
+    payload[:user_id] = current_user&.id
+    payload[:ip] = request.remote_ip
+    payload[:request_id] = request.request_id
+  end
+
   private
 
   def track_page_view
