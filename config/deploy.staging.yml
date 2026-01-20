@@ -48,6 +48,8 @@ env:
     SOLID_QUEUE_IN_PUMA: true
     RAILS_LOG_TO_STDOUT: true
     RAILS_SERVE_STATIC_FILES: true
+    WEB_CONCURRENCY: 1
+    RAILS_MAX_THREADS: 3
     APP_HOST: staging.tariffik.com
     INBOUND_EMAIL_DOMAIN: inbound.staging.tariffik.com
     HETZNER_STORAGE_BUCKET: tariffik
