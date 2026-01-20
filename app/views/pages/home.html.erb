@@ -424,6 +424,89 @@
   </div>
 </div>
 
+<!-- Testimonials Section -->
+<div class="bg-highlight/90 py-24 border-b border-gray-200">
+  <div class="mx-auto max-w-7xl px-6 lg:px-8">
+    <div class="mx-auto max-w-3xl text-center mb-16">
+      <span class="inline-flex items-center rounded-full bg-brand-mint/50 px-4 py-1.5 text-sm font-semibold text-brand-dark mb-4">
+        TESTIMONIALS
+      </span>
+      <h2 class="text-4xl font-bold tracking-tight text-brand-dark sm:text-5xl">
+        What our users say
+      </h2>
+    </div>
+
+    <div class="mx-auto max-w-2xl" data-controller="testimonial-carousel" data-action="mouseenter->testimonial-carousel#pauseAutoplay mouseleave->testimonial-carousel#resumeAutoplay">
+      <!-- Carousel Container -->
+      <div class="relative">
+        <!-- Testimonial 1 -->
+        <div data-testimonial-carousel-target="slide" class="rounded-2xl border-2 border-brand-dark bg-white p-8 md:p-10">
+          <svg class="size-8 text-brand-orange mb-4" fill="currentColor" viewBox="0 0 24 24">
+            <path d="M14.017 21v-7.391c0-5.704 3.731-9.57 8.983-10.609l.995 2.151c-2.432.917-3.995 3.638-3.995 5.849h4v10h-9.983zm-14.017 0v-7.391c0-5.704 3.748-9.57 9-10.609l.996 2.151c-2.433.917-3.996 3.638-3.996 5.849h3.983v10h-9.983z"/>
+          </svg>
+          <p class="text-gray-700 text-xl leading-relaxed mb-6">
+            "Saved me hours of searching through the tariff. I just paste the Amazon link and get the code instantly. Brilliant for my small business."
+          </p>
+          <p class="text-sm font-semibold text-brand-dark">Sarah</p>
+        </div>
+
+        <!-- Testimonial 2 -->
+        <div data-testimonial-carousel-target="slide" class="hidden rounded-2xl border-2 border-brand-dark bg-white p-8 md:p-10">
+          <svg class="size-8 text-brand-orange mb-4" fill="currentColor" viewBox="0 0 24 24">
+            <path d="M14.017 21v-7.391c0-5.704 3.731-9.57 8.983-10.609l.995 2.151c-2.432.917-3.995 3.638-3.995 5.849h4v10h-9.983zm-14.017 0v-7.391c0-5.704 3.748-9.57 9-10.609l.996 2.151c-2.433.917-3.996 3.638-3.996 5.849h3.983v10h-9.983z"/>
+          </svg>
+          <p class="text-gray-700 text-xl leading-relaxed mb-6">
+            "This is an excellent idea! Still recovering from when a new straw bag was accidentally coded as seal skin 🦭"
+          </p>
+          <p class="text-sm font-semibold text-brand-dark">Emma</p>
+        </div>
+
+        <!-- Testimonial 3 -->
+        <div data-testimonial-carousel-target="slide" class="hidden rounded-2xl border-2 border-brand-dark bg-white p-8 md:p-10">
+          <svg class="size-8 text-brand-orange mb-4" fill="currentColor" viewBox="0 0 24 24">
+            <path d="M14.017 21v-7.391c0-5.704 3.731-9.57 8.983-10.609l.995 2.151c-2.432.917-3.995 3.638-3.995 5.849h4v10h-9.983zm-14.017 0v-7.391c0-5.704 3.748-9.57 9-10.609l.996 2.151c-2.433.917-3.996 3.638-3.996 5.849h3.983v10h-9.983z"/>
+          </svg>
+          <p class="text-gray-700 text-xl leading-relaxed mb-6">
+            "Photo lookup is a game changer. Snapped a pic of a sample from my supplier and had the commodity code in seconds. No more guessing."
+          </p>
+          <p class="text-sm font-semibold text-brand-dark">James</p>
+        </div>
+
+        <!-- Testimonial 4 -->
+        <div data-testimonial-carousel-target="slide" class="hidden rounded-2xl border-2 border-brand-dark bg-white p-8 md:p-10">
+          <svg class="size-8 text-brand-orange mb-4" fill="currentColor" viewBox="0 0 24 24">
+            <path d="M14.017 21v-7.391c0-5.704 3.731-9.57 8.983-10.609l.995 2.151c-2.432.917-3.995 3.638-3.995 5.849h4v10h-9.983zm-14.017 0v-7.391c0-5.704 3.748-9.57 9-10.609l.996 2.151c-2.433.917-3.996 3.638-3.996 5.849h3.983v10h-9.983z"/>
+          </svg>
+          <p class="text-gray-700 text-xl leading-relaxed mb-6">
+            "I once told customs just to keep my package and enjoy it as I found it so stressful working out the codes!"
+          </p>
+          <p class="text-sm font-semibold text-brand-dark">Tracey</p>
+        </div>
+
+        <!-- Navigation Arrows -->
+        <button type="button" data-action="click->testimonial-carousel#previous" class="absolute left-0 top-1/2 -translate-y-1/2 -translate-x-4 md:-translate-x-14 rounded-full bg-white border-2 border-brand-dark p-2 hover:bg-gray-50 transition-colors cursor-pointer">
+          <svg class="size-5 text-brand-dark" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/>
+          </svg>
+        </button>
+        <button type="button" data-action="click->testimonial-carousel#next" class="absolute right-0 top-1/2 -translate-y-1/2 translate-x-4 md:translate-x-14 rounded-full bg-white border-2 border-brand-dark p-2 hover:bg-gray-50 transition-colors cursor-pointer">
+          <svg class="size-5 text-brand-dark" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
+          </svg>
+        </button>
+      </div>
+
+      <!-- Navigation Dots -->
+      <div class="flex justify-center gap-2 mt-6">
+        <button type="button" data-testimonial-carousel-target="dot" data-action="click->testimonial-carousel#goToSlide" data-index="0" class="size-3 rounded-full bg-brand-dark transition-colors cursor-pointer"></button>
+        <button type="button" data-testimonial-carousel-target="dot" data-action="click->testimonial-carousel#goToSlide" data-index="1" class="size-3 rounded-full bg-gray-300 transition-colors cursor-pointer"></button>
+        <button type="button" data-testimonial-carousel-target="dot" data-action="click->testimonial-carousel#goToSlide" data-index="2" class="size-3 rounded-full bg-gray-300 transition-colors cursor-pointer"></button>
+        <button type="button" data-testimonial-carousel-target="dot" data-action="click->testimonial-carousel#goToSlide" data-index="3" class="size-3 rounded-full bg-gray-300 transition-colors cursor-pointer"></button>
+      </div>
+    </div>
+  </div>
+</div>
+
 <!-- Final CTA -->
 <div class="bg-brand-dark">
   <div class="mx-auto max-w-7xl px-6 py-24 lg:px-8">
