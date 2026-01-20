@@ -338,7 +338,7 @@ ENV['HETZNER_STORAGE_ACCESS_KEY_ID'].present?
                     v                                        v
 +-------------------------------+          +-------------------------------+
 |     Production Server         |          |      Staging Server           |
-|     Hetzner CPX32 (Helsinki)  |          |      Hetzner CPX22 (Helsinki) |
+|     Hetzner CPX32 (Nuremberg) |          |      Hetzner CPX22 (Nuremberg) |
 |     4 vCPU, 8GB RAM, x86/AMD  |          |      2 vCPU, 4GB RAM, x86/AMD |
 +-------------------------------+          +-------------------------------+
 |  kamal-proxy (TLS termination)|          |  kamal-proxy (TLS termination)|
