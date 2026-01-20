@@ -40,8 +40,8 @@ env:
     - TAVILY_API_KEY
     - RESEND_API_KEY
     - RESEND_WEBHOOK_SECRET
-    - CLOUDFLARE_R2_ACCESS_KEY_ID
-    - CLOUDFLARE_R2_SECRET_ACCESS_KEY
+    - HETZNER_STORAGE_ACCESS_KEY_ID
+    - HETZNER_STORAGE_SECRET_ACCESS_KEY
     - SCRAPINGBEE_API_KEY
   clear:
     RAILS_ENV: production
@@ -50,8 +50,9 @@ env:
     RAILS_SERVE_STATIC_FILES: true
     APP_HOST: tariffik.com
     INBOUND_EMAIL_DOMAIN: inbound.tariffik.com
-    CLOUDFLARE_R2_BUCKET: tariffik-images
-    CLOUDFLARE_R2_ENDPOINT: https://e7abfe0b0e0dec8e97ee18f0ea00ae1c.r2.cloudflarestorage.com
+    HETZNER_STORAGE_BUCKET: tariffik
+    HETZNER_STORAGE_REGION: nbg1
+    HETZNER_STORAGE_ENDPOINT: https://nbg1.your-objectstorage.com
 
 # Kamal command aliases
 aliases:

@@ -6,17 +6,26 @@ local:
   service: Disk
   root: <%= Rails.root.join("storage") %>
 
-# Cloudflare R2 (S3-compatible) for production image storage
-cloudflare:
+# Hetzner Object Storage (S3-compatible) for production image storage
+# Same datacenter as servers (Falkenstein) for low latency
+hetzner:
   service: S3
-  access_key_id: <%= ENV["CLOUDFLARE_R2_ACCESS_KEY_ID"] %>
-  secret_access_key: <%= ENV["CLOUDFLARE_R2_SECRET_ACCESS_KEY"] %>
-  region: auto
-  bucket: <%= ENV["CLOUDFLARE_R2_BUCKET"] %>
-  endpoint: <%= ENV["CLOUDFLARE_R2_ENDPOINT"] %>
+  access_key_id: <%= ENV["HETZNER_STORAGE_ACCESS_KEY_ID"] %>
+  secret_access_key: <%= ENV["HETZNER_STORAGE_SECRET_ACCESS_KEY"] %>
+  region: <%= ENV.fetch("HETZNER_STORAGE_REGION", "fsn1") %>
+  bucket: <%= ENV["HETZNER_STORAGE_BUCKET"] %>
+  endpoint: <%= ENV["HETZNER_STORAGE_ENDPOINT"] %>
   force_path_style: true
-  request_checksum_calculation: when_required
-  response_checksum_validation: when_required
+
+# Cloudflare R2 (kept for reference, but SSL issues from Hetzner)
+# cloudflare:
+#   service: S3
+#   access_key_id: <%= ENV["CLOUDFLARE_R2_ACCESS_KEY_ID"] %>
+#   secret_access_key: <%= ENV["CLOUDFLARE_R2_SECRET_ACCESS_KEY"] %>
+#   region: auto
+#   bucket: <%= ENV["CLOUDFLARE_R2_BUCKET"] %>
+#   endpoint: <%= ENV["CLOUDFLARE_R2_ENDPOINT"] %>
+#   force_path_style: true
 
 # Use bin/rails credentials:edit to set the AWS secrets (as aws:access_key_id|secret_access_key)
 # amazon:
