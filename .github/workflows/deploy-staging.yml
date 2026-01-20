@@ -46,18 +46,17 @@ jobs:
 
       - name: Create secrets file
         run: |
-          cat > .kamal/secrets.staging << 'EOF'
-          KAMAL_REGISTRY_PASSWORD=${{ secrets.GHCR_TOKEN }}
-          RAILS_MASTER_KEY=${{ secrets.RAILS_MASTER_KEY }}
-          DATABASE_URL=${{ secrets.STAGING_DATABASE_URL }}
-          ANTHROPIC_API_KEY=${{ secrets.ANTHROPIC_API_KEY }}
-          TAVILY_API_KEY=${{ secrets.TAVILY_API_KEY }}
-          RESEND_API_KEY=${{ secrets.RESEND_API_KEY }}
-          RESEND_WEBHOOK_SECRET=${{ secrets.STAGING_RESEND_WEBHOOK_SECRET }}
-          HETZNER_STORAGE_ACCESS_KEY_ID=${{ secrets.HETZNER_STORAGE_ACCESS_KEY_ID }}
-          HETZNER_STORAGE_SECRET_ACCESS_KEY=${{ secrets.HETZNER_STORAGE_SECRET_ACCESS_KEY }}
-          SCRAPINGBEE_API_KEY=${{ secrets.SCRAPINGBEE_API_KEY }}
-          EOF
+          mkdir -p .kamal
+          echo "KAMAL_REGISTRY_PASSWORD=${{ secrets.GHCR_TOKEN }}" > .kamal/secrets.staging
+          echo "RAILS_MASTER_KEY=${{ secrets.RAILS_MASTER_KEY }}" >> .kamal/secrets.staging
+          echo "DATABASE_URL=${{ secrets.STAGING_DATABASE_URL }}" >> .kamal/secrets.staging
+          echo "ANTHROPIC_API_KEY=${{ secrets.ANTHROPIC_API_KEY }}" >> .kamal/secrets.staging
+          echo "TAVILY_API_KEY=${{ secrets.TAVILY_API_KEY }}" >> .kamal/secrets.staging
+          echo "RESEND_API_KEY=${{ secrets.RESEND_API_KEY }}" >> .kamal/secrets.staging
+          echo "RESEND_WEBHOOK_SECRET=${{ secrets.STAGING_RESEND_WEBHOOK_SECRET }}" >> .kamal/secrets.staging
+          echo "HETZNER_STORAGE_ACCESS_KEY_ID=${{ secrets.HETZNER_STORAGE_ACCESS_KEY_ID }}" >> .kamal/secrets.staging
+          echo "HETZNER_STORAGE_SECRET_ACCESS_KEY=${{ secrets.HETZNER_STORAGE_SECRET_ACCESS_KEY }}" >> .kamal/secrets.staging
+          echo "SCRAPINGBEE_API_KEY=${{ secrets.SCRAPINGBEE_API_KEY }}" >> .kamal/secrets.staging
 
       - name: Deploy to Staging
         run: kamal deploy -d staging
