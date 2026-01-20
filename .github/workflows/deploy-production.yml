@@ -30,13 +30,14 @@ jobs:
       - name: Set up SSH key
         run: |
           mkdir -p ~/.ssh
-          echo "${{ secrets.SSH_PRIVATE_KEY }}" > ~/.ssh/id_ed25519
+          printf '%s\n' "${{ secrets.SSH_PRIVATE_KEY }}" > ~/.ssh/id_ed25519
           chmod 600 ~/.ssh/id_ed25519
-          cat >> ~/.ssh/config << EOF
+          cat >> ~/.ssh/config << 'SSHEOF'
           Host *
             StrictHostKeyChecking no
             UserKnownHostsFile /dev/null
-          EOF
+            RequestTTY no
+          SSHEOF
           chmod 600 ~/.ssh/config
 
       - name: Create secrets file
