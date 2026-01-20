@@ -8,7 +8,7 @@
 
 | Environment | URL | Status | Server IP | Database |
 |-------------|-----|--------|-----------|----------|
-| Production | https://tariffik.com | ✅ Live | 46.62.174.131 | DigitalOcean Managed PostgreSQL |
+| Production | https://tariffik.com | ⏳ DNS pending | 116.203.77.140 | DigitalOcean Managed PostgreSQL |
 | Staging | https://staging.tariffik.com | ✅ Live | 91.99.171.192 | DigitalOcean Managed PostgreSQL |
 
 **Deployment Date:** 2026-01-20
@@ -284,7 +284,7 @@ Before deploying to production, verify ALL of these:
 | Setting | Production | Staging |
 |---------|------------|---------|
 | Domain | tariffik.com | staging.tariffik.com |
-| Server IP | 46.62.174.131 | 91.99.171.192 |
+| Server IP | 116.203.77.140 | 91.99.171.192 |
 | Server Type | CPX32 (4 vCPU, 8GB) | CPX22 (2 vCPU, 4GB) |
 | Database | tariffik_production | tariffik_staging |
 | WEB_CONCURRENCY | 0 | 0 |
