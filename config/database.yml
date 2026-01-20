@@ -39,7 +39,7 @@ production:
     reaping_frequency: 30    # Check for stale connections every 30 seconds
   queue:
     <<: *production_primary
-    pool: 3                  # Solid Queue needs fewer connections
+    pool: 5                  # Solid Queue needs 5 threads
     migrations_paths: db/queue_migrate
   cache:
     <<: *production_primary
