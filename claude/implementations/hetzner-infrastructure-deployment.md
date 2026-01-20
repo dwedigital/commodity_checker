@@ -376,9 +376,97 @@ ENV['HETZNER_STORAGE_ACCESS_KEY_ID'].present?
 
 ---
 
+## GitHub Actions CI/CD
+
+Automated deployments are configured via GitHub Actions. Tests run before every deployment.
+
+### Workflows
+
+| Workflow | Trigger | Action |
+|----------|---------|--------|
+| `ci.yml` | PRs, push to `main` | Runs Brakeman, importmap audit, RuboCop, and tests |
+| `deploy-production.yml` | Push to `main` | Runs tests, then deploys to production |
+| `deploy-staging.yml` | Push to `develop` | Runs tests, deploys to staging, auto-stops after 15 min |
+| `staging-control.yml` | Manual | Start/stop/restart staging server |
+
+### Standard Deployment Flow
+
+```
+feature branch → PR to develop → merge → staging deploys (auto-stops in 15 min)
+                      ↓
+              test on staging
+                      ↓
+              PR to main → merge → production deploys
+```
+
+### Staging Auto-Stop Behavior
+
+To conserve database connections (shared DigitalOcean PostgreSQL), staging automatically stops 15 minutes after deployment.
+
+**To keep staging running indefinitely:**
+1. Go to Actions → Deploy Staging
+2. Click "Run workflow"
+3. Select `keep_running: true`
+4. Click "Run workflow"
+
+**To manually control staging:**
+1. Go to Actions → Staging Control
+2. Click "Run workflow"
+3. Select action: `start`, `stop`, or `restart`
+
+### Required GitHub Secrets
+
+Set these in repository Settings → Secrets and variables → Actions:
+
+| Secret | Description |
+|--------|-------------|
+| `SSH_PRIVATE_KEY` | Private SSH key for server access (contents of `~/.ssh/id_ed25519`) |
+| `GHCR_TOKEN` | GitHub Container Registry token (use `gh auth token`) |
+| `RAILS_MASTER_KEY` | Rails credentials encryption key |
+| `STAGING_DATABASE_URL` | Staging PostgreSQL connection string |
+| `PRODUCTION_DATABASE_URL` | Production PostgreSQL connection string |
+| `ANTHROPIC_API_KEY` | Claude API key |
+| `TAVILY_API_KEY` | Tavily search API key |
+| `RESEND_API_KEY` | Resend email API key |
+| `STAGING_RESEND_WEBHOOK_SECRET` | Staging webhook signing secret |
+| `PRODUCTION_RESEND_WEBHOOK_SECRET` | Production webhook signing secret |
+| `HETZNER_STORAGE_ACCESS_KEY_ID` | Object storage access key |
+| `HETZNER_STORAGE_SECRET_ACCESS_KEY` | Object storage secret key |
+| `SCRAPINGBEE_API_KEY` | ScrapingBee API key (optional) |
+
+### SSH Key Setup
+
+**Important:** The `SSH_PRIVATE_KEY` secret must contain the **private** key, not the public key.
+
+```bash
+# View your private key (copy entire contents including BEGIN/END lines)
+cat ~/.ssh/id_ed25519
+
+# This is WRONG - do not use the .pub file
+cat ~/.ssh/id_ed25519.pub  # ❌ This is the public key
+```
+
+The corresponding public key must be in the server's `~/.ssh/authorized_keys` file.
+
+### Local Deployments (Manual)
+
+You can still deploy manually using Kamal from your local machine:
+
+```bash
+# Deploy to staging
+kamal deploy -d staging
+
+# Deploy to production
+kamal deploy -d production
+```
+
+Local deployments require `.kamal/secrets.staging` and `.kamal/secrets.production` files.
+
+---
+
 ## Deployment Commands Reference
 
-### Regular Deployments
+### Regular Deployments (Local)
 
 ```bash
 # ALWAYS commit first!

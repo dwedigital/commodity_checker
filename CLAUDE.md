@@ -588,11 +588,39 @@ See `claude/implementations/api-layer-premium-feature.md` for full implementatio
 
 ## Git Branching & Deployment Strategy
 
-**IMPORTANT**: This app uses a feature branch → develop → production workflow.
+**IMPORTANT**: This app uses a feature branch → develop → production workflow with GitHub Actions CI/CD.
+
+### Infrastructure
+
+| Environment | URL | Server | Deploys From |
+|-------------|-----|--------|--------------|
+| Production | https://tariffik.com | Hetzner VPS (116.203.77.140) | `main` branch |
+| Staging | https://staging.tariffik.com | Hetzner VPS (91.99.171.192) | `develop` branch |
+
+See `claude/implementations/hetzner-infrastructure-deployment.md` for full deployment documentation.
+
+### GitHub Actions Workflows
+
+| Workflow | File | Trigger | What It Does |
+|----------|------|---------|--------------|
+| CI | `ci.yml` | PRs, push to `main` | Runs security scans, linting, and tests |
+| Deploy Production | `deploy-production.yml` | Push to `main` | Runs tests, deploys to production |
+| Deploy Staging | `deploy-staging.yml` | Push to `develop` | Runs tests, deploys to staging, **auto-stops after 15 min** |
+| Staging Control | `staging-control.yml` | Manual | Start/stop/restart staging server |
+
+### Staging Auto-Stop
+
+Staging automatically stops 15 minutes after deployment to conserve database connections (shared DigitalOcean PostgreSQL).
+
+**To keep staging running longer:**
+- Actions → Deploy Staging → Run workflow → set `keep_running: true`
+
+**To manually start/stop staging:**
+- Actions → Staging Control → Run workflow → select `start`, `stop`, or `restart`
 
 ### Branches
 - `feature/*`, `bugfix/*`, `hotfix/*` → Feature branches for development
-- `develop` → Auto-deploys to **staging** (`tariffik-staging.onrender.com`)
+- `develop` → Auto-deploys to **staging** (`staging.tariffik.com`)
 - `main` → Auto-deploys to **production** (`tariffik.com`)
 
 ### Branch Naming (Gitflow)
@@ -628,7 +656,7 @@ Use these prefixes for branch names:
    gh pr merge --merge
    ```
 
-6. **Test on staging** - Verify on `tariffik-staging.onrender.com`
+6. **Test on staging** - Verify on `staging.tariffik.com` (start staging if stopped)
 
 7. **Deploy to production** - Create PR from `develop` → `main`:
    ```bash
@@ -650,6 +678,14 @@ git checkout develop
 git merge main
 git push origin develop
 ```
+
+### Manual Deployments (Kamal)
+You can still deploy manually from your local machine:
+```bash
+kamal deploy -d staging      # Deploy to staging
+kamal deploy -d production   # Deploy to production
+```
+Requires `.kamal/secrets.staging` and `.kamal/secrets.production` files locally.
 
 ### Never
 - Commit directly to `main` or `develop`
