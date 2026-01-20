@@ -20,9 +20,37 @@ concurrency:
   cancel-in-progress: false
 
 jobs:
+  test:
+    name: Run Tests
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Ruby
+        uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: '3.3'
+          bundler-cache: true
+
+      - name: Install dependencies
+        run: bundle install
+
+      - name: Set up database
+        run: bin/rails db:prepare
+        env:
+          RAILS_ENV: test
+
+      - name: Run tests
+        run: bin/rails test
+        env:
+          RAILS_ENV: test
+
   deploy:
     name: Deploy to Staging
     runs-on: ubuntu-latest
+    needs: test
 
     steps:
       - name: Checkout code
