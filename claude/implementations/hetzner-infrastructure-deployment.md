@@ -239,6 +239,89 @@ Before deploying to production, verify ALL of these:
 
 ---
 
+## Post-Deploy Console Verification
+
+After deploying, open the Rails console to verify the system is healthy:
+
+```bash
+kamal console -d production   # or -d staging
+```
+
+### 1. Database Connection
+```ruby
+ActiveRecord::Base.connection.execute("SELECT 1").first
+# Should return {"?column?"=>1} or similar
+```
+
+### 2. Connection Pool Status
+```ruby
+ActiveRecord::Base.connection_pool.stat
+# Should show {size: 5, connections: X, busy: X, dead: 0, idle: X, waiting: 0}
+# Connections should be low, dead should be 0
+```
+
+### 3. All Databases Connect
+```ruby
+[:primary, :queue, :cache, :cable].each do |db|
+  result = ActiveRecord::Base.connected_to(database: db) { ActiveRecord::Base.connection.active? }
+  puts "#{db}: #{result}"
+end
+# All should return true
+```
+
+### 4. Solid Queue Running
+```ruby
+SolidQueue::Process.count
+# Should be > 0 if queue is running in Puma
+```
+
+### 5. Data Integrity Check
+```ruby
+User.count
+Order.count
+# Should match expected counts from old server
+```
+
+### 6. Recent Activity
+```ruby
+Order.order(created_at: :desc).limit(3).pluck(:id, :created_at)
+# Verify recent orders are present
+```
+
+### 7. Image Processing (vips)
+```ruby
+Rails.application.config.active_storage.variant_processor
+# Should return :vips
+
+# Verify libvips library is installed
+`dpkg -l | grep vips`.strip
+# Should show libvips package
+
+# If you have blobs, test one
+blob = ActiveStorage::Blob.last
+blob.present? && blob.variable?
+# Should return true for image blobs
+```
+
+### 8. Storage Connection (Hetzner)
+```ruby
+ActiveStorage::Blob.service.class.name
+# Should return "ActiveStorage::Service::S3Service"
+
+ActiveStorage::Blob.count
+# Should match expected count
+```
+
+### 9. API Keys Configured
+```ruby
+ENV['ANTHROPIC_API_KEY'].present?
+ENV['RESEND_API_KEY'].present?
+ENV['HETZNER_STORAGE_ACCESS_KEY_ID'].present?
+# All should return true
+```
+
+---
+
 ## Architecture
 
 ```
