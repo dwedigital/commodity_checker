@@ -28,6 +28,115 @@ Do this automatically at the end of implementing a feature - do not wait to be a
 
 **Tariffik** ([tariffik.com](https://tariffik.com)) - A Rails 8 app that helps users track online orders and get EU/UK commodity tariff code suggestions. Users forward tracking emails, the app extracts order info, and uses Claude AI + UK Trade Tariff API to suggest HS codes.
 
+## Brand Design System
+
+Tariffik uses a retro/minimalist aesthetic with a custom color palette. All UI changes must follow these guidelines.
+
+### Brand Colors
+
+| Name | Hex | Tailwind Class | Usage |
+|------|-----|----------------|-------|
+| Primary (Red) | `#E3170A` | `bg-primary`, `text-primary`, `border-primary` | CTAs, active states, links, errors |
+| Mint | `#A9E5BB` | `bg-brand-mint`, `text-brand-mint` | Success states, positive badges |
+| Yellow/Highlight | `#FCF6B1` | `bg-highlight`, `text-highlight` | Warnings, pending states, info banners |
+| Orange | `#F7B32B` | `bg-brand-orange`, `text-brand-orange` | Secondary actions, accents |
+| Aubergine (Dark) | `#2D1E2F` | `bg-brand-dark`, `text-brand-dark` | Headers, high-contrast sections, table headers |
+
+### Design Tokens (Tailwind v4)
+
+Colors are defined in `app/assets/tailwind/application.css` using `@theme`:
+```css
+@theme {
+  --color-primary: #E3170A;
+  --color-primary-hover: #c91409;
+  --color-brand-mint: #A9E5BB;
+  --color-highlight: #FCF6B1;
+  --color-brand-orange: #F7B32B;
+  --color-brand-dark: #2D1E2F;
+}
+```
+
+### Component Patterns
+
+| Element | Pattern | Example |
+|---------|---------|---------|
+| Cards | `rounded-2xl` with `border border-gray-200` | Outer containers |
+| Inner elements | `rounded-xl` | Form inputs, inner boxes |
+| Buttons | `rounded-full` | All buttons |
+| Form inputs | `rounded-xl border border-gray-200 py-2.5 px-4` | Text fields |
+| Tables | `bg-brand-dark` header with `text-white` | High contrast |
+
+### Status Badges
+
+```erb
+<%# Success/Complete %>
+<span class="inline-flex items-center rounded-full bg-brand-mint px-3 py-1 text-sm font-medium text-brand-dark">Complete</span>
+
+<%# Pending/Processing %>
+<span class="inline-flex items-center rounded-full bg-highlight px-3 py-1 text-sm font-medium text-brand-dark">Pending</span>
+
+<%# Error/Failed %>
+<span class="inline-flex items-center rounded-full bg-primary/10 px-3 py-1 text-sm font-medium text-primary">Failed</span>
+```
+
+### Page Header Badges
+
+Use colored badges above page titles for visual hierarchy:
+```erb
+<span class="inline-flex items-center rounded-full bg-brand-mint px-3 py-1 text-xs font-semibold text-brand-dark mb-2">SECTION NAME</span>
+```
+
+Color usage by context:
+- **Mint** (`bg-brand-mint`) - Primary actions, getting started, success states
+- **Highlight/Yellow** (`bg-highlight`) - Information, warnings
+- **Orange** (`bg-brand-orange`) - Secondary actions, password/security
+- **Aubergine** (`bg-brand-dark text-white`) - Settings, admin areas
+
+### High-Contrast Tables
+
+All dashboard tables use aubergine headers for readability:
+```erb
+<table class="min-w-full">
+  <thead class="bg-brand-dark">
+    <tr>
+      <th class="px-4 py-3 text-left text-xs font-medium text-white uppercase tracking-wider">Column</th>
+    </tr>
+  </thead>
+  <tbody class="bg-white divide-y divide-gray-200">
+    <tr>
+      <td class="px-4 py-4 text-sm text-gray-900">Content</td>
+    </tr>
+  </tbody>
+</table>
+```
+
+### Dark CTA Sections
+
+For high-contrast call-to-action areas (e.g., upsells, feature promos):
+```erb
+<div class="bg-brand-dark rounded-2xl p-8 text-center">
+  <h3 class="text-xl font-bold text-white mb-2">Heading</h3>
+  <p class="text-gray-300 mb-6">Description text</p>
+  <%= link_to "Action", path, class: "inline-flex items-center rounded-full bg-white px-6 py-3 text-sm font-semibold text-brand-dark hover:bg-gray-100 transition-colors" %>
+</div>
+```
+
+### Stimulus Controllers for Interactivity
+
+CSP blocks inline JavaScript. Use Stimulus controllers instead:
+- `tabs_controller.js` - Tab switching with `border-primary` active state
+- `clipboard_controller.js` - Copy to clipboard functionality
+- `password_strength_controller.js` - Password validation (uses `text-brand-mint` for valid)
+
+### Key Files for Styling
+
+| File | Purpose |
+|------|---------|
+| `app/assets/tailwind/application.css` | Brand color definitions |
+| `app/javascript/controllers/tabs_controller.js` | Tab active state styling |
+| `app/views/shared/_navbar.html.erb` | Navigation styling |
+| `app/views/layouts/application.html.erb` | Base layout |
+
 ## Key Architectural Decisions
 
 ### Why Rails 8?

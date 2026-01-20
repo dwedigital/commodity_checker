@@ -21,6 +21,8 @@ This directory contains setup guides and documentation.
 |----------|---------|
 | `/README.md` | Project overview and quick start |
 | `/CLAUDE.md` | AI assistant context (this project) |
+| `/app/views/CLAUDE.md` | View styling guidelines and brand design system |
+| `/app/javascript/controllers/CLAUDE.md` | Stimulus controller documentation |
 | `/.env.example` | Environment variables template |
 | `/config/credentials.yml.enc` | Encrypted secrets (edit with `rails credentials:edit`) |
 
