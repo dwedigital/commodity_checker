@@ -1,3 +1,5 @@
+require "action_mailbox/resend/engine"
+
 Rails.application.routes.draw do
   # Resend inbound email webhook endpoint
   mount ActionMailbox::Resend::Engine, at: "/rails/action_mailbox/resend"
