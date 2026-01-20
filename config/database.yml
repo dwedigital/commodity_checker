@@ -34,12 +34,18 @@ production:
     adapter: postgresql
     encoding: unicode
     url: <%= ENV["DATABASE_URL"] %>
+    # Connection management - close idle connections
+    idle_timeout: 300        # Close connections idle for 5 minutes
+    reaping_frequency: 30    # Check for stale connections every 30 seconds
   queue:
     <<: *production_primary
+    pool: 3                  # Solid Queue needs fewer connections
     migrations_paths: db/queue_migrate
   cache:
     <<: *production_primary
+    pool: 2                  # Cache uses minimal connections
     migrations_paths: db/cache_migrate
   cable:
     <<: *production_primary
+    pool: 2                  # Cable rarely used heavily
     migrations_paths: db/cable_migrate
