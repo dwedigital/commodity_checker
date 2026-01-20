@@ -12,12 +12,13 @@ image: dwedigital/tariffik
 servers:
   web:
     hosts:
-      - 65.109.132.216
+      - 91.99.171.192
 
 # Proxy configuration (kamal-proxy handles TLS via Let's Encrypt)
 proxy:
   ssl: true
   host: staging.tariffik.com
+  response_timeout: 120  # Longer timeout for scraping/AI requests (seconds)
 
 # GitHub Container Registry
 registry:

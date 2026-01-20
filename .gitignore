@@ -34,5 +34,9 @@
 # Ignore master key for decrypting credentials and more.
 /config/master.key
 
+# Kamal secrets (contain actual API keys)
+/.kamal/secrets.staging
+/.kamal/secrets.production
+
 /app/assets/builds/*
 !/app/assets/builds/.keep
