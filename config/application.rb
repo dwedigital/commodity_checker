@@ -27,7 +27,7 @@ module Tariffik
     # Inbound email domain for forwarding tracking emails
     config.inbound_email_domain = ENV.fetch("INBOUND_EMAIL_DOMAIN", "inbound.tariffik.com")
 
-    # Use MiniMagick (ImageMagick) for image processing instead of vips
-    config.active_storage.variant_processor = :mini_magick
+    # Use vips for image processing (libvips is installed in Docker image)
+    config.active_storage.variant_processor = :vips
   end
 end
