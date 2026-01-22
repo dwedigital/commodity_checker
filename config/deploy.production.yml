@@ -55,6 +55,7 @@ env:
     HETZNER_STORAGE_BUCKET: tariffik
     HETZNER_STORAGE_REGION: nbg1
     HETZNER_STORAGE_ENDPOINT: https://nbg1.your-objectstorage.com
+    CHROME_EXTENSION_ID: gkjpgbgongkgdjfapjclandjhglnpmpn
 
 # Kamal command aliases
 aliases:
