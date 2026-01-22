@@ -41,12 +41,22 @@ class OrderMatcherService
     return nil unless parsed_data[:retailer_name].present?
 
     # Look for orders from same retailer in last 7 days without a tracking URL yet
-    user.orders
+    candidates = user.orders
         .left_joins(:tracking_events)
         .where(retailer_name: parsed_data[:retailer_name])
         .where(created_at: 7.days.ago..)
         .where(tracking_events: { id: nil }) # No tracking yet
         .order(created_at: :desc)
-        .first
+
+    # If the new email has an order reference, don't match an existing order
+    # that has a DIFFERENT order reference (they're clearly separate orders)
+    if parsed_data[:order_reference].present?
+      candidates = candidates.where(
+        "order_reference IS NULL OR order_reference = ?",
+        parsed_data[:order_reference]
+      )
+    end
+
+    candidates.first
   end
 end

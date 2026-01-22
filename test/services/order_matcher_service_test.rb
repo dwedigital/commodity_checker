@@ -254,6 +254,38 @@ class OrderMatcherServiceTest < ActiveSupport::TestCase
     assert_nil matcher.find_matching_order
   end
 
+  test "does not match by retailer when order references are different" do
+    # Existing order with a specific order reference
+    Order.create!(
+      user: @user,
+      order_reference: "ORD-EXISTING-111",
+      retailer_name: "Amazon",
+      created_at: 2.days.ago
+    )
+
+    # New email has a DIFFERENT order reference - should NOT match
+    parsed_data = { order_reference: "ORD-NEW-222", tracking_urls: [], retailer_name: "Amazon" }
+    matcher = OrderMatcherService.new(@user, parsed_data)
+
+    assert_nil matcher.find_matching_order
+  end
+
+  test "matches by retailer when existing order has no reference but new email does" do
+    # Existing order without an order reference
+    order = Order.create!(
+      user: @user,
+      order_reference: nil,
+      retailer_name: "Amazon",
+      created_at: 2.days.ago
+    )
+
+    # New email has an order reference - can match order without reference
+    parsed_data = { order_reference: "ORD-NEW-333", tracking_urls: [], retailer_name: "Amazon" }
+    matcher = OrderMatcherService.new(@user, parsed_data)
+
+    assert_equal order, matcher.find_matching_order
+  end
+
   # =============================================================================
   # Matching Priority
   # =============================================================================
