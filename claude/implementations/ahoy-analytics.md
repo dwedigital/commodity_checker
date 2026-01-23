@@ -332,6 +332,7 @@ ORDER BY date;
 ### Features
 - **Date range selection**: 7 days, 30 days, 90 days, 1 year
 - **Visitor stats**: Total visitors, total visits, visitors by day chart
+- **Page views**: Total page views, views per visitor, top pages table
 - **Lookup stats**: Total lookups, lookups by source (homepage guest/user, extension, photo upload, email forwarding)
 - **Signup stats**: Total signups, signups by day chart, conversion rate
 - **Usage trends**: Active users, repeat users, average lookups per user

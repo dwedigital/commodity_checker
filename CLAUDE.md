@@ -773,6 +773,16 @@ docker compose down           # Stop PostgreSQL
 docker compose logs postgres  # View logs
 ```
 
+### Initial Setup (Fresh Clone)
+
+```bash
+docker compose up -d              # Start PostgreSQL
+bin/rails db:create db:migrate    # Create and migrate database
+bin/rails db:schema:load:queue    # Create Solid Queue tables
+bin/rails db:seed                 # Create admin user (dev only)
+bin/rails analytics:seed          # Optional: seed 90 days of mock analytics
+```
+
 ### Development Commands
 
 ```bash
@@ -796,6 +806,12 @@ bin/rails analytics:clear
 **Important**: Always use `bin/dev` in development. It runs both Rails and the Tailwind CSS watcher via Procfile.dev. Using `bin/rails server` alone means new Tailwind utility classes won't be compiled.
 
 **SQLite fallback**: Set `USE_SQLITE=true` env var to use SQLite instead of PostgreSQL (no Docker required).
+
+### Default Admin User (Development)
+
+Created by `db:seed`:
+- Email: `dave@dwedigital.com`
+- Password: `T0p$ecret!`
 
 ## Admin Dashboards
 
