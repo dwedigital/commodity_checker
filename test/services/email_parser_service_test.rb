@@ -105,6 +105,61 @@ class EmailParserServiceTest < ActiveSupport::TestCase
     assert_equal [], urls
   end
 
+  test "detects carrier from surrounding text when URL is a redirect" do
+    # This simulates emails where tracking URLs are wrapped in click-tracking redirects
+    # The actual carrier (UPS) is mentioned in the text but the URL is a redirect
+    email = build_email(
+      body_text: <<~TEXT
+        Your order has shipped!
+
+        Track your UPS shipment:
+        http://clicktracking.retailer.com/redirect/abc123
+
+        Estimated delivery: Tomorrow
+      TEXT
+    )
+    parser = EmailParserService.new(email)
+
+    urls = parser.extract_tracking_urls
+
+    assert urls.any?, "Should find the tracking URL"
+    ups_tracking = urls.find { |u| u[:url].include?("clicktracking") }
+    assert_equal "ups", ups_tracking[:carrier], "Should detect UPS from surrounding text"
+  end
+
+  test "detects carrier from shipped via pattern" do
+    email = build_email(
+      body_text: <<~TEXT
+        Order shipped via FedEx
+        Track here: http://tracking.example.com/ship123
+      TEXT
+    )
+    parser = EmailParserService.new(email)
+
+    urls = parser.extract_tracking_urls
+
+    assert urls.any?
+    assert_equal "fedex", urls.first[:carrier]
+  end
+
+  test "detects carrier from HTML context around link" do
+    email = build_email(
+      body_text: "Track your DHL delivery",
+      body_html: <<~HTML
+        <p>Your package is on its way via DHL Express.</p>
+        <p><a href="http://redirect.example.com/track/xyz">Track your package</a></p>
+      HTML
+    )
+    parser = EmailParserService.new(email)
+
+    urls = parser.extract_tracking_urls
+
+    assert urls.any?
+    dhl_url = urls.find { |u| u[:url].include?("redirect.example.com") }
+    assert dhl_url, "Should find the redirect URL"
+    assert_equal "dhl", dhl_url[:carrier], "Should detect DHL from surrounding HTML context"
+  end
+
   # =============================================================================
   # Order Reference Extraction
   # =============================================================================

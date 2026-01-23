@@ -133,6 +133,9 @@ class EmailParserService
     extract_generic_tracking_urls(urls)
     extract_tracking_links_from_html(urls)
 
+    # Enrich "unknown" carriers by looking at surrounding text context
+    enrich_unknown_carriers_from_context(urls)
+
     urls.uniq { |u| u[:url] }
   end
 
@@ -189,12 +192,79 @@ class EmailParserService
   def detect_carrier_from_text(text)
     return "global_e" if text.match?(/global-?e/i)
     return "royal_mail" if text.match?(/royal\s*mail/i)
-    return "dhl" if text.match?(/dhl/i)
-    return "ups" if text.match?(/ups/i)
+    return "dhl" if text.match?(/\bdhl\b/i)
+    return "ups" if text.match?(/\bups\b/i)
     return "fedex" if text.match?(/fedex/i)
-    return "dpd" if text.match?(/dpd/i)
+    return "dpd" if text.match?(/\bdpd\b/i)
     return "evri" if text.match?(/evri|hermes/i)
+    return "usps" if text.match?(/\busps\b/i)
+    return "yodel" if text.match?(/yodel/i)
     "unknown"
+  end
+
+  # Look at text surrounding tracking URLs to detect carrier when URL doesn't reveal it
+  # This handles cases where tracking URLs are wrapped in click-tracking redirects
+  def enrich_unknown_carriers_from_context(urls)
+    urls.each do |tracking_info|
+      next unless tracking_info[:carrier] == "unknown"
+
+      # First, try to find carrier mentioned near the URL in the text
+      carrier = detect_carrier_near_url(tracking_info[:url])
+
+      # If not found near URL, look for carrier mentions in tracking-related sections
+      carrier ||= detect_carrier_from_tracking_section
+
+      tracking_info[:carrier] = carrier if carrier && carrier != "unknown"
+    end
+  end
+
+  # Look for carrier name mentioned within ~300 chars before or after the URL
+  def detect_carrier_near_url(url)
+    # Find the URL position in text (might be partial match due to URL encoding)
+    url_snippet = url[0, 50] # Use first 50 chars to find position
+    position = @text.index(url_snippet)
+
+    if position
+      # Get surrounding context (300 chars before and after)
+      start_pos = [ position - 300, 0 ].max
+      end_pos = [ position + url.length + 300, @text.length ].min
+      context = @text[start_pos...end_pos]
+
+      carrier = detect_carrier_from_text(context)
+      return carrier if carrier != "unknown"
+    end
+
+    # Also check HTML for context around links
+    if @html.present?
+      # Look for carrier names near anchor tags containing this URL
+      url_escaped = Regexp.escape(url[0, 40])
+      @html.scan(/(.{0,300})<a[^>]*href=["'][^"']*#{url_escaped}[^"']*["'][^>]*>(.{0,100})/i).each do |before, anchor_text|
+        context = "#{before} #{anchor_text}"
+        carrier = detect_carrier_from_text(context)
+        return carrier if carrier != "unknown"
+      end
+    end
+
+    nil
+  end
+
+  # Look for carrier mentions in sections that talk about tracking/shipping
+  def detect_carrier_from_tracking_section
+    # Look for patterns like "Shipped via UPS", "Carrier: DHL", "Delivered by FedEx"
+    tracking_patterns = [
+      /(?:shipped|shipping|delivered|carrier|via|by|with)\s*(?:via|by|:)?\s*(\w+(?:\s+\w+)?)/i,
+      /(\w+(?:\s+\w+)?)\s+(?:tracking|shipment|delivery)/i,
+      /track\s+(?:your\s+)?(?:order\s+)?(?:with\s+)?(\w+)/i
+    ]
+
+    tracking_patterns.each do |pattern|
+      @text.scan(pattern).flatten.each do |match|
+        carrier = detect_carrier_from_text(match)
+        return carrier if carrier != "unknown"
+      end
+    end
+
+    nil
   end
 
   def detect_carrier_from_tracking_number(tracking_num)
