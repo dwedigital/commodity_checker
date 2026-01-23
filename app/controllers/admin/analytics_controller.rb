@@ -10,6 +10,7 @@ module Admin
       @start_date = parse_period(@period)
 
       load_visitor_stats
+      load_page_views
       load_lookup_stats
       load_signup_stats
       load_usage_trends
@@ -61,6 +62,30 @@ module Admin
         .group(:device_type)
         .count
         .transform_keys { |k| k || "Unknown" }
+    end
+
+    def load_page_views
+      page_views = Ahoy::Event.where("time >= ?", @start_date)
+        .where(name: "page_view")
+
+      @total_page_views = page_views.count
+
+      # Top pages by view count
+      @top_pages = page_views
+        .select("properties->>'page' as page, COUNT(*) as view_count")
+        .group("properties->>'page'")
+        .order("view_count DESC")
+        .limit(15)
+        .map { |r| [ r.page, r.view_count ] }
+        .to_h
+
+      # Page views by day for chart
+      @page_views_by_day = page_views
+        .group("DATE(time)")
+        .count
+        .transform_keys { |k| k.to_date }
+        .sort
+        .to_h
     end
 
     def load_lookup_stats
