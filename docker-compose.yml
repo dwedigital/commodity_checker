@@ -1,0 +1,24 @@
+# Local development services
+# Start with: docker compose up -d
+# Stop with: docker compose down
+
+services:
+  postgres:
+    image: postgres:16-alpine
+    container_name: tariffik_postgres
+    environment:
+      POSTGRES_USER: tariffik
+      POSTGRES_PASSWORD: tariffik_dev
+      POSTGRES_DB: tariffik_development
+    ports:
+      - "5444:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U tariffik"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+volumes:
+  postgres_data:

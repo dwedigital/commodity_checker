@@ -1,16 +1,30 @@
-# SQLite for development and test, PostgreSQL for production
+# PostgreSQL for all environments (production parity)
 #
-# Development/Test: SQLite (zero setup)
+# Development: PostgreSQL via Docker (docker compose up -d)
+# Test: PostgreSQL (same Docker instance, different database)
 # Production: PostgreSQL via DATABASE_URL environment variable
+#
+# To use SQLite instead (no Docker), set: USE_SQLITE=true
 
 default: &default
   pool: <%= ENV.fetch("RAILS_MAX_THREADS") { 5 } %>
+
+postgres: &postgres
+  <<: *default
+  adapter: postgresql
+  encoding: unicode
+  host: <%= ENV.fetch("POSTGRES_HOST", "localhost") %>
+  port: <%= ENV.fetch("POSTGRES_PORT", 5444) %>
+  username: <%= ENV.fetch("POSTGRES_USER", "tariffik") %>
+  password: <%= ENV.fetch("POSTGRES_PASSWORD", "tariffik_dev") %>
 
 sqlite: &sqlite
   <<: *default
   adapter: sqlite3
   timeout: 5000
 
+<% if ENV["USE_SQLITE"] == "true" %>
+# SQLite mode (legacy, for quick setup without Docker)
 development:
   primary:
     <<: *sqlite
@@ -27,6 +41,35 @@ development:
 test:
   <<: *sqlite
   database: storage/test.sqlite3
+
+<% else %>
+# PostgreSQL mode (recommended, matches production)
+development:
+  primary:
+    <<: *postgres
+    database: tariffik_development
+  queue:
+    <<: *postgres
+    database: tariffik_development
+    migrations_paths: db/queue_migrate
+  cable:
+    <<: *postgres
+    database: tariffik_development
+    migrations_paths: db/cable_migrate
+
+test:
+  primary:
+    <<: *postgres
+    database: tariffik_test
+  queue:
+    <<: *postgres
+    database: tariffik_test
+    migrations_paths: db/queue_migrate
+  cable:
+    <<: *postgres
+    database: tariffik_test
+    migrations_paths: db/cable_migrate
+<% end %>
 
 production:
   primary: &production_primary

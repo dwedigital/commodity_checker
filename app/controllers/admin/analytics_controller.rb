@@ -74,28 +74,28 @@ module Admin
 
       @total_lookups = lookup_events.count
 
-      # Lookups by source
-      @lookups_by_source = {
-        "Homepage (guest)" => Ahoy::Event.where("time >= ?", @start_date)
-          .where(name: "guest_lookup_performed").count,
-        "Homepage (user)" => Ahoy::Event.where("time >= ?", @start_date)
-          .where(name: "user_lookup_performed")
-          .where("properties->>'lookup_type' != 'photo' OR properties->>'lookup_type' IS NULL")
-          .where("properties->>'source' IS NULL OR properties->>'source' != 'extension'")
-          .count,
-        "Extension" => Ahoy::Event.where("time >= ?", @start_date)
-          .where(name: "extension_lookup_performed").count,
-        "Photo upload" => Ahoy::Event.where("time >= ?", @start_date)
-          .where(name: "user_lookup_performed")
-          .where("properties->>'lookup_type' = 'photo'")
-          .count
-      }
+      # Use native PostgreSQL jsonb operators for efficient queries
+      user_lookup_base = Ahoy::Event.where("time >= ?", @start_date)
+        .where(name: "user_lookup_performed")
+
+      photo_count = user_lookup_base.where("properties->>'lookup_type' = ?", "photo").count
+      non_photo_count = user_lookup_base.where("properties->>'lookup_type' IS DISTINCT FROM ?", "photo").count
 
       # Email forwarding (orders created via email)
       @email_lookups = Ahoy::Event.where("time >= ?", @start_date)
         .where(name: "order_created")
-        .where("properties->>'source' = 'email'")
+        .where("properties->>'source' = ?", "email")
         .count
+
+      # Lookups by source
+      @lookups_by_source = {
+        "Homepage (guest)" => Ahoy::Event.where("time >= ?", @start_date)
+          .where(name: "guest_lookup_performed").count,
+        "Homepage (user)" => non_photo_count,
+        "Extension" => Ahoy::Event.where("time >= ?", @start_date)
+          .where(name: "extension_lookup_performed").count,
+        "Photo upload" => photo_count
+      }
 
       @lookups_by_source["Email forwarding"] = @email_lookups
 
