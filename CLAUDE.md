@@ -4,11 +4,26 @@ This file provides context for AI assistants working on this codebase.
 
 ## Required: Implementation Documentation
 
-After implementing any significant feature (new models, services, controllers, or major modifications to existing functionality), you MUST create an implementation summary markdown file at:
+After implementing any significant feature (new models, services, controllers, or major modifications to existing functionality), you MUST create or update implementation documentation at:
 
 ```
 ./claude/implementations/<feature-name>.md
 ```
+
+### When to Create vs Update
+
+- **New feature**: Create a new implementation doc
+- **Modifying existing feature**: Update the existing implementation doc if one exists (check `./claude/implementations/` first)
+- **Bug fixes**: No doc needed unless it changes architecture or behavior significantly
+
+### Finding Existing Docs
+
+Before creating a new doc, check if one already exists:
+```bash
+ls ./claude/implementations/
+```
+
+### Template
 
 Use `./claude/implementations/product-url-lookup-and-scraping.md` as the template. Each implementation doc must include:
 
@@ -759,6 +774,32 @@ bin/rails console
 ```
 
 **Important**: Always use `bin/dev` in development. It runs both Rails and the Tailwind CSS watcher via Procfile.dev. Using `bin/rails server` alone means new Tailwind utility classes won't be compiled.
+
+## Admin Dashboards
+
+Admin-only routes require `user.admin? == true` (Devise authentication).
+
+| Dashboard | URL | Purpose |
+|-----------|-----|---------|
+| Solid Queue | `/admin/jobs` | Monitor background jobs, retry failed jobs, view recurring schedules |
+| PgHero | `/admin/pghero` | PostgreSQL monitoring (production only) |
+
+### Solid Queue Dashboard
+
+Provided by `mission_control-jobs` gem. Features:
+- View pending, running, and failed jobs
+- Retry or discard failed jobs
+- Monitor recurring job schedules
+- Queue health metrics
+
+### Recurring Jobs
+
+Configured in `config/recurring.yml`:
+
+| Job | Schedule | Purpose |
+|-----|----------|---------|
+| `clear_solid_queue_finished_jobs` | Hourly | Prevent queue table bloat |
+| `cleanup_orphaned_emails` | 3am daily | Delete orphaned inbound emails older than 30 days |
 
 ## Production Configuration (Render)
 
