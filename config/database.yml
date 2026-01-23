@@ -1,6 +1,6 @@
 # PostgreSQL for all environments (production parity)
 #
-# Development: PostgreSQL via Docker (docker compose up -d)
+# Development: PostgreSQL via Docker (docker compose up -d) on port 5444
 # Test: PostgreSQL (same Docker instance, different database)
 # Production: PostgreSQL via DATABASE_URL environment variable
 #
@@ -9,7 +9,8 @@
 default: &default
   pool: <%= ENV.fetch("RAILS_MAX_THREADS") { 5 } %>
 
-postgres: &postgres
+# Local development PostgreSQL (Docker on port 5444)
+local_postgres: &local_postgres
   <<: *default
   adapter: postgresql
   encoding: unicode
@@ -46,31 +47,32 @@ test:
 # PostgreSQL mode (recommended, matches production)
 development:
   primary:
-    <<: *postgres
+    <<: *local_postgres
     database: tariffik_development
   queue:
-    <<: *postgres
+    <<: *local_postgres
     database: tariffik_development
     migrations_paths: db/queue_migrate
   cable:
-    <<: *postgres
+    <<: *local_postgres
     database: tariffik_development
     migrations_paths: db/cable_migrate
 
 test:
   primary:
-    <<: *postgres
+    <<: *local_postgres
     database: tariffik_test
   queue:
-    <<: *postgres
+    <<: *local_postgres
     database: tariffik_test
     migrations_paths: db/queue_migrate
   cable:
-    <<: *postgres
+    <<: *local_postgres
     database: tariffik_test
     migrations_paths: db/cable_migrate
 <% end %>
 
+# Production uses DATABASE_URL - no port 5444 defaults here
 production:
   primary: &production_primary
     <<: *default

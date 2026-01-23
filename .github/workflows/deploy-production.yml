@@ -31,11 +31,13 @@ jobs:
         run: bin/rails db:prepare
         env:
           RAILS_ENV: test
+          USE_SQLITE: "true"
 
       - name: Run tests
         run: bin/rails test
         env:
           RAILS_ENV: test
+          USE_SQLITE: "true"
 
   deploy:
     name: Deploy to Production
