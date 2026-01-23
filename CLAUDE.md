@@ -142,6 +142,7 @@ CSP blocks inline JavaScript. Use Stimulus controllers instead:
 - `tabs_controller.js` - Tab switching with `border-primary` active state
 - `clipboard_controller.js` - Copy to clipboard functionality
 - `password_strength_controller.js` - Password validation (uses `text-brand-mint` for valid)
+- `simple_chart_controller.js` - CSP-compliant Canvas-based line charts (used in analytics dashboard)
 
 ### Key Files for Styling
 
@@ -159,9 +160,11 @@ CSP blocks inline JavaScript. Use Stimulus controllers instead:
 - Action Mailbox for email processing
 - Hotwire for modern frontend without heavy JS
 
-### Why SQLite in development?
-- Zero setup, works immediately
-- Production can use PostgreSQL
+### Why PostgreSQL in development?
+- Production parity with staging and production environments
+- Full feature support (jsonb, GIN indexes, etc.)
+- Docker Compose for local PostgreSQL (port 5444)
+- SQLite fallback available with `USE_SQLITE=true` env var
 
 ### Email Processing Flow
 ```
@@ -248,6 +251,8 @@ Product Description → TariffLookupService (UK API) → LlmCommoditySuggester (
 | `app/models/api_key.rb` | API key with tier, usage tracking, authentication |
 | `app/services/api_commodity_service.rb` | Wraps scraper + suggester for API use |
 | `config/initializers/rack_attack.rb` | Per-tier API rate limiting configuration |
+| `app/controllers/admin/analytics_controller.rb` | Admin analytics dashboard with visitor/lookup/signup stats |
+| `app/controllers/users/registrations_controller.rb` | Custom Devise controller for sign-up tracking |
 
 ## Blog System
 
@@ -759,6 +764,17 @@ change_column :products, :count, :string  # ❌ DANGEROUS
 
 ## Running the App
 
+### Prerequisites
+
+Start PostgreSQL via Docker (uses port 5444 to avoid conflicts):
+```bash
+docker compose up -d          # Start PostgreSQL
+docker compose down           # Stop PostgreSQL
+docker compose logs postgres  # View logs
+```
+
+### Development Commands
+
 ```bash
 # Development (RECOMMENDED - runs Tailwind watcher)
 bin/dev
@@ -771,9 +787,15 @@ bin/rails solid_queue:start
 
 # Console
 bin/rails console
+
+# Seed mock analytics data (for testing dashboard)
+bin/rails analytics:seed
+bin/rails analytics:clear
 ```
 
 **Important**: Always use `bin/dev` in development. It runs both Rails and the Tailwind CSS watcher via Procfile.dev. Using `bin/rails server` alone means new Tailwind utility classes won't be compiled.
+
+**SQLite fallback**: Set `USE_SQLITE=true` env var to use SQLite instead of PostgreSQL (no Docker required).
 
 ## Admin Dashboards
 
@@ -781,8 +803,20 @@ Admin-only routes require `user.admin? == true` (Devise authentication).
 
 | Dashboard | URL | Purpose |
 |-----------|-----|---------|
+| Analytics | `/admin/analytics` | Privacy-first analytics: visitors, lookups, sign-ups, usage trends |
 | Solid Queue | `/admin/jobs` | Monitor background jobs, retry failed jobs, view recurring schedules |
 | PgHero | `/admin/pghero` | PostgreSQL monitoring (production only) |
+
+### Analytics Dashboard
+
+Privacy-first analytics using Ahoy (no third-party services, no cookies). Features:
+- Visitors over time with date range selection (7d/30d/90d/1y)
+- Lookups by source (homepage guest/user, extension, photo upload, email forwarding)
+- Sign-up tracking and conversion rates
+- Active/repeat user metrics
+- Top referrers and device breakdown
+
+See `claude/implementations/ahoy-analytics.md` for implementation details.
 
 ### Solid Queue Dashboard
 

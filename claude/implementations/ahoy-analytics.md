@@ -1,7 +1,8 @@
 # Ahoy Analytics Implementation
 
 **Date:** 2026-01-17
-**Feature:** Privacy-first analytics using the Ahoy gem
+**Updated:** 2026-01-23
+**Feature:** Privacy-first analytics using the Ahoy gem + Admin Dashboard
 
 ## Overview
 
@@ -9,9 +10,17 @@ This implementation adds privacy-first analytics to Tariffik using the Ahoy gem.
 
 **Why Ahoy:**
 - No third-party cookies or tracking pixels
-- All data stays in your PostgreSQL/SQLite database
+- All data stays in your PostgreSQL database
 - Automatic user association for logged-in users
 - Standard SQL tables ready for Metabase/Looker
+- Native PostgreSQL jsonb support for efficient queries
+
+**2026-01-23 Updates:**
+- Added admin analytics dashboard at `/admin/analytics`
+- Added sign-up tracking via custom Devise registrations controller
+- Added extension lookup tracking (server-side)
+- Converted `ahoy_events.properties` from text to jsonb with GIN index
+- Added rake tasks for seeding mock analytics data
 
 ## Design Decisions
 
@@ -62,13 +71,16 @@ Using `Ahoy.cookies = :none` for cookieless visitor identification. Ahoy automat
 | visit_id | bigint | FK to ahoy_visits |
 | user_id | bigint | **FK to users** (null for guests) |
 | name | string | Event name (e.g., `order_created`) |
-| properties | json | Event properties as JSON |
+| properties | **jsonb** | Event properties (native PostgreSQL JSON) |
 | time | datetime | When event occurred |
+
+**Note:** The `properties` column was migrated from `text` to `jsonb` on 2026-01-23 to enable native PostgreSQL JSON operators (`->>`) for efficient queries.
 
 ### Indexes
 - `ahoy_visits.visit_token` (unique)
 - `ahoy_visits.visitor_token, started_at` (compound)
 - `ahoy_events.name, time` (compound)
+- `ahoy_events.properties` (GIN index for jsonb queries)
 
 ---
 
@@ -78,10 +90,16 @@ Using `Ahoy.cookies = :none` for cookieless visitor identification. Ahoy automat
 |------|---------|
 | `config/initializers/ahoy.rb` | Ahoy configuration (cookieless mode, privacy settings) |
 | `app/models/ahoy/visit.rb` | Ahoy Visit model (auto-generated) |
-| `app/models/ahoy/event.rb` | Ahoy Event model (modified: `visit` made optional for server-side events) |
+| `app/models/ahoy/event.rb` | Ahoy Event model (jsonb properties, visit optional for server-side events) |
 | `app/controllers/concerns/trackable.rb` | Controller concern for tracking events |
 | `app/services/analytics_tracker.rb` | Service for tracking events in background jobs |
 | `db/migrate/20260117171118_create_ahoy_visits_and_events.rb` | Migration for both tables |
+| `app/controllers/admin/analytics_controller.rb` | Admin dashboard with visitor/lookup/signup stats |
+| `app/views/admin/analytics/index.html.erb` | Dashboard view with charts and stats cards |
+| `app/controllers/users/registrations_controller.rb` | Custom Devise controller for sign-up tracking |
+| `app/javascript/controllers/simple_chart_controller.js` | CSP-compliant Canvas-based line charts |
+| `lib/tasks/seed_analytics.rake` | Rake tasks to seed/clear mock analytics data |
+| `db/migrate/20260123205132_change_ahoy_events_properties_to_jsonb.rb` | Migration to convert properties to jsonb |
 
 ---
 
@@ -97,6 +115,10 @@ Using `Ahoy.cookies = :none` for cookieless visitor identification. Ahoy automat
 | `app/models/user.rb` | Track account creation via after_create callback |
 | `app/jobs/process_inbound_email_job.rb` | Track email forwarding and order creation |
 | `app/jobs/suggest_commodity_codes_job.rb` | Track commodity code suggestions |
+| `app/controllers/api/v1/extension_controller.rb` | Track extension lookup events (server-side) |
+| `config/routes.rb` | Add admin analytics route |
+| `config/database.yml` | PostgreSQL by default, SQLite fallback with USE_SQLITE=true |
+| `docker-compose.yml` | Local PostgreSQL container (port 5444) |
 
 ---
 
@@ -119,8 +141,9 @@ Using `Ahoy.cookies = :none` for cookieless visitor identification. Ahoy automat
 
 | Event | Properties | Trigger |
 |-------|------------|---------|
-| `user_account_created` | `user_id` | User model after_create |
+| `user_registered` | `user_id`, `registration_source` | Custom Devise RegistrationsController |
 | `user_lookup_performed` | `lookup_id`, `lookup_type`, `commodity_code` | PagesController, ProductLookupsController |
+| `extension_lookup_performed` | `user_id`, `commodity_code`, `source` | ExtensionController (server-side) |
 | `user_email_forwarded` | `email_id`, `email_type` | ProcessInboundEmailJob |
 | `order_created` | `order_id`, `retailer`, `source` | OrdersController, ProcessInboundEmailJob |
 | `commodity_code_suggested` | `order_item_id`, `commodity_code`, `confidence` | SuggestCommodityCodesJob |
@@ -301,33 +324,77 @@ ORDER BY date;
 
 ---
 
+## Admin Analytics Dashboard
+
+### Route
+`GET /admin/analytics` - Requires admin authentication
+
+### Features
+- **Date range selection**: 7 days, 30 days, 90 days, 1 year
+- **Visitor stats**: Total visitors, total visits, visitors by day chart
+- **Lookup stats**: Total lookups, lookups by source (homepage guest/user, extension, photo upload, email forwarding)
+- **Signup stats**: Total signups, signups by day chart, conversion rate
+- **Usage trends**: Active users, repeat users, average lookups per user
+- **Top referrers**: Traffic source breakdown
+- **Device breakdown**: Desktop/mobile/tablet split
+
+### Charts
+Uses `simple_chart_controller.js` - a CSP-compliant Canvas-based line chart that doesn't require external libraries or inline JavaScript.
+
+---
+
+## Seeding Mock Data
+
+For development/testing, use the rake tasks:
+
+```bash
+# Seed 90 days of realistic mock data
+bin/rails analytics:seed
+
+# Clear all seeded data
+bin/rails analytics:clear
+```
+
+The seeder creates:
+- Visits with realistic patterns (weekday peaks, weekend dips)
+- Guest and user lookup events
+- Sign-up events with conversion rate simulation
+- Extension lookup events
+
+---
+
 ## Limitations & Future Improvements
 
 ### Current Limitations
 - No JavaScript tracking: Only server-side events are tracked. Client-side interactions (scroll depth, time on page) are not tracked.
-- No real-time dashboard (query database directly or use BI tool)
-- No automatic funnel visualization (build in BI tool)
+- No real-time dashboard updates (page refresh required)
 
 ### Future Improvements
 - Add data retention job to purge events older than N days
-- Add custom dashboard in Rails admin
 - Implement cohort analysis queries
 - Add `ahoy.js` for client-side event tracking
 - Add A/B testing support via properties
+- Export to CSV functionality
 
 ---
 
 ## Files Summary
 
-### New Files (6)
+### New Files (12)
 - `config/initializers/ahoy.rb`
 - `app/models/ahoy/visit.rb`
 - `app/models/ahoy/event.rb`
 - `app/controllers/concerns/trackable.rb`
 - `app/services/analytics_tracker.rb`
 - `db/migrate/20260117171118_create_ahoy_visits_and_events.rb`
+- `app/controllers/admin/analytics_controller.rb`
+- `app/views/admin/analytics/index.html.erb`
+- `app/controllers/users/registrations_controller.rb`
+- `app/javascript/controllers/simple_chart_controller.js`
+- `lib/tasks/seed_analytics.rake`
+- `db/migrate/20260123205132_change_ahoy_events_properties_to_jsonb.rb`
 
-### Modified Files (8)
+### Modified Files (12)
 - `Gemfile`
 - `app/controllers/application_controller.rb`
 - `app/controllers/pages_controller.rb`
@@ -336,3 +403,7 @@ ORDER BY date;
 - `app/models/user.rb`
 - `app/jobs/process_inbound_email_job.rb`
 - `app/jobs/suggest_commodity_codes_job.rb`
+- `app/controllers/api/v1/extension_controller.rb`
+- `config/routes.rb`
+- `config/database.yml`
+- `docker-compose.yml`
