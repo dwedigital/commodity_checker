@@ -11,16 +11,16 @@ namespace :analytics do
     growth_rate = 1.02 # 2% daily growth
 
     devices = %w[Desktop Mobile Tablet]
-    device_weights = [0.6, 0.35, 0.05]
+    device_weights = [ 0.6, 0.35, 0.05 ]
 
-    browsers = ["Chrome", "Safari", "Firefox", "Edge"]
-    browser_weights = [0.65, 0.2, 0.1, 0.05]
+    browsers = [ "Chrome", "Safari", "Firefox", "Edge" ]
+    browser_weights = [ 0.65, 0.2, 0.1, 0.05 ]
 
-    referrers = [nil, "google.com", "twitter.com", "reddit.com", "linkedin.com", "facebook.com"]
-    referrer_weights = [0.5, 0.25, 0.08, 0.07, 0.05, 0.05]
+    referrers = [ nil, "google.com", "twitter.com", "reddit.com", "linkedin.com", "facebook.com" ]
+    referrer_weights = [ 0.5, 0.25, 0.08, 0.07, 0.05, 0.05 ]
 
-    landing_pages = ["/", "/blog", "/users/sign_up", "/users/sign_in", "/pricing"]
-    landing_weights = [0.5, 0.2, 0.15, 0.1, 0.05]
+    landing_pages = [ "/", "/blog", "/users/sign_up", "/users/sign_in", "/pricing" ]
+    landing_weights = [ 0.5, 0.2, 0.15, 0.1, 0.05 ]
 
     # Get existing users for authenticated events
     users = User.all.to_a
@@ -41,7 +41,7 @@ namespace :analytics do
       random_variation = rand(0.7..1.3)
 
       daily_visitors = (base_daily_visitors * weekday_multiplier * time_multiplier * random_variation).round
-      daily_visitors = [daily_visitors, 1].max
+      daily_visitors = [ daily_visitors, 1 ].max
 
       daily_visitors.times do
         # Create a visit
@@ -156,7 +156,7 @@ namespace :analytics do
           visit_id: nil,
           user_id: users.sample&.id,
           name: "order_created",
-          properties: { source: "email", retailer: ["Amazon", "ASOS", "eBay"].sample },
+          properties: { source: "email", retailer: [ "Amazon", "ASOS", "eBay" ].sample },
           time: order_time
         )
         total_events += 1

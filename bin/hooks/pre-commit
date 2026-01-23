@@ -2,8 +2,8 @@
 
 # Pre-commit hook to run RuboCop on staged Ruby files
 
-# Get list of staged Ruby files
-STAGED_FILES=$(git diff --cached --name-only --diff-filter=ACM | grep '\.rb$')
+# Get list of staged Ruby files (including .rake files)
+STAGED_FILES=$(git diff --cached --name-only --diff-filter=ACM | grep -E '\.(rb|rake)$')
 
 if [ -z "$STAGED_FILES" ]; then
   exit 0
