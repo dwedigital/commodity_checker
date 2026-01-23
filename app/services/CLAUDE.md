@@ -19,6 +19,7 @@ See `test/CLAUDE.md` for detailed testing guidelines.
 |---------|---------|----------------------|-------|
 | `email_classifier_service.rb` | AI classification of email types | Anthropic Claude (Haiku) | Pending |
 | `email_parser_service.rb` | Extract data from forwarded emails | None | ✅ 35 tests |
+| `delivery_date_extractor_service.rb` | Extract delivery dates from emails | None (config file) | ✅ 38 tests |
 | `product_info_finder_service.rb` | Find product details via web search | Tavily API, Anthropic Claude | Pending |
 | `product_url_finder_service.rb` | Find product pages on retailer sites | ScrapingBee (optional) | Pending |
 | `order_matcher_service.rb` | Match emails to existing orders | None | ✅ 18 tests |
@@ -96,6 +97,45 @@ Royal Mail, DHL, UPS, FedEx, USPS, Amazon, DPD, Hermes/Evri, Yodel, **Global-e**
 3. Quantity patterns ("2x Product Name")
 
 **When modifying:** Avoid overfitting to specific email formats. Test with multiple retailer emails.
+
+## DeliveryDateExtractorService
+
+Extracts expected delivery dates from email content using multiple strategies.
+
+**Extraction priority (by confidence):**
+1. Explicit dates (0.9) - "ESTIMATED DELIVERY DATE: 2026-01-28"
+2. Relative dates (0.9) - "tomorrow", "this Friday", "next Monday"
+3. Shipping method (0.7) - "Royal Mail 2nd Class" → calculate from config
+4. Day range (0.6) - "3-5 business days" → use minimum
+
+**Usage:**
+```ruby
+extractor = DeliveryDateExtractorService.new(
+  email_body: "Your order will arrive by January 28, 2026",
+  email_date: Date.current
+)
+result = extractor.extract
+# => { estimated_delivery: Date, confidence: 0.9, source: :explicit_date, ... }
+```
+
+**Response format:**
+```ruby
+{
+  estimated_delivery: Date.new(2026, 1, 28),
+  confidence: 0.9,
+  source: :explicit_date,  # or :shipping_method, :day_range
+  shipping_method: nil,    # e.g., "royal_mail/first_class"
+  raw_match: "January 28, 2026"
+}
+```
+
+**Shipping method configuration:** `config/shipping_methods.yml`
+
+**Supported carriers:** Royal Mail, DPD, Evri/Hermes, DHL, UPS, FedEx, Amazon, Yodel, USPS
+
+**Business day calculation:** Skips weekends (Sat/Sun). Does not account for public holidays.
+
+**Called by:** `EmailParserService#extract_delivery_info`
 
 ## ProductInfoFinderService
 

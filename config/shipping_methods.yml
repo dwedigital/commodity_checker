@@ -1,0 +1,281 @@
+# Shipping Methods Configuration
+# Maps carriers and shipping methods to delivery windows (in business days)
+
+carriers:
+  royal_mail:
+    patterns:
+      - 'royal mail'
+      - 'royalmail'
+      - 'parcelforce'
+    methods:
+      first_class:
+        patterns:
+          - '1st class'
+          - 'first class'
+        min_days: 1
+        max_days: 2
+      second_class:
+        patterns:
+          - '2nd class'
+          - 'second class'
+        min_days: 2
+        max_days: 3
+      tracked_24:
+        patterns:
+          - 'tracked 24'
+          - 'next day'
+          - 'special delivery'
+        min_days: 1
+        max_days: 1
+      tracked_48:
+        patterns:
+          - 'tracked 48'
+          - '48 hour'
+          - '2 day'
+        min_days: 2
+        max_days: 2
+      signed_for:
+        patterns:
+          - 'signed for'
+          - 'recorded'
+        min_days: 1
+        max_days: 3
+
+  dpd:
+    patterns:
+      - 'dpd'
+    methods:
+      next_day:
+        patterns:
+          - 'next day'
+          - 'express'
+          - 'by 12'
+          - 'by noon'
+        min_days: 1
+        max_days: 1
+      two_day:
+        patterns:
+          - '2 day'
+          - 'two day'
+        min_days: 2
+        max_days: 2
+      standard:
+        patterns:
+          - 'standard'
+          - 'classic'
+        min_days: 2
+        max_days: 3
+
+  evri:
+    patterns:
+      - 'evri'
+      - 'hermes'
+      - 'myhermes'
+    methods:
+      next_day:
+        patterns:
+          - 'next day'
+          - 'courier'
+        min_days: 1
+        max_days: 2
+      standard:
+        patterns:
+          - 'standard'
+          - 'parcelshop'
+        min_days: 3
+        max_days: 5
+
+  dhl:
+    patterns:
+      - 'dhl'
+    methods:
+      express:
+        patterns:
+          - 'express'
+          - 'next day'
+        min_days: 1
+        max_days: 2
+      standard:
+        patterns:
+          - 'standard'
+          - 'economy'
+          - 'parcel'
+        min_days: 3
+        max_days: 5
+
+  ups:
+    patterns:
+      - 'ups'
+      - 'united parcel'
+    methods:
+      express:
+        patterns:
+          - 'express'
+          - 'next day'
+          - 'saver'
+        min_days: 1
+        max_days: 2
+      standard:
+        patterns:
+          - 'standard'
+          - 'ground'
+        min_days: 3
+        max_days: 5
+
+  fedex:
+    patterns:
+      - 'fedex'
+      - 'federal express'
+    methods:
+      priority:
+        patterns:
+          - 'priority'
+          - 'overnight'
+          - 'first'
+        min_days: 1
+        max_days: 1
+      express:
+        patterns:
+          - 'express'
+          - '2day'
+          - 'two day'
+        min_days: 2
+        max_days: 2
+      ground:
+        patterns:
+          - 'ground'
+          - 'home'
+          - 'smart post'
+        min_days: 3
+        max_days: 5
+
+  amazon:
+    patterns:
+      - 'amazon'
+    methods:
+      same_day:
+        patterns:
+          - 'same day'
+          - 'same-day'
+          - 'today'
+        min_days: 0
+        max_days: 0
+      next_day:
+        patterns:
+          - 'next day'
+          - 'next-day'
+          - 'prime'
+          - 'one day'
+          - 'one-day'
+          - 'tomorrow'
+        min_days: 1
+        max_days: 1
+      two_day:
+        patterns:
+          - 'two day'
+          - 'two-day'
+          - '2 day'
+          - '2-day'
+        min_days: 2
+        max_days: 2
+      standard:
+        patterns:
+          - 'standard'
+          - 'free delivery'
+          - 'no-rush'
+        min_days: 3
+        max_days: 5
+
+  yodel:
+    patterns:
+      - 'yodel'
+    methods:
+      next_day:
+        patterns:
+          - 'next day'
+          - 'express'
+        min_days: 1
+        max_days: 2
+      standard:
+        patterns:
+          - 'standard'
+        min_days: 2
+        max_days: 3
+
+  usps:
+    patterns:
+      - 'usps'
+      - 'us postal'
+      - 'united states postal'
+    methods:
+      priority_express:
+        patterns:
+          - 'priority express'
+          - 'overnight'
+        min_days: 1
+        max_days: 2
+      priority:
+        patterns:
+          - 'priority'
+        min_days: 2
+        max_days: 3
+      first_class:
+        patterns:
+          - 'first class'
+          - 'first-class'
+        min_days: 3
+        max_days: 5
+      ground:
+        patterns:
+          - 'ground'
+          - 'retail ground'
+        min_days: 5
+        max_days: 7
+
+# Generic shipping methods (carrier-agnostic)
+generic_methods:
+  express:
+    patterns:
+      - 'express'
+      - 'priority'
+      - 'expedited'
+      - 'urgent'
+    min_days: 1
+    max_days: 2
+  next_day:
+    patterns:
+      - 'next day'
+      - 'next-day'
+      - 'overnight'
+      - '24 hour'
+      - '24-hour'
+      - 'tomorrow'
+    min_days: 1
+    max_days: 1
+  two_day:
+    patterns:
+      - 'two day'
+      - 'two-day'
+      - '2 day'
+      - '2-day'
+      - '48 hour'
+      - '48-hour'
+    min_days: 2
+    max_days: 2
+  standard:
+    patterns:
+      - 'standard'
+      - 'economy'
+      - 'regular'
+      - 'free shipping'
+      - 'free delivery'
+    min_days: 3
+    max_days: 5
+
+# Patterns for extracting day ranges from text like "3-5 business days"
+day_range_patterns:
+  - '(\d+)\s*[-–]\s*(\d+)\s*(?:business\s+)?(?:working\s+)?days?'
+  - 'within\s+(\d+)\s*(?:business\s+)?(?:working\s+)?days?'
+  - '(\d+)\s+(?:to|or)\s+(\d+)\s*(?:business\s+)?(?:working\s+)?days?'
+  - 'arrives?\s+in\s+(\d+)\s*[-–]?\s*(\d*)?\s*(?:business\s+)?(?:working\s+)?days?'
+  - '(?:delivery\s+)?in\s+(\d+)\s*(?:business\s+)?(?:working\s+)?days?'

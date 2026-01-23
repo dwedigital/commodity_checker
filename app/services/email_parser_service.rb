@@ -109,8 +109,16 @@ class EmailParserService
       order_reference: extract_order_reference,
       retailer_name: identify_retailer,
       product_descriptions: extract_product_descriptions,
-      product_images: extract_product_images
+      product_images: extract_product_images,
+      delivery_info: extract_delivery_info
     }
+  end
+
+  def extract_delivery_info
+    DeliveryDateExtractorService.new(
+      email_body: @html.presence || @text,
+      email_date: @inbound_email.created_at&.to_date || Date.current
+    ).extract
   end
 
   def extract_product_urls

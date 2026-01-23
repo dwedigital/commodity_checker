@@ -79,6 +79,9 @@ class ProcessInboundEmailJob < ApplicationJob
       order.update!(retailer_name: parsed_data[:retailer_name])
     end
 
+    # Update delivery estimate if this email has one and it's more specific
+    update_delivery_estimate(order, parsed_data[:delivery_info])
+
     # Filter to only real product descriptions
     real_products = parsed_data[:product_descriptions].select { |d| looks_like_product_description?(d) }
 
@@ -109,7 +112,8 @@ class ProcessInboundEmailJob < ApplicationJob
       source_email: inbound_email,
       order_reference: parsed_data[:order_reference],
       retailer_name: parsed_data[:retailer_name],
-      status: :pending
+      status: :pending,
+      estimated_delivery: parsed_data.dig(:delivery_info, :estimated_delivery)
     )
 
     # Track order creation
@@ -360,7 +364,9 @@ class ProcessInboundEmailJob < ApplicationJob
       # Pass through product URLs from regex
       product_urls: regex_data[:product_urls],
       # Pass through product images from HTML parsing
-      product_images: regex_data[:product_images] || []
+      product_images: regex_data[:product_images] || [],
+      # Pass through delivery info from email parsing
+      delivery_info: regex_data[:delivery_info]
     }
   end
 
@@ -380,6 +386,9 @@ class ProcessInboundEmailJob < ApplicationJob
 
       add_new_tracking_urls(existing_order, parsed_data[:tracking_urls])
 
+      # Update delivery estimate if this shipping email has better info
+      update_delivery_estimate(existing_order, parsed_data[:delivery_info])
+
       if existing_order.pending? && existing_order.tracking_events.any?
         existing_order.update!(status: :in_transit)
       end
@@ -391,7 +400,8 @@ class ProcessInboundEmailJob < ApplicationJob
         source_email: inbound_email,
         order_reference: parsed_data[:order_reference],
         retailer_name: parsed_data[:retailer_name],
-        status: :in_transit
+        status: :in_transit,
+        estimated_delivery: parsed_data.dig(:delivery_info, :estimated_delivery)
       )
 
       # Link this email to the order
@@ -433,5 +443,19 @@ class ProcessInboundEmailJob < ApplicationJob
     AnalyticsTracker.new(user: user).track(event_name, properties)
   rescue => e
     Rails.logger.error("Analytics tracking failed: #{e.message}")
+  end
+
+  # Update delivery estimate if new info is more specific
+  def update_delivery_estimate(order, delivery_info)
+    return unless delivery_info&.dig(:estimated_delivery).present?
+
+    # Update if order doesn't have estimate, or new info is explicit date with high confidence
+    should_update = order.estimated_delivery.blank? ||
+                    (delivery_info[:source] == :explicit_date && delivery_info[:confidence] >= 0.8)
+
+    if should_update
+      order.update!(estimated_delivery: delivery_info[:estimated_delivery])
+      Rails.logger.info("Updated delivery estimate for order #{order.id} to #{delivery_info[:estimated_delivery]} (source: #{delivery_info[:source]})")
+    end
   end
 end
