@@ -4,6 +4,9 @@ Rails.application.routes.draw do
 
   # Admin-only routes
   authenticate :user, ->(user) { user.admin? } do
+    # Analytics dashboard
+    get "admin/analytics", to: "admin/analytics#index", as: :admin_analytics
+
     # Solid Queue job monitoring dashboard
     mount MissionControl::Jobs::Engine, at: "admin/jobs"
 
@@ -50,7 +53,9 @@ Rails.application.routes.draw do
   post "extension/auth", to: "extension_auth#create_code", as: :extension_auth_create
   get "extension/auth/callback", to: "extension_auth#callback", as: :extension_auth_callback
 
-  devise_for :users
+  devise_for :users, controllers: {
+    registrations: "users/registrations"
+  }
 
   # Dashboard routes (authenticated user area)
   scope "/dashboard" do
