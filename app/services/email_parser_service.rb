@@ -56,11 +56,24 @@ class EmailParserService
   }.freeze
 
   # Patterns to extract order references
+  # Order of patterns matters - more specific patterns first
   ORDER_REFERENCE_PATTERNS = [
-    /order\s*(?:#|number|no\.?|ref\.?)?:?\s*([A-Z0-9][\w-]{5,30})/i,
-    /reference\s*(?:#|number|no\.?)?:?\s*([A-Z0-9][\w-]{5,30})/i,
-    /tracking\s*(?:#|number|no\.?)?:?\s*([A-Z0-9][\w-]{8,30})/i,
-    /shipment\s*(?:#|number|no\.?)?:?\s*([A-Z0-9][\w-]{5,30})/i
+    # "order #ABC123456" or "order #624274" (alphanumeric or numeric after order + #)
+    /order\s*#\s*([A-Z0-9][\w-]{5,30})/i,
+    # "order: ABC123456" or "order: 624274"
+    /order\s*:\s*([A-Z0-9][\w-]{5,30})/i,
+    # "order number ABC123456" or "order no. 624274"
+    /order\s*(?:number|no\.?)\s*:?\s*([A-Z0-9][\w-]{5,30})/i,
+    # "for #624274" or "for order #624274" (handles "payment for #624274")
+    /(?:for|re:?)\s*(?:order\s*)?#\s*([A-Z0-9][\w-]{4,30})/i,
+    # Standalone "#624274" or "#ABC123" (common in subjects)
+    /#([A-Z0-9][\w-]{4,30})\b/i,
+    # Reference patterns
+    /reference\s*:?\s*([A-Z0-9][\w-]{5,30})/i,
+    /ref\.?\s*:?\s*([A-Z0-9][\w-]{5,30})/i,
+    # Tracking/shipment patterns
+    /tracking\s*(?:number|no\.?)?\s*:?\s*([A-Z0-9][\w-]{8,30})/i,
+    /shipment\s*(?:number|no\.?)?\s*:?\s*([A-Z0-9][\w-]{5,30})/i
   ].freeze
 
   # Patterns to identify retailer from email

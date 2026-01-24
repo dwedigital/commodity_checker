@@ -24,6 +24,72 @@ class OrderMatcherServiceTest < ActiveSupport::TestCase
     assert_equal order, matcher.find_matching_order
   end
 
+  test "matches order reference case-insensitively" do
+    order = Order.create!(
+      user: @user,
+      order_reference: "ABC-12345",
+      retailer_name: "Test Retailer"
+    )
+
+    parsed_data = { order_reference: "abc-12345", tracking_urls: [], retailer_name: nil }
+    matcher = OrderMatcherService.new(@user, parsed_data)
+
+    assert_equal order, matcher.find_matching_order
+  end
+
+  test "matches order reference with different prefixes" do
+    order = Order.create!(
+      user: @user,
+      order_reference: "12345-XYZ",
+      retailer_name: "Test Retailer"
+    )
+
+    # Email says "Order #12345-XYZ" but stored as "12345-XYZ"
+    parsed_data = { order_reference: "Order #12345-XYZ", tracking_urls: [], retailer_name: nil }
+    matcher = OrderMatcherService.new(@user, parsed_data)
+
+    assert_equal order, matcher.find_matching_order
+  end
+
+  test "matches order reference when stored with prefix but email has none" do
+    order = Order.create!(
+      user: @user,
+      order_reference: "Order #67890",
+      retailer_name: "Test Retailer"
+    )
+
+    parsed_data = { order_reference: "67890", tracking_urls: [], retailer_name: nil }
+    matcher = OrderMatcherService.new(@user, parsed_data)
+
+    assert_equal order, matcher.find_matching_order
+  end
+
+  test "matches order reference with extra whitespace" do
+    order = Order.create!(
+      user: @user,
+      order_reference: "REF-99999",
+      retailer_name: "Test Retailer"
+    )
+
+    parsed_data = { order_reference: "  REF-99999  ", tracking_urls: [], retailer_name: nil }
+    matcher = OrderMatcherService.new(@user, parsed_data)
+
+    assert_equal order, matcher.find_matching_order
+  end
+
+  test "matches order reference with Ref: prefix variation" do
+    order = Order.create!(
+      user: @user,
+      order_reference: "Ref: ABC123",
+      retailer_name: "Test Retailer"
+    )
+
+    parsed_data = { order_reference: "Reference: ABC123", tracking_urls: [], retailer_name: nil }
+    matcher = OrderMatcherService.new(@user, parsed_data)
+
+    assert_equal order, matcher.find_matching_order
+  end
+
   test "does not match order reference from different user" do
     other_user = users(:two)
     Order.create!(

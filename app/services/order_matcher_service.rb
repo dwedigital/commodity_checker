@@ -17,10 +17,48 @@ class OrderMatcherService
   private
 
   # Most reliable: match by order reference number
+  # Uses normalized comparison (case-insensitive, stripped of common prefixes)
   def match_by_order_reference
     return nil unless parsed_data[:order_reference].present?
 
-    user.orders.find_by(order_reference: parsed_data[:order_reference])
+    incoming_ref = normalize_order_reference(parsed_data[:order_reference])
+    return nil if incoming_ref.blank?
+
+    # First try exact match (fastest)
+    exact_match = user.orders.find_by(order_reference: parsed_data[:order_reference])
+    return exact_match if exact_match
+
+    # Then try normalized matching against all user orders with references
+    user.orders.where.not(order_reference: nil).find do |order|
+      normalize_order_reference(order.order_reference) == incoming_ref
+    end
+  end
+
+  # Normalize order reference for comparison
+  # - Strips whitespace
+  # - Converts to uppercase
+  # - Removes common prefixes (Order #, Order:, Ref:, etc.)
+  # - Removes special characters except alphanumeric and hyphens
+  def normalize_order_reference(ref)
+    return nil if ref.blank?
+
+    normalized = ref.to_s.strip.upcase
+
+    # Remove common prefixes
+    prefixes = [
+      /^ORDER\s*[#:\-]?\s*/i,
+      /^ORD\s*[#:\-]?\s*/i,
+      /^REF(?:ERENCE)?\s*[#:\-]?\s*/i,
+      /^CONFIRMATION\s*[#:\-]?\s*/i,
+      /^NUMBER\s*[#:\-]?\s*/i,
+      /^NO\.?\s*[#:\-]?\s*/i,
+      /^#\s*/
+    ]
+
+    prefixes.each { |prefix| normalized.gsub!(prefix, "") }
+
+    # Remove any remaining special characters except alphanumeric and hyphens
+    normalized.gsub(/[^A-Z0-9\-]/, "").presence
   end
 
   # Match if we've seen this tracking URL before
