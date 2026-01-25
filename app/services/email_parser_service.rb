@@ -622,8 +622,43 @@ class EmailParserService
 
   def clean_url(url)
     # Remove trailing punctuation and clean up
-    url.gsub(/[.,;:!?\])\}>]+$/, "")
-       .gsub(/&amp;/, "&")
+    cleaned = url.gsub(/[.,;:!?\])\}>]+$/, "")
+                 .gsub(/&amp;/, "&")
+
+    normalize_url(cleaned)
+  end
+
+  def normalize_url(url)
+    return url if url.blank?
+
+    # Parse URL to normalize components
+    uri = URI.parse(url)
+
+    # Normalize scheme to https
+    uri.scheme = "https" if uri.scheme == "http"
+
+    # Normalize host: lowercase and remove www. prefix
+    if uri.host
+      uri.host = uri.host.downcase.sub(/^www\./, "")
+    end
+
+    # Remove default ports
+    uri.port = nil if uri.port == 80 || uri.port == 443
+
+    # Remove trailing slash from path (unless it's just "/")
+    if uri.path && uri.path.length > 1
+      uri.path = uri.path.chomp("/")
+    end
+
+    # Remove fragment (anchors aren't relevant for tracking)
+    uri.fragment = nil
+
+    uri.to_s
+  rescue URI::InvalidURIError
+    # If URL can't be parsed, just do basic normalization
+    url.gsub(%r{^http://}i, "https://")
+       .gsub(%r{^(https?://)www\.}i, '\1')
+       .chomp("/")
   end
 
   def identify_from_email(email_address)

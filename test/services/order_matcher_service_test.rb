@@ -177,6 +177,56 @@ class OrderMatcherServiceTest < ActiveSupport::TestCase
     assert_equal order, matcher.find_matching_order
   end
 
+  test "matches order when tracking URL differs only by www prefix" do
+    order = Order.create!(
+      user: @user,
+      order_reference: "ORD-WWW-TRACK",
+      retailer_name: "Test Retailer"
+    )
+    # Database has URL with www
+    TrackingEvent.create!(
+      order: order,
+      carrier: "royal_mail",
+      tracking_url: "https://www.royalmail.com/track?id=WWW123",
+      status: "Tracking link found"
+    )
+
+    # Incoming email has URL without www
+    parsed_data = {
+      order_reference: nil,
+      tracking_urls: [ { carrier: "royal_mail", url: "https://royalmail.com/track?id=WWW123" } ],
+      retailer_name: nil
+    }
+    matcher = OrderMatcherService.new(@user, parsed_data)
+
+    assert_equal order, matcher.find_matching_order
+  end
+
+  test "matches order when existing URL has no www but incoming has www" do
+    order = Order.create!(
+      user: @user,
+      order_reference: "ORD-NO-WWW-TRACK",
+      retailer_name: "Test Retailer"
+    )
+    # Database has URL without www
+    TrackingEvent.create!(
+      order: order,
+      carrier: "dhl",
+      tracking_url: "https://dhl.com/track?id=NOWWW456",
+      status: "Tracking link found"
+    )
+
+    # Incoming email has URL with www
+    parsed_data = {
+      order_reference: nil,
+      tracking_urls: [ { carrier: "dhl", url: "https://www.dhl.com/track?id=NOWWW456" } ],
+      retailer_name: nil
+    }
+    matcher = OrderMatcherService.new(@user, parsed_data)
+
+    assert_equal order, matcher.find_matching_order
+  end
+
   test "does not match tracking URL from different user" do
     other_user = users(:two)
     other_order = Order.create!(

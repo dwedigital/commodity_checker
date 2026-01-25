@@ -305,10 +305,11 @@ class ProcessInboundEmailJob < ApplicationJob
   def add_new_tracking_urls(order, tracking_urls)
     return if tracking_urls.blank?
 
-    existing_urls = order.tracking_events.pluck(:tracking_url)
+    existing_urls = order.tracking_events.pluck(:tracking_url).map { |url| normalize_tracking_url(url) }
 
     tracking_urls.each do |tracking_info|
-      next if existing_urls.include?(tracking_info[:url])
+      normalized_url = normalize_tracking_url(tracking_info[:url])
+      next if existing_urls.include?(normalized_url)
 
       order.tracking_events.create!(
         carrier: tracking_info[:carrier],
@@ -317,6 +318,22 @@ class ProcessInboundEmailJob < ApplicationJob
         event_timestamp: Time.current
       )
     end
+  end
+
+  def normalize_tracking_url(url)
+    return url if url.blank?
+
+    uri = URI.parse(url)
+    uri.scheme = "https" if uri.scheme == "http"
+    uri.host = uri.host&.downcase&.sub(/^www\./, "")
+    uri.port = nil if uri.port == 80 || uri.port == 443
+    uri.path = uri.path.chomp("/") if uri.path && uri.path.length > 1
+    uri.fragment = nil
+    uri.to_s
+  rescue URI::InvalidURIError
+    url.gsub(%r{^http://}i, "https://")
+       .gsub(%r{^(https?://)www\.}i, '\1')
+       .chomp("/")
   end
 
   # AI-based email classification

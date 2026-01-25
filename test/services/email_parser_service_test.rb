@@ -96,6 +96,55 @@ class EmailParserServiceTest < ActiveSupport::TestCase
     assert_equal urls.length, unique_urls.length
   end
 
+  test "deduplicates URLs that differ only by www prefix" do
+    email = build_email(
+      body_text: "Track here: https://www.royalmail.com/track?id=123 or here: https://royalmail.com/track?id=123"
+    )
+    parser = EmailParserService.new(email)
+
+    urls = parser.extract_tracking_urls
+
+    # Should deduplicate www and non-www variants
+    assert_equal 1, urls.length
+    # URL should be normalized to non-www
+    assert_equal "https://royalmail.com/track?id=123", urls.first[:url]
+  end
+
+  test "normalizes http to https" do
+    email = build_email(
+      body_text: "Track here: http://royalmail.com/track?id=123"
+    )
+    parser = EmailParserService.new(email)
+
+    urls = parser.extract_tracking_urls
+
+    assert urls.first[:url].start_with?("https://")
+  end
+
+  test "normalizes URL case in domain" do
+    email = build_email(
+      body_text: "Track here: https://WWW.RoyalMail.COM/track?id=123"
+    )
+    parser = EmailParserService.new(email)
+
+    urls = parser.extract_tracking_urls
+
+    assert_equal "https://royalmail.com/track?id=123", urls.first[:url]
+  end
+
+  test "removes trailing slashes from URLs" do
+    email = build_email(
+      body_text: "Track here: https://royalmail.com/track/ and https://royalmail.com/track"
+    )
+    parser = EmailParserService.new(email)
+
+    urls = parser.extract_tracking_urls
+
+    # Should deduplicate after removing trailing slash
+    assert_equal 1, urls.length
+    refute urls.first[:url].end_with?("/")
+  end
+
   test "returns empty array when no tracking URLs present" do
     email = build_email(body_text: "Thank you for your order!")
     parser = EmailParserService.new(email)

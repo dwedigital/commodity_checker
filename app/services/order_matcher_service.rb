@@ -65,12 +65,30 @@ class OrderMatcherService
   def match_by_tracking_url
     return nil unless parsed_data[:tracking_urls].any?
 
-    urls = parsed_data[:tracking_urls].map { |t| t[:url] }
+    incoming_urls = parsed_data[:tracking_urls].map { |t| normalize_url(t[:url]) }
 
-    user.orders
-        .joins(:tracking_events)
-        .where(tracking_events: { tracking_url: urls })
-        .first
+    # Find orders where any tracking URL matches (after normalization)
+    user.orders.joins(:tracking_events).find do |order|
+      order.tracking_events.any? do |event|
+        incoming_urls.include?(normalize_url(event.tracking_url))
+      end
+    end
+  end
+
+  def normalize_url(url)
+    return url if url.blank?
+
+    uri = URI.parse(url)
+    uri.scheme = "https" if uri.scheme == "http"
+    uri.host = uri.host&.downcase&.sub(/^www\./, "")
+    uri.port = nil if uri.port == 80 || uri.port == 443
+    uri.path = uri.path.chomp("/") if uri.path && uri.path.length > 1
+    uri.fragment = nil
+    uri.to_s
+  rescue URI::InvalidURIError
+    url.gsub(%r{^http://}i, "https://")
+       .gsub(%r{^(https?://)www\.}i, '\1')
+       .chomp("/")
   end
 
   # Match by same retailer within recent timeframe (7 days)
