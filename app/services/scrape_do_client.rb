@@ -1,6 +1,5 @@
 # Centralized client for Scrape.do API
 # Handles API token management, timeouts, and error handling
-# Replaces ScrapingBee with scrape.do free tier
 class ScrapeDoClient
   API_URL = "https://api.scrape.do/".freeze
 

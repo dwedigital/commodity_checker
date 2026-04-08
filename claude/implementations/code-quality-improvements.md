@@ -10,7 +10,7 @@ Implemented a comprehensive code quality improvement plan addressing model valid
 
 2. **Service Extraction Pattern** - Extracted common patterns into reusable services with clear single responsibilities:
    - `LlmResponseParser` - Centralized JSON extraction from Claude responses
-   - `ScrapingbeeClient` - Unified ScrapingBee API client with error handling
+   - `ScrapeDoClient` - Unified Scrape.do API client with error handling
    - `CommoditySuggestionFormatter` - Consistent formatting of commodity suggestions
    - `GuestProductLookupService` - Encapsulated guest user lookup logic
 
@@ -25,7 +25,7 @@ No migrations required. All changes are at the application code level.
 | File | Purpose |
 |------|---------|
 | `app/services/llm_response_parser.rb` | Extracts and parses JSON from Claude LLM responses |
-| `app/services/scrapingbee_client.rb` | Centralized ScrapingBee API client with error handling |
+| `app/services/scrape_do_client.rb` | Centralized Scrape.do API client with error handling |
 | `app/services/commodity_suggestion_formatter.rb` | Formats commodity code suggestions for display |
 | `app/services/guest_product_lookup_service.rb` | Handles synchronous lookups for guest users |
 
@@ -168,6 +168,6 @@ Manual verification:
 - Anthropic model name centralization
 
 ### Future Considerations
-- Consider adding tests for new services (LlmResponseParser, ScrapingbeeClient, etc.)
-- Monitor ScrapingBee credit usage after refactoring
+- Consider adding tests for new services (LlmResponseParser, ScrapeDoClient, etc.)
+- Monitor Scrape.do credit usage after refactoring
 - Consider circuit breaker pattern for external API calls

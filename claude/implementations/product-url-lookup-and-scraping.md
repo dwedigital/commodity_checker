@@ -272,34 +272,34 @@ bin/rails runner "
 "
 ```
 
-## ScrapingBee Fallback (Added 2026-01-16)
+## Scrape.do Fallback (Updated 2026-04-08)
 
-The scraper now uses ScrapingBee as a fallback for protected websites that block direct HTTP requests.
+The scraper uses Scrape.do as a fallback for protected websites that block direct HTTP requests. (Originally ScrapingBee, replaced with Scrape.do for cost savings.)
 
 ### How It Works
 
 1. **Try direct fetch first** - Fast and free, works for most sites
 2. **Detect failures** - HTTP 403, 401, 503, timeouts, connection failures
-3. **Fallback to ScrapingBee** - Only if API key is configured and error is recoverable
-4. **Return result** - Includes `fetched_via` field showing `:direct` or `:scrapingbee`
+3. **Fallback to Scrape.do** - Only if API token is configured and error is recoverable
+4. **Return result** - Includes `fetched_via` field showing `:direct` or `:scrape_do`
 
 ### Configuration
 
 Add to `.env`:
 ```bash
-SCRAPINGBEE_API_KEY=your-api-key-here
+SCRAPE_DO_API_TOKEN=your-api-token-here
 ```
 
-### ScrapingBee Settings
+### Scrape.do Settings
 
 ```ruby
 params = {
-  api_key: api_key,
+  token: token,
   url: url,
-  render_js: "true",       # Handle JavaScript SPAs
-  premium_proxy: "true",   # Better success rate
-  country_code: "gb"       # UK proxy for UK content
+  render: "true",          # Handle JavaScript SPAs
+  geoCode: "gb"            # UK proxy for UK content
 }
+# super: "true" for residential/mobile IPs (last resort fallback)
 ```
 
 ### Supported Protected Sites
@@ -312,8 +312,8 @@ Now works with:
 ### Cost Optimization
 
 - Direct fetch is always attempted first (free)
-- ScrapingBee only used for failures (pay-per-request)
-- Premium proxy + JS rendering uses ~25 credits per request
+- Scrape.do only used for failures (pay-per-request)
+- Free tier covers basic usage; super proxy for heavily protected sites
 
 ### Bug Fix
 
@@ -330,7 +330,7 @@ image = image["url"] if image.is_a?(Hash) && image["url"]
 
 - **Rate limiting**: No explicit rate limiting implemented yet. Relies on Solid Queue job processing.
 - **URL matching**: Product URLs in emails are matched to order items sequentially, not by content similarity.
-- **ScrapingBee costs**: Premium proxy + JS rendering uses credits; monitor usage
+- **Scrape.do costs**: Proxy + JS rendering uses credits; monitor usage
 
 ### Potential Future Improvements
 

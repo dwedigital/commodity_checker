@@ -2,11 +2,9 @@
 # ================================================
 # This is the base config. Use destination-specific files:
 #   kamal setup -d production   → uses deploy.production.yml
-#   kamal setup -d staging      → uses deploy.staging.yml
 #
 # Commands:
 #   kamal deploy -d production    # Deploy to production
-#   kamal deploy -d staging       # Deploy to staging
 #   kamal console -d production   # Rails console
 #   kamal logs -d production      # View logs
 

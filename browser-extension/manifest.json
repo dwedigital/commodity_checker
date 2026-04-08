@@ -26,7 +26,6 @@
   },
   "host_permissions": [
     "https://tariffik.com/*",
-    "https://tariffik-staging.onrender.com/*",
     "http://localhost:3000/*"
   ],
   "background": {
@@ -43,7 +42,7 @@
   "web_accessible_resources": [
     {
       "resources": ["callback/callback.html"],
-      "matches": ["https://tariffik.com/*", "https://tariffik-staging.onrender.com/*", "http://localhost:3000/*"]
+      "matches": ["https://tariffik.com/*", "http://localhost:3000/*"]
     }
   ]
 }

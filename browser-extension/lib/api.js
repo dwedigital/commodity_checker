@@ -3,13 +3,11 @@
 // Environment configuration
 // Change this to switch between environments:
 // - 'local': http://localhost:3000 (for development)
-// - 'staging': https://tariffik-staging.onrender.com
 // - 'production': https://tariffik.com
 const ENVIRONMENT = 'production';
 
 const HOSTS = {
   local: 'http://localhost:3000',
-  staging: 'https://tariffik-staging.onrender.com',
   production: 'https://tariffik.com'
 };
 
