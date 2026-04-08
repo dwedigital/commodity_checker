@@ -21,7 +21,7 @@ See `test/CLAUDE.md` for detailed testing guidelines.
 | `email_parser_service.rb` | Extract data from forwarded emails | None | ✅ 35 tests |
 | `delivery_date_extractor_service.rb` | Extract delivery dates from emails | None (config file) | ✅ 38 tests |
 | `product_info_finder_service.rb` | Find product details via web search | Tavily API, Anthropic Claude | Pending |
-| `product_url_finder_service.rb` | Find product pages on retailer sites | ScrapingBee (optional) | Pending |
+| `product_url_finder_service.rb` | Find product pages on retailer sites | Scrape.do (optional) | Pending |
 | `order_matcher_service.rb` | Match emails to existing orders | None | ✅ 18 tests |
 | `tariff_lookup_service.rb` | Query UK Trade Tariff API | UK Gov API | ✅ 7 tests |
 | `llm_commodity_suggester.rb` | AI commodity code suggestions | Anthropic Claude | ✅ 16 tests |
@@ -197,7 +197,7 @@ result = finder.find(
 
 **Features:**
 - Retailer-specific search URL patterns (Amazon, eBay, ASOS, etc.)
-- Uses ScrapingBee for JS-rendered pages (if configured)
+- Uses Scrape.do for JS-rendered pages (if configured)
 - Scores URLs by relevance to product name
 - Filters to likely product URLs (not category/search pages)
 

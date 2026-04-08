@@ -109,7 +109,7 @@ jobs:
           echo "RESEND_WEBHOOK_SECRET=${{ secrets.STAGING_RESEND_WEBHOOK_SECRET }}" >> .kamal/secrets.staging
           echo "HETZNER_STORAGE_ACCESS_KEY_ID=${{ secrets.HETZNER_STORAGE_ACCESS_KEY_ID }}" >> .kamal/secrets.staging
           echo "HETZNER_STORAGE_SECRET_ACCESS_KEY=${{ secrets.HETZNER_STORAGE_SECRET_ACCESS_KEY }}" >> .kamal/secrets.staging
-          echo "SCRAPINGBEE_API_KEY=${{ secrets.SCRAPINGBEE_API_KEY }}" >> .kamal/secrets.staging
+          echo "SCRAPE_DO_API_TOKEN=${{ secrets.SCRAPE_DO_API_TOKEN }}" >> .kamal/secrets.staging
 
       - name: Deploy to Staging
         run: kamal deploy -d staging

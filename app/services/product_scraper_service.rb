@@ -19,17 +19,17 @@ class ProductScraperService
     "prodirect" => /prodirectsport\.com/i
   }.freeze
 
-  # Known retailers that always require ScrapingBee (skip direct fetch to save time)
+  # Known retailers that always require a scraping proxy (skip direct fetch to save time)
   # Additional retailers are learned dynamically and cached
-  KNOWN_SCRAPINGBEE_RETAILERS = %w[
+  KNOWN_PROXY_RETAILERS = %w[
     amazon john_lewis argos currys marks_spencer boots wayfair lululemon
   ].freeze
 
   # Cache key prefix for learned retailers
-  RETAILER_CACHE_PREFIX = "scrapingbee_required:".freeze
+  RETAILER_CACHE_PREFIX = "proxy_required:".freeze
   RETAILER_CACHE_EXPIRY = 30.days
 
-  # Errors that should trigger ScrapingBee fallback
+  # Errors that should trigger proxy fallback
   FALLBACK_ERRORS = [
     "HTTP 403",
     "HTTP 401",
@@ -38,11 +38,11 @@ class ProductScraperService
     "Connection failed"
   ].freeze
 
-  # Errors from premium proxy that should trigger stealth proxy fallback
-  STEALTH_FALLBACK_ERRORS = [
-    "ScrapingBee HTTP 500",
-    "ScrapingBee HTTP 403",
-    "ScrapingBee HTTP 401"
+  # Errors from standard proxy that should trigger super proxy fallback
+  SUPER_FALLBACK_ERRORS = [
+    "Scrape.do HTTP 500",
+    "Scrape.do HTTP 403",
+    "Scrape.do HTTP 401"
   ].freeze
 
   # Tracking parameters to strip from URLs before scraping
@@ -66,7 +66,7 @@ class ProductScraperService
       f.adapter Faraday.default_adapter
     end
 
-    @scrapingbee = ScrapingbeeClient.new
+    @scrape_do = ScrapeDoClient.new
   end
 
   def scrape(url)
@@ -80,9 +80,9 @@ class ProductScraperService
     fetch_attempts = []
     direct_fetch_failed = false
 
-    # Skip direct fetch for retailers that already require ScrapingBee
-    if requires_scrapingbee?(retailer)
-      Rails.logger.info("ProductScraperService: #{retailer} requires ScrapingBee, skipping direct fetch")
+    # Skip direct fetch for retailers that already require a proxy
+    if requires_proxy?(retailer)
+      Rails.logger.info("ProductScraperService: #{retailer} requires proxy, skipping direct fetch")
       response = { error: "Retailer requires proxy" }
     else
       # Try direct fetch first
@@ -91,30 +91,30 @@ class ProductScraperService
       direct_fetch_failed = response[:error].present?
     end
 
-    # If direct fetch failed with a recoverable error, try ScrapingBee with premium proxy
-    if response[:error] && (requires_scrapingbee?(retailer) || should_use_fallback?(response[:error]))
+    # If direct fetch failed with a recoverable error, try Scrape.do with standard proxy
+    if response[:error] && (requires_proxy?(retailer) || should_use_fallback?(response[:error]))
       if fetch_attempts.any?
         fetch_attempts.last[:status] = "failed"
         fetch_attempts.last[:message] = "Direct fetch blocked (#{response[:error]})"
       end
 
-      fetch_attempts << { method: "premium_proxy", status: "attempting", message: "Trying with proxy..." }
-      Rails.logger.info("ProductScraperService: Direct fetch failed (#{response[:error]}), trying ScrapingBee premium proxy")
-      response = fetch_via_scrapingbee(clean_url, stealth: false)
+      fetch_attempts << { method: "standard_proxy", status: "attempting", message: "Trying with proxy..." }
+      Rails.logger.info("ProductScraperService: Direct fetch failed (#{response[:error]}), trying Scrape.do standard proxy")
+      response = fetch_via_scrape_do(clean_url, super_proxy: false)
 
-      # If ScrapingBee succeeded and direct fetch had failed, learn this retailer for future
+      # If Scrape.do succeeded and direct fetch had failed, learn this retailer for future
       if response[:error].nil? && direct_fetch_failed
-        remember_retailer_requires_scrapingbee(retailer)
+        remember_retailer_requires_proxy(retailer)
       end
 
-      # If premium proxy failed, try stealth proxy as last resort
-      if response[:error] && should_use_stealth_fallback?(response[:error])
+      # If standard proxy failed, try super proxy as last resort
+      if response[:error] && should_use_super_fallback?(response[:error])
         fetch_attempts.last[:status] = "failed"
-        fetch_attempts.last[:message] = "Premium proxy blocked (#{response[:error]})"
+        fetch_attempts.last[:message] = "Standard proxy blocked (#{response[:error]})"
 
-        fetch_attempts << { method: "stealth_proxy", status: "attempting", message: "Site has strong protection, using stealth mode..." }
-        Rails.logger.info("ProductScraperService: Premium proxy failed (#{response[:error]}), trying ScrapingBee stealth proxy")
-        response = fetch_via_scrapingbee(clean_url, stealth: true)
+        fetch_attempts << { method: "super_proxy", status: "attempting", message: "Site has strong protection, using super proxy..." }
+        Rails.logger.info("ProductScraperService: Standard proxy failed (#{response[:error]}), trying Scrape.do super proxy")
+        response = fetch_via_scrape_do(clean_url, super_proxy: true)
       end
     end
 
@@ -172,43 +172,43 @@ class ProductScraperService
     { error: e.message }
   end
 
-  def fetch_via_scrapingbee(url, stealth: false)
+  def fetch_via_scrape_do(url, super_proxy: false)
     country = detect_country_from_url(url)
-    @scrapingbee.fetch(url, stealth: stealth, country_code: country)
+    @scrape_do.fetch(url, super_proxy: super_proxy, geo_code: country)
   end
 
   def should_use_fallback?(error)
-    return false unless ScrapingbeeClient.configured?
+    return false unless ScrapeDoClient.configured?
 
     FALLBACK_ERRORS.any? { |fallback_error| error.to_s.include?(fallback_error) }
   end
 
-  def requires_scrapingbee?(retailer)
-    return false unless ScrapingbeeClient.configured?
+  def requires_proxy?(retailer)
+    return false unless ScrapeDoClient.configured?
 
     retailer_key = retailer.to_s.downcase
 
     # Check hardcoded list first
-    return true if KNOWN_SCRAPINGBEE_RETAILERS.include?(retailer_key)
+    return true if KNOWN_PROXY_RETAILERS.include?(retailer_key)
 
-    # Check if we've learned this retailer requires ScrapingBee
+    # Check if we've learned this retailer requires a proxy
     Rails.cache.exist?("#{RETAILER_CACHE_PREFIX}#{retailer_key}")
   end
 
-  def remember_retailer_requires_scrapingbee(retailer)
+  def remember_retailer_requires_proxy(retailer)
     retailer_key = retailer.to_s.downcase
     Rails.cache.write(
       "#{RETAILER_CACHE_PREFIX}#{retailer_key}",
       true,
       expires_in: RETAILER_CACHE_EXPIRY
     )
-    Rails.logger.info("ProductScraperService: Learned that #{retailer} requires ScrapingBee (cached for 30 days)")
+    Rails.logger.info("ProductScraperService: Learned that #{retailer} requires proxy (cached for 30 days)")
   end
 
-  def should_use_stealth_fallback?(error)
-    return false unless ScrapingbeeClient.configured?
+  def should_use_super_fallback?(error)
+    return false unless ScrapeDoClient.configured?
 
-    STEALTH_FALLBACK_ERRORS.any? { |fallback_error| error.to_s.include?(fallback_error) }
+    SUPER_FALLBACK_ERRORS.any? { |fallback_error| error.to_s.include?(fallback_error) }
   end
 
   def strip_tracking_params(url)

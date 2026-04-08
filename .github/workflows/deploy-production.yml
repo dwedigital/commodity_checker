@@ -99,7 +99,7 @@ jobs:
           echo "RESEND_WEBHOOK_SECRET=${{ secrets.PRODUCTION_RESEND_WEBHOOK_SECRET }}" >> .kamal/secrets.production
           echo "HETZNER_STORAGE_ACCESS_KEY_ID=${{ secrets.HETZNER_STORAGE_ACCESS_KEY_ID }}" >> .kamal/secrets.production
           echo "HETZNER_STORAGE_SECRET_ACCESS_KEY=${{ secrets.HETZNER_STORAGE_SECRET_ACCESS_KEY }}" >> .kamal/secrets.production
-          echo "SCRAPINGBEE_API_KEY=${{ secrets.SCRAPINGBEE_API_KEY }}" >> .kamal/secrets.production
+          echo "SCRAPE_DO_API_TOKEN=${{ secrets.SCRAPE_DO_API_TOKEN }}" >> .kamal/secrets.production
 
       - name: Deploy to Production
         run: kamal deploy -d production
