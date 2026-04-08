@@ -29,7 +29,7 @@ class ProductUrlFinderService
       f.adapter Faraday.default_adapter
     end
 
-    @scrapingbee = ScrapingbeeClient.new
+    @scrape_do = ScrapeDoClient.new
   end
 
   # Find product URL given retailer info and product name
@@ -105,9 +105,9 @@ class ProductUrlFinderService
   end
 
   def fetch_search_page(url)
-    # Most e-commerce sites need JS rendering - try ScrapingBee first if available
-    if ScrapingbeeClient.configured?
-      result = @scrapingbee.fetch(url, wait: "3000", wait_for: "a[href]")
+    # Most e-commerce sites need JS rendering - try Scrape.do first if available
+    if ScrapeDoClient.configured?
+      result = @scrape_do.fetch(url, custom_wait: 3000, wait_selector: "a[href]")
       return result[:body] if result[:body] && has_product_content?(result[:body])
     end
 

@@ -84,7 +84,7 @@ services:
       - key: TAVILY_API_KEY
         sync: false
       # Web scraping
-      - key: SCRAPINGBEE_API_KEY
+      - key: SCRAPE_DO_API_TOKEN
         sync: false
       # Cloudflare R2 storage
       - key: CLOUDFLARE_R2_ACCESS_KEY_ID
@@ -132,7 +132,7 @@ services:
       - key: TAVILY_API_KEY
         sync: false
       # Web scraping
-      - key: SCRAPINGBEE_API_KEY
+      - key: SCRAPE_DO_API_TOKEN
         sync: false
       # Cloudflare R2 storage
       - key: CLOUDFLARE_R2_ACCESS_KEY_ID
@@ -213,7 +213,7 @@ services:
       - key: TAVILY_API_KEY
         sync: false
       # Web scraping
-      - key: SCRAPINGBEE_API_KEY
+      - key: SCRAPE_DO_API_TOKEN
         sync: false
       # Cloudflare R2 storage
       - key: CLOUDFLARE_R2_ACCESS_KEY_ID

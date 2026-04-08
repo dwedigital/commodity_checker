@@ -19,7 +19,7 @@ class ProductScraperService
     "prodirect" => /prodirectsport\.com/i
   }.freeze
 
-  # Errors that should trigger ScrapingBee fallback
+  # Errors that should trigger proxy fallback
   FALLBACK_ERRORS = [
     "HTTP 403",
     "HTTP 401",
@@ -28,11 +28,11 @@ class ProductScraperService
     "Connection failed"
   ].freeze
 
-  # Errors from premium proxy that should trigger stealth proxy fallback
-  STEALTH_FALLBACK_ERRORS = [
-    "ScrapingBee HTTP 500",
-    "ScrapingBee HTTP 403",
-    "ScrapingBee HTTP 401"
+  # Errors from standard proxy that should trigger super proxy fallback
+  SUPER_FALLBACK_ERRORS = [
+    "Scrape.do HTTP 500",
+    "Scrape.do HTTP 403",
+    "Scrape.do HTTP 401"
   ].freeze
 
   # Tracking parameters to strip from URLs before scraping
@@ -56,7 +56,7 @@ class ProductScraperService
       f.adapter Faraday.default_adapter
     end
 
-    @scrapingbee = ScrapingbeeClient.new
+    @scrape_do = ScrapeDoClient.new
   end
 
   def scrape(url)
@@ -73,23 +73,23 @@ class ProductScraperService
     fetch_attempts << { method: "direct", status: "attempting", message: "Fetching page..." }
     response = fetch_page(clean_url)
 
-    # If direct fetch failed with a recoverable error, try ScrapingBee with premium proxy
+    # If direct fetch failed with a recoverable error, try Scrape.do with standard proxy
     if response[:error] && should_use_fallback?(response[:error])
       fetch_attempts.last[:status] = "failed"
       fetch_attempts.last[:message] = "Direct fetch blocked (#{response[:error]})"
 
-      fetch_attempts << { method: "premium_proxy", status: "attempting", message: "Trying with proxy..." }
-      Rails.logger.info("ProductScraperService: Direct fetch failed (#{response[:error]}), trying ScrapingBee premium proxy")
-      response = fetch_via_scrapingbee(clean_url, stealth: false)
+      fetch_attempts << { method: "standard_proxy", status: "attempting", message: "Trying with proxy..." }
+      Rails.logger.info("ProductScraperService: Direct fetch failed (#{response[:error]}), trying Scrape.do standard proxy")
+      response = fetch_via_scrape_do(clean_url, super_proxy: false)
 
-      # If premium proxy failed, try stealth proxy as last resort
-      if response[:error] && should_use_stealth_fallback?(response[:error])
+      # If standard proxy failed, try super proxy as last resort
+      if response[:error] && should_use_super_fallback?(response[:error])
         fetch_attempts.last[:status] = "failed"
-        fetch_attempts.last[:message] = "Premium proxy blocked (#{response[:error]})"
+        fetch_attempts.last[:message] = "Standard proxy blocked (#{response[:error]})"
 
-        fetch_attempts << { method: "stealth_proxy", status: "attempting", message: "Site has strong protection, using stealth mode..." }
-        Rails.logger.info("ProductScraperService: Premium proxy failed (#{response[:error]}), trying ScrapingBee stealth proxy")
-        response = fetch_via_scrapingbee(clean_url, stealth: true)
+        fetch_attempts << { method: "super_proxy", status: "attempting", message: "Site has strong protection, using super proxy..." }
+        Rails.logger.info("ProductScraperService: Standard proxy failed (#{response[:error]}), trying Scrape.do super proxy")
+        response = fetch_via_scrape_do(clean_url, super_proxy: true)
       end
     end
 
@@ -147,21 +147,21 @@ class ProductScraperService
     { error: e.message }
   end
 
-  def fetch_via_scrapingbee(url, stealth: false)
+  def fetch_via_scrape_do(url, super_proxy: false)
     country = detect_country_from_url(url)
-    @scrapingbee.fetch(url, stealth: stealth, country_code: country)
+    @scrape_do.fetch(url, super_proxy: super_proxy, geo_code: country)
   end
 
   def should_use_fallback?(error)
-    return false unless ScrapingbeeClient.configured?
+    return false unless ScrapeDoClient.configured?
 
     FALLBACK_ERRORS.any? { |fallback_error| error.to_s.include?(fallback_error) }
   end
 
-  def should_use_stealth_fallback?(error)
-    return false unless ScrapingbeeClient.configured?
+  def should_use_super_fallback?(error)
+    return false unless ScrapeDoClient.configured?
 
-    STEALTH_FALLBACK_ERRORS.any? { |fallback_error| error.to_s.include?(fallback_error) }
+    SUPER_FALLBACK_ERRORS.any? { |fallback_error| error.to_s.include?(fallback_error) }
   end
 
   def strip_tracking_params(url)
