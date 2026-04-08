@@ -56,11 +56,24 @@ class EmailParserService
   }.freeze
 
   # Patterns to extract order references
+  # Order of patterns matters - more specific patterns first
   ORDER_REFERENCE_PATTERNS = [
-    /order\s*(?:#|number|no\.?|ref\.?)?:?\s*([A-Z0-9][\w-]{5,30})/i,
-    /reference\s*(?:#|number|no\.?)?:?\s*([A-Z0-9][\w-]{5,30})/i,
-    /tracking\s*(?:#|number|no\.?)?:?\s*([A-Z0-9][\w-]{8,30})/i,
-    /shipment\s*(?:#|number|no\.?)?:?\s*([A-Z0-9][\w-]{5,30})/i
+    # "order #ABC123456" or "order #624274" (alphanumeric or numeric after order + #)
+    /order\s*#\s*([A-Z0-9][\w-]{5,30})/i,
+    # "order: ABC123456" or "order: 624274"
+    /order\s*:\s*([A-Z0-9][\w-]{5,30})/i,
+    # "order number ABC123456" or "order no. 624274"
+    /order\s*(?:number|no\.?)\s*:?\s*([A-Z0-9][\w-]{5,30})/i,
+    # "for #624274" or "for order #624274" (handles "payment for #624274")
+    /(?:for|re:?)\s*(?:order\s*)?#\s*([A-Z0-9][\w-]{4,30})/i,
+    # Standalone "#624274" or "#ABC123" (common in subjects)
+    /#([A-Z0-9][\w-]{4,30})\b/i,
+    # Reference patterns
+    /reference\s*:?\s*([A-Z0-9][\w-]{5,30})/i,
+    /ref\.?\s*:?\s*([A-Z0-9][\w-]{5,30})/i,
+    # Tracking/shipment patterns
+    /tracking\s*(?:number|no\.?)?\s*:?\s*([A-Z0-9][\w-]{8,30})/i,
+    /shipment\s*(?:number|no\.?)?\s*:?\s*([A-Z0-9][\w-]{5,30})/i
   ].freeze
 
   # Patterns to identify retailer from email
@@ -109,8 +122,16 @@ class EmailParserService
       order_reference: extract_order_reference,
       retailer_name: identify_retailer,
       product_descriptions: extract_product_descriptions,
-      product_images: extract_product_images
+      product_images: extract_product_images,
+      delivery_info: extract_delivery_info
     }
+  end
+
+  def extract_delivery_info
+    DeliveryDateExtractorService.new(
+      email_body: @html.presence || @text,
+      email_date: @inbound_email.created_at&.to_date || Date.current
+    ).extract
   end
 
   def extract_product_urls
@@ -124,6 +145,9 @@ class EmailParserService
     extract_carrier_tracking_urls(urls)
     extract_generic_tracking_urls(urls)
     extract_tracking_links_from_html(urls)
+
+    # Enrich "unknown" carriers by looking at surrounding text context
+    enrich_unknown_carriers_from_context(urls)
 
     urls.uniq { |u| u[:url] }
   end
@@ -181,12 +205,79 @@ class EmailParserService
   def detect_carrier_from_text(text)
     return "global_e" if text.match?(/global-?e/i)
     return "royal_mail" if text.match?(/royal\s*mail/i)
-    return "dhl" if text.match?(/dhl/i)
-    return "ups" if text.match?(/ups/i)
+    return "dhl" if text.match?(/\bdhl\b/i)
+    return "ups" if text.match?(/\bups\b/i)
     return "fedex" if text.match?(/fedex/i)
-    return "dpd" if text.match?(/dpd/i)
+    return "dpd" if text.match?(/\bdpd\b/i)
     return "evri" if text.match?(/evri|hermes/i)
+    return "usps" if text.match?(/\busps\b/i)
+    return "yodel" if text.match?(/yodel/i)
     "unknown"
+  end
+
+  # Look at text surrounding tracking URLs to detect carrier when URL doesn't reveal it
+  # This handles cases where tracking URLs are wrapped in click-tracking redirects
+  def enrich_unknown_carriers_from_context(urls)
+    urls.each do |tracking_info|
+      next unless tracking_info[:carrier] == "unknown"
+
+      # First, try to find carrier mentioned near the URL in the text
+      carrier = detect_carrier_near_url(tracking_info[:url])
+
+      # If not found near URL, look for carrier mentions in tracking-related sections
+      carrier ||= detect_carrier_from_tracking_section
+
+      tracking_info[:carrier] = carrier if carrier && carrier != "unknown"
+    end
+  end
+
+  # Look for carrier name mentioned within ~300 chars before or after the URL
+  def detect_carrier_near_url(url)
+    # Find the URL position in text (might be partial match due to URL encoding)
+    url_snippet = url[0, 50] # Use first 50 chars to find position
+    position = @text.index(url_snippet)
+
+    if position
+      # Get surrounding context (300 chars before and after)
+      start_pos = [ position - 300, 0 ].max
+      end_pos = [ position + url.length + 300, @text.length ].min
+      context = @text[start_pos...end_pos]
+
+      carrier = detect_carrier_from_text(context)
+      return carrier if carrier != "unknown"
+    end
+
+    # Also check HTML for context around links
+    if @html.present?
+      # Look for carrier names near anchor tags containing this URL
+      url_escaped = Regexp.escape(url[0, 40])
+      @html.scan(/(.{0,300})<a[^>]*href=["'][^"']*#{url_escaped}[^"']*["'][^>]*>(.{0,100})/i).each do |before, anchor_text|
+        context = "#{before} #{anchor_text}"
+        carrier = detect_carrier_from_text(context)
+        return carrier if carrier != "unknown"
+      end
+    end
+
+    nil
+  end
+
+  # Look for carrier mentions in sections that talk about tracking/shipping
+  def detect_carrier_from_tracking_section
+    # Look for patterns like "Shipped via UPS", "Carrier: DHL", "Delivered by FedEx"
+    tracking_patterns = [
+      /(?:shipped|shipping|delivered|carrier|via|by|with)\s*(?:via|by|:)?\s*(\w+(?:\s+\w+)?)/i,
+      /(\w+(?:\s+\w+)?)\s+(?:tracking|shipment|delivery)/i,
+      /track\s+(?:your\s+)?(?:order\s+)?(?:with\s+)?(\w+)/i
+    ]
+
+    tracking_patterns.each do |pattern|
+      @text.scan(pattern).flatten.each do |match|
+        carrier = detect_carrier_from_text(match)
+        return carrier if carrier != "unknown"
+      end
+    end
+
+    nil
   end
 
   def detect_carrier_from_tracking_number(tracking_num)
@@ -531,8 +622,43 @@ class EmailParserService
 
   def clean_url(url)
     # Remove trailing punctuation and clean up
-    url.gsub(/[.,;:!?\])\}>]+$/, "")
-       .gsub(/&amp;/, "&")
+    cleaned = url.gsub(/[.,;:!?\])\}>]+$/, "")
+                 .gsub(/&amp;/, "&")
+
+    normalize_url(cleaned)
+  end
+
+  def normalize_url(url)
+    return url if url.blank?
+
+    # Parse URL to normalize components
+    uri = URI.parse(url)
+
+    # Normalize scheme to https
+    uri.scheme = "https" if uri.scheme == "http"
+
+    # Normalize host: lowercase and remove www. prefix
+    if uri.host
+      uri.host = uri.host.downcase.sub(/^www\./, "")
+    end
+
+    # Remove default ports
+    uri.port = nil if uri.port == 80 || uri.port == 443
+
+    # Remove trailing slash from path (unless it's just "/")
+    if uri.path && uri.path.length > 1
+      uri.path = uri.path.chomp("/")
+    end
+
+    # Remove fragment (anchors aren't relevant for tracking)
+    uri.fragment = nil
+
+    uri.to_s
+  rescue URI::InvalidURIError
+    # If URL can't be parsed, just do basic normalization
+    url.gsub(%r{^http://}i, "https://")
+       .gsub(%r{^(https?://)www\.}i, '\1')
+       .chomp("/")
   end
 
   def identify_from_email(email_address)

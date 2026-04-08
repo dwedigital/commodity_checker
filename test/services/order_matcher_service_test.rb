@@ -24,6 +24,72 @@ class OrderMatcherServiceTest < ActiveSupport::TestCase
     assert_equal order, matcher.find_matching_order
   end
 
+  test "matches order reference case-insensitively" do
+    order = Order.create!(
+      user: @user,
+      order_reference: "ABC-12345",
+      retailer_name: "Test Retailer"
+    )
+
+    parsed_data = { order_reference: "abc-12345", tracking_urls: [], retailer_name: nil }
+    matcher = OrderMatcherService.new(@user, parsed_data)
+
+    assert_equal order, matcher.find_matching_order
+  end
+
+  test "matches order reference with different prefixes" do
+    order = Order.create!(
+      user: @user,
+      order_reference: "12345-XYZ",
+      retailer_name: "Test Retailer"
+    )
+
+    # Email says "Order #12345-XYZ" but stored as "12345-XYZ"
+    parsed_data = { order_reference: "Order #12345-XYZ", tracking_urls: [], retailer_name: nil }
+    matcher = OrderMatcherService.new(@user, parsed_data)
+
+    assert_equal order, matcher.find_matching_order
+  end
+
+  test "matches order reference when stored with prefix but email has none" do
+    order = Order.create!(
+      user: @user,
+      order_reference: "Order #67890",
+      retailer_name: "Test Retailer"
+    )
+
+    parsed_data = { order_reference: "67890", tracking_urls: [], retailer_name: nil }
+    matcher = OrderMatcherService.new(@user, parsed_data)
+
+    assert_equal order, matcher.find_matching_order
+  end
+
+  test "matches order reference with extra whitespace" do
+    order = Order.create!(
+      user: @user,
+      order_reference: "REF-99999",
+      retailer_name: "Test Retailer"
+    )
+
+    parsed_data = { order_reference: "  REF-99999  ", tracking_urls: [], retailer_name: nil }
+    matcher = OrderMatcherService.new(@user, parsed_data)
+
+    assert_equal order, matcher.find_matching_order
+  end
+
+  test "matches order reference with Ref: prefix variation" do
+    order = Order.create!(
+      user: @user,
+      order_reference: "Ref: ABC123",
+      retailer_name: "Test Retailer"
+    )
+
+    parsed_data = { order_reference: "Reference: ABC123", tracking_urls: [], retailer_name: nil }
+    matcher = OrderMatcherService.new(@user, parsed_data)
+
+    assert_equal order, matcher.find_matching_order
+  end
+
   test "does not match order reference from different user" do
     other_user = users(:two)
     Order.create!(
@@ -104,6 +170,56 @@ class OrderMatcherServiceTest < ActiveSupport::TestCase
         { carrier: "royal_mail", url: "https://www.royalmail.com/track?id=NEW" },
         { carrier: "dhl", url: "https://www.dhl.com/track?id=DHL456" }
       ],
+      retailer_name: nil
+    }
+    matcher = OrderMatcherService.new(@user, parsed_data)
+
+    assert_equal order, matcher.find_matching_order
+  end
+
+  test "matches order when tracking URL differs only by www prefix" do
+    order = Order.create!(
+      user: @user,
+      order_reference: "ORD-WWW-TRACK",
+      retailer_name: "Test Retailer"
+    )
+    # Database has URL with www
+    TrackingEvent.create!(
+      order: order,
+      carrier: "royal_mail",
+      tracking_url: "https://www.royalmail.com/track?id=WWW123",
+      status: "Tracking link found"
+    )
+
+    # Incoming email has URL without www
+    parsed_data = {
+      order_reference: nil,
+      tracking_urls: [ { carrier: "royal_mail", url: "https://royalmail.com/track?id=WWW123" } ],
+      retailer_name: nil
+    }
+    matcher = OrderMatcherService.new(@user, parsed_data)
+
+    assert_equal order, matcher.find_matching_order
+  end
+
+  test "matches order when existing URL has no www but incoming has www" do
+    order = Order.create!(
+      user: @user,
+      order_reference: "ORD-NO-WWW-TRACK",
+      retailer_name: "Test Retailer"
+    )
+    # Database has URL without www
+    TrackingEvent.create!(
+      order: order,
+      carrier: "dhl",
+      tracking_url: "https://dhl.com/track?id=NOWWW456",
+      status: "Tracking link found"
+    )
+
+    # Incoming email has URL with www
+    parsed_data = {
+      order_reference: nil,
+      tracking_urls: [ { carrier: "dhl", url: "https://www.dhl.com/track?id=NOWWW456" } ],
       retailer_name: nil
     }
     matcher = OrderMatcherService.new(@user, parsed_data)
@@ -252,6 +368,38 @@ class OrderMatcherServiceTest < ActiveSupport::TestCase
     matcher = OrderMatcherService.new(@user, parsed_data)
 
     assert_nil matcher.find_matching_order
+  end
+
+  test "does not match by retailer when order references are different" do
+    # Existing order with a specific order reference
+    Order.create!(
+      user: @user,
+      order_reference: "ORD-EXISTING-111",
+      retailer_name: "Amazon",
+      created_at: 2.days.ago
+    )
+
+    # New email has a DIFFERENT order reference - should NOT match
+    parsed_data = { order_reference: "ORD-NEW-222", tracking_urls: [], retailer_name: "Amazon" }
+    matcher = OrderMatcherService.new(@user, parsed_data)
+
+    assert_nil matcher.find_matching_order
+  end
+
+  test "matches by retailer when existing order has no reference but new email does" do
+    # Existing order without an order reference
+    order = Order.create!(
+      user: @user,
+      order_reference: nil,
+      retailer_name: "Amazon",
+      created_at: 2.days.ago
+    )
+
+    # New email has an order reference - can match order without reference
+    parsed_data = { order_reference: "ORD-NEW-333", tracking_urls: [], retailer_name: "Amazon" }
+    matcher = OrderMatcherService.new(@user, parsed_data)
+
+    assert_equal order, matcher.find_matching_order
   end
 
   # =============================================================================

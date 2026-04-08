@@ -24,9 +24,10 @@ Rails.application.configure do
   # Enable serving of images, stylesheets, and JavaScripts from an asset server.
   # config.asset_host = "http://assets.example.com"
 
-  # Store uploaded files in Cloudflare R2 (see config/storage.yml for options).
-  config.active_storage.service = :cloudflare
-  # Proxy files through Rails instead of redirecting to R2 (R2 endpoint isn't public)
+  # Store uploaded files in Hetzner Object Storage (see config/storage.yml for options).
+  # Same datacenter as servers for low latency
+  config.active_storage.service = :hetzner
+  # Proxy files through Rails instead of redirecting to storage endpoint
   config.active_storage.resolve_model_to_route = :rails_storage_proxy
 
   # Set default URL options for URL generation outside of request context (e.g., Turbo Streams from jobs)

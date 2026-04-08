@@ -2,11 +2,16 @@ Rails.application.routes.draw do
   # Resend inbound email webhook endpoint
   mount ActionMailbox::Resend::Engine, at: "/rails/action_mailbox/resend"
 
-  # Admin-only routes (PgHero only available in production with PostgreSQL)
-  if Rails.env.production?
-    authenticate :user, ->(user) { user.admin? } do
-      mount PgHero::Engine, at: "admin/pghero"
-    end
+  # Admin-only routes
+  authenticate :user, ->(user) { user.admin? } do
+    # Analytics dashboard
+    get "admin/analytics", to: "admin/analytics#index", as: :admin_analytics
+
+    # Solid Queue job monitoring dashboard
+    mount MissionControl::Jobs::Engine, at: "admin/jobs"
+
+    # PgHero database monitoring (only in production with PostgreSQL)
+    mount PgHero::Engine, at: "admin/pghero" if Rails.env.production?
   end
 
   # API v1 endpoints
@@ -48,7 +53,9 @@ Rails.application.routes.draw do
   post "extension/auth", to: "extension_auth#create_code", as: :extension_auth_create
   get "extension/auth/callback", to: "extension_auth#callback", as: :extension_auth_callback
 
-  devise_for :users
+  devise_for :users, controllers: {
+    registrations: "users/registrations"
+  }
 
   # Dashboard routes (authenticated user area)
   scope "/dashboard" do

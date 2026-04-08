@@ -30,40 +30,40 @@
   <%= blog_post_json_ld(@post) %>
 
   <style>
-    .prose h2 { margin-top: 2em; margin-bottom: 0.75em; font-size: 1.5rem; font-weight: 600; }
-    .prose h3 { margin-top: 1.5em; margin-bottom: 0.5em; font-size: 1.25rem; font-weight: 600; }
+    .prose h2 { margin-top: 2em; margin-bottom: 0.75em; font-size: 1.5rem; font-weight: 600; color: #2D1E2F; }
+    .prose h3 { margin-top: 1.5em; margin-bottom: 0.5em; font-size: 1.25rem; font-weight: 600; color: #2D1E2F; }
     .prose p { margin-bottom: 1.25em; line-height: 1.75; }
     .prose ul, .prose ol { margin-bottom: 1.25em; padding-left: 1.5em; }
     .prose li { margin-bottom: 0.5em; }
     .prose ul { list-style-type: disc; }
     .prose ol { list-style-type: decimal; }
-    .prose a { color: #4f46e5; text-decoration: underline; }
-    .prose a:hover { color: #3730a3; }
-    .prose blockquote { border-left: 4px solid #e5e7eb; padding-left: 1em; margin: 1.5em 0; color: #6b7280; font-style: italic; }
-    .prose code { background-color: #f3f4f6; padding: 0.125em 0.25em; border-radius: 0.25em; font-size: 0.875em; }
-    .prose pre { background-color: #1f2937; padding: 1em; border-radius: 0.5em; overflow-x: auto; margin: 1.5em 0; }
+    .prose a { color: #E3170A; text-decoration: underline; }
+    .prose a:hover { color: #c91409; }
+    .prose blockquote { border-left: 4px solid #2D1E2F; padding-left: 1em; margin: 1.5em 0; color: #6b7280; font-style: italic; }
+    .prose code { background-color: #FCF6B1; padding: 0.125em 0.375em; border-radius: 0.25em; font-size: 0.875em; color: #2D1E2F; }
+    .prose pre { background-color: #2D1E2F; padding: 1em; border-radius: 0.75em; overflow-x: auto; margin: 1.5em 0; }
     .prose pre code { background-color: transparent; padding: 0; color: #e5e7eb; }
-    .prose img { border-radius: 0.5em; margin: 1.5em 0; }
+    .prose img { border-radius: 0.75em; margin: 1.5em 0; }
     .prose table { width: 100%; border-collapse: collapse; margin: 1.5em 0; }
     .prose th, .prose td { border: 1px solid #e5e7eb; padding: 0.75em; text-align: left; }
-    .prose th { background-color: #f9fafb; font-weight: 600; }
+    .prose th { background-color: #FCF6B1; font-weight: 600; color: #2D1E2F; }
 
     /* Rouge syntax highlighting */
-    .highlight { background: #1f2937; }
+    .highlight { background: #2D1E2F; }
     .highlight .c, .highlight .c1, .highlight .cm { color: #6b7280; font-style: italic; }
     .highlight .k, .highlight .kd, .highlight .kn, .highlight .kp, .highlight .kr { color: #c084fc; }
-    .highlight .s, .highlight .s1, .highlight .s2, .highlight .sb, .highlight .sc { color: #86efac; }
+    .highlight .s, .highlight .s1, .highlight .s2, .highlight .sb, .highlight .sc { color: #A9E5BB; }
     .highlight .n, .highlight .na, .highlight .nb, .highlight .nc, .highlight .no { color: #93c5fd; }
-    .highlight .nf, .highlight .ni { color: #fcd34d; }
+    .highlight .nf, .highlight .ni { color: #F7B32B; }
     .highlight .o, .highlight .p { color: #e5e7eb; }
-    .highlight .m, .highlight .mi, .highlight .mf { color: #f87171; }
+    .highlight .m, .highlight .mi, .highlight .mf { color: #E3170A; }
   </style>
 <% end %>
 
 <article class="max-w-3xl mx-auto">
   <!-- Back link -->
   <div class="mb-8">
-    <%= link_to blog_path, class: "inline-flex items-center text-sm text-gray-500 hover:text-indigo-600" do %>
+    <%= link_to blog_path, class: "inline-flex items-center text-sm text-gray-500 hover:text-brand-dark transition-colors" do %>
       <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" />
       </svg>
@@ -73,24 +73,24 @@
 
   <!-- Hero image -->
   <% if @post.hero_image.present? %>
-    <div class="aspect-video rounded-xl overflow-hidden bg-gray-100 mb-8">
+    <div class="aspect-video rounded-2xl overflow-hidden bg-gray-100 mb-8 border border-gray-200">
       <%= image_tag @post.hero_image, alt: @post.title, class: "w-full h-full object-cover" %>
     </div>
   <% end %>
 
   <!-- Header -->
   <header class="mb-8">
-    <div class="flex items-center gap-2 text-sm text-gray-500 mb-4">
+    <div class="flex items-center gap-3 text-sm text-gray-500 mb-4">
       <time datetime="<%= @post.date.iso8601 %>"><%= @post.date.strftime("%B %d, %Y") %></time>
-      <span>&middot;</span>
+      <span class="text-gray-300">|</span>
       <span><%= reading_time(@post.content) %></span>
       <% if @post.author.present? %>
-        <span>&middot;</span>
+        <span class="text-gray-300">|</span>
         <span>By <%= @post.author %></span>
       <% end %>
     </div>
 
-    <h1 class="text-4xl font-bold text-gray-900 mb-4"><%= @post.title %></h1>
+    <h1 class="text-4xl font-bold text-brand-dark mb-4"><%= @post.title %></h1>
 
     <% if @post.description.present? %>
       <p class="text-xl text-gray-600"><%= @post.description %></p>
@@ -99,7 +99,7 @@
     <% if @post.tags.any? %>
       <div class="mt-4 flex flex-wrap gap-2">
         <% @post.tags.each do |tag| %>
-          <span class="inline-flex items-center rounded-full bg-indigo-50 px-3 py-1 text-sm font-medium text-indigo-700">
+          <span class="inline-flex items-center rounded-full bg-highlight px-3 py-1 text-sm font-medium text-brand-dark">
             <%= tag %>
           </span>
         <% end %>
@@ -115,7 +115,7 @@
   <!-- Footer -->
   <footer class="mt-12 pt-8 border-t border-gray-200">
     <div class="flex items-center justify-between">
-      <%= link_to blog_path, class: "inline-flex items-center text-indigo-600 hover:text-indigo-700 font-medium" do %>
+      <%= link_to blog_path, class: "inline-flex items-center text-primary hover:text-primary-hover font-medium transition-colors" do %>
         <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
           <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" />
         </svg>

@@ -3,9 +3,6 @@ class DashboardController < ApplicationController
 
   def index
     @orders = current_user.orders.includes(:order_items).order(created_at: :desc).limit(10)
-    @pending_codes = current_user.orders.joins(:order_items)
-                                 .where(order_items: { confirmed_commodity_code: nil })
-                                 .where.not(order_items: { suggested_commodity_code: nil })
-                                 .distinct.count
+    @total_items = OrderItem.joins(:order).where(orders: { user_id: current_user.id }).count
   end
 end

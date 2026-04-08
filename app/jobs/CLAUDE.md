@@ -12,6 +12,7 @@ Background jobs using Solid Queue (Rails 8 default).
 | `api_batch_processing_job.rb` | API batch endpoint | Orchestrate batch processing |
 | `api_batch_item_job.rb` | Batch processing job | Process individual batch items |
 | `webhook_delivery_job.rb` | Batch completion | Deliver webhooks with retries |
+| `cleanup_orphaned_emails_job.rb` | Recurring (3am daily) | Delete old orphaned inbound emails |
 
 ## ProcessInboundEmailJob
 
@@ -154,6 +155,60 @@ bin/rails solid_queue:start
 **Supported events:**
 - `batch.completed` - Batch processing finished
 - `test` - Test webhook delivery
+
+## CleanupOrphanedEmailsJob
+
+**Triggered by:** Solid Queue recurring schedule (3am daily)
+
+**Purpose:** Clean up orphaned `InboundEmail` records where the associated order was deleted.
+
+When an order is destroyed, its `inbound_emails` have their `order_id` set to NULL (via `dependent: :nullify`). This job deletes those orphaned emails after a grace period (default 30 days) to:
+- Prevent database bloat
+- Allow recovery if order was deleted by mistake
+- Maintain data hygiene
+
+**Configuration:** `config/recurring.yml`
+```yaml
+cleanup_orphaned_emails:
+  class: CleanupOrphanedEmailsJob
+  args: [{ days_old: 30 }]
+  schedule: at 3am every day
+```
+
+**Parameters:**
+- `days_old` (default: 30) - Only delete orphaned emails older than this many days
+
+## Recurring Jobs
+
+Recurring jobs are configured in `config/recurring.yml` and run automatically by Solid Queue.
+
+| Job | Schedule | Purpose |
+|-----|----------|---------|
+| `clear_solid_queue_finished_jobs` | Every hour | Prevent Solid Queue table bloat |
+| `cleanup_orphaned_emails` | 3am daily | Delete orphaned inbound emails |
+
+**Schedule syntax examples:**
+- `every hour`
+- `every 15 minutes`
+- `at 3am every day`
+- `every Monday at 9am`
+
+**Adding a recurring job:**
+1. Create the job class in `app/jobs/`
+2. Add entry to `config/recurring.yml` under appropriate environment
+3. Job runs automatically when Solid Queue starts
+
+## Solid Queue Dashboard
+
+Monitor jobs at `/admin/jobs` (requires admin user).
+
+**Features:**
+- View pending, running, and failed jobs
+- Retry failed jobs
+- View recurring job schedules
+- Monitor queue health
+
+**Access:** Requires `user.admin? == true`
 
 ## Adding New Jobs
 

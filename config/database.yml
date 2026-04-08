@@ -1,16 +1,31 @@
-# SQLite for development and test, PostgreSQL for production
+# PostgreSQL for all environments (production parity)
 #
-# Development/Test: SQLite (zero setup)
+# Development: PostgreSQL via Docker (docker compose up -d) on port 5444
+# Test: PostgreSQL (same Docker instance, different database)
 # Production: PostgreSQL via DATABASE_URL environment variable
+#
+# To use SQLite instead (no Docker), set: USE_SQLITE=true
 
 default: &default
   pool: <%= ENV.fetch("RAILS_MAX_THREADS") { 5 } %>
+
+# Local development PostgreSQL (Docker on port 5444)
+local_postgres: &local_postgres
+  <<: *default
+  adapter: postgresql
+  encoding: unicode
+  host: <%= ENV.fetch("POSTGRES_HOST", "localhost") %>
+  port: <%= ENV.fetch("POSTGRES_PORT", 5444) %>
+  username: <%= ENV.fetch("POSTGRES_USER", "tariffik") %>
+  password: <%= ENV.fetch("POSTGRES_PASSWORD", "tariffik_dev") %>
 
 sqlite: &sqlite
   <<: *default
   adapter: sqlite3
   timeout: 5000
 
+<% if ENV["USE_SQLITE"] == "true" %>
+# SQLite mode (legacy, for quick setup without Docker)
 development:
   primary:
     <<: *sqlite
@@ -28,18 +43,54 @@ test:
   <<: *sqlite
   database: storage/test.sqlite3
 
+<% else %>
+# PostgreSQL mode (recommended, matches production)
+development:
+  primary:
+    <<: *local_postgres
+    database: tariffik_development
+  queue:
+    <<: *local_postgres
+    database: tariffik_development
+    migrations_paths: db/queue_migrate
+  cable:
+    <<: *local_postgres
+    database: tariffik_development
+    migrations_paths: db/cable_migrate
+
+test:
+  primary:
+    <<: *local_postgres
+    database: tariffik_test
+  queue:
+    <<: *local_postgres
+    database: tariffik_test
+    migrations_paths: db/queue_migrate
+  cable:
+    <<: *local_postgres
+    database: tariffik_test
+    migrations_paths: db/cable_migrate
+<% end %>
+
+# Production uses DATABASE_URL - no port 5444 defaults here
 production:
   primary: &production_primary
     <<: *default
     adapter: postgresql
     encoding: unicode
     url: <%= ENV["DATABASE_URL"] %>
+    # Connection management - close idle connections
+    idle_timeout: 300        # Close connections idle for 5 minutes
+    reaping_frequency: 30    # Check for stale connections every 30 seconds
   queue:
     <<: *production_primary
+    pool: 5                  # Solid Queue needs 5 threads
     migrations_paths: db/queue_migrate
   cache:
     <<: *production_primary
+    pool: 2                  # Cache uses minimal connections
     migrations_paths: db/cache_migrate
   cable:
     <<: *production_primary
+    pool: 2                  # Cable rarely used heavily
     migrations_paths: db/cable_migrate

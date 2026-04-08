@@ -41,17 +41,17 @@ export default class extends Controller {
 
   updateRequirement(element, icon, isMet) {
     if (isMet) {
-      icon.innerHTML = "&#10003;" // checkmark
+      icon.innerHTML = "✓"
       icon.classList.remove("text-gray-400")
-      icon.classList.add("text-green-500")
-      element.classList.remove("text-gray-500")
-      element.classList.add("text-green-600")
+      icon.classList.add("text-brand-mint")
+      element.classList.remove("text-gray-600")
+      element.classList.add("text-brand-dark")
     } else {
-      icon.innerHTML = "&#9675;" // circle
+      icon.innerHTML = "○"
       icon.classList.add("text-gray-400")
-      icon.classList.remove("text-green-500")
-      element.classList.add("text-gray-500")
-      element.classList.remove("text-green-600")
+      icon.classList.remove("text-brand-mint")
+      element.classList.add("text-gray-600")
+      element.classList.remove("text-brand-dark")
     }
   }
 }

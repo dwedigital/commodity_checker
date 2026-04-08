@@ -6,5 +6,5 @@ class Ahoy::Event < ApplicationRecord
   belongs_to :visit, optional: true  # Optional for server-side events
   belongs_to :user, optional: true
 
-  serialize :properties, coder: JSON
+  # properties column is jsonb - PostgreSQL handles serialization natively
 end

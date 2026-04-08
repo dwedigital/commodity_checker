@@ -96,6 +96,55 @@ class EmailParserServiceTest < ActiveSupport::TestCase
     assert_equal urls.length, unique_urls.length
   end
 
+  test "deduplicates URLs that differ only by www prefix" do
+    email = build_email(
+      body_text: "Track here: https://www.royalmail.com/track?id=123 or here: https://royalmail.com/track?id=123"
+    )
+    parser = EmailParserService.new(email)
+
+    urls = parser.extract_tracking_urls
+
+    # Should deduplicate www and non-www variants
+    assert_equal 1, urls.length
+    # URL should be normalized to non-www
+    assert_equal "https://royalmail.com/track?id=123", urls.first[:url]
+  end
+
+  test "normalizes http to https" do
+    email = build_email(
+      body_text: "Track here: http://royalmail.com/track?id=123"
+    )
+    parser = EmailParserService.new(email)
+
+    urls = parser.extract_tracking_urls
+
+    assert urls.first[:url].start_with?("https://")
+  end
+
+  test "normalizes URL case in domain" do
+    email = build_email(
+      body_text: "Track here: https://WWW.RoyalMail.COM/track?id=123"
+    )
+    parser = EmailParserService.new(email)
+
+    urls = parser.extract_tracking_urls
+
+    assert_equal "https://royalmail.com/track?id=123", urls.first[:url]
+  end
+
+  test "removes trailing slashes from URLs" do
+    email = build_email(
+      body_text: "Track here: https://royalmail.com/track/ and https://royalmail.com/track"
+    )
+    parser = EmailParserService.new(email)
+
+    urls = parser.extract_tracking_urls
+
+    # Should deduplicate after removing trailing slash
+    assert_equal 1, urls.length
+    refute urls.first[:url].end_with?("/")
+  end
+
   test "returns empty array when no tracking URLs present" do
     email = build_email(body_text: "Thank you for your order!")
     parser = EmailParserService.new(email)
@@ -103,6 +152,61 @@ class EmailParserServiceTest < ActiveSupport::TestCase
     urls = parser.extract_tracking_urls
 
     assert_equal [], urls
+  end
+
+  test "detects carrier from surrounding text when URL is a redirect" do
+    # This simulates emails where tracking URLs are wrapped in click-tracking redirects
+    # The actual carrier (UPS) is mentioned in the text but the URL is a redirect
+    email = build_email(
+      body_text: <<~TEXT
+        Your order has shipped!
+
+        Track your UPS shipment:
+        http://clicktracking.retailer.com/redirect/abc123
+
+        Estimated delivery: Tomorrow
+      TEXT
+    )
+    parser = EmailParserService.new(email)
+
+    urls = parser.extract_tracking_urls
+
+    assert urls.any?, "Should find the tracking URL"
+    ups_tracking = urls.find { |u| u[:url].include?("clicktracking") }
+    assert_equal "ups", ups_tracking[:carrier], "Should detect UPS from surrounding text"
+  end
+
+  test "detects carrier from shipped via pattern" do
+    email = build_email(
+      body_text: <<~TEXT
+        Order shipped via FedEx
+        Track here: http://tracking.example.com/ship123
+      TEXT
+    )
+    parser = EmailParserService.new(email)
+
+    urls = parser.extract_tracking_urls
+
+    assert urls.any?
+    assert_equal "fedex", urls.first[:carrier]
+  end
+
+  test "detects carrier from HTML context around link" do
+    email = build_email(
+      body_text: "Track your DHL delivery",
+      body_html: <<~HTML
+        <p>Your package is on its way via DHL Express.</p>
+        <p><a href="http://redirect.example.com/track/xyz">Track your package</a></p>
+      HTML
+    )
+    parser = EmailParserService.new(email)
+
+    urls = parser.extract_tracking_urls
+
+    assert urls.any?
+    dhl_url = urls.find { |u| u[:url].include?("redirect.example.com") }
+    assert dhl_url, "Should find the redirect URL"
+    assert_equal "dhl", dhl_url[:carrier], "Should detect DHL from surrounding HTML context"
   end
 
   # =============================================================================

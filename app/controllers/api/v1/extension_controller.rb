@@ -116,6 +116,13 @@ module Api
           status = result[:error] == "free_lookups_exhausted" ? :payment_required : :unprocessable_entity
           render json: result, status: status
         else
+          # Track successful anonymous extension lookup
+          track_extension_event("extension_lookup_performed", {
+            lookup_type: params[:url].present? ? "url" : "description",
+            extension_id: extension_id,
+            authenticated: false,
+            commodity_code: result[:commodity_code]
+          })
           render json: result
         end
       end
@@ -136,8 +143,22 @@ module Api
           status = result[:error] == "monthly_limit_reached" ? :payment_required : :unprocessable_entity
           render json: result, status: status
         else
+          # Track successful authenticated extension lookup
+          track_extension_event("extension_lookup_performed", {
+            lookup_type: params[:url].present? ? "url" : "description",
+            user_id: @current_user.id,
+            authenticated: true,
+            commodity_code: result[:commodity_code]
+          })
           render json: result
         end
+      end
+
+      def track_extension_event(name, properties = {})
+        user = properties[:user_id] ? User.find_by(id: properties[:user_id]) : nil
+        AnalyticsTracker.new(user: user).track(name, properties.merge(source: "extension"))
+      rescue => e
+        Rails.logger.error("Extension analytics tracking failed: #{e.message}")
       end
     end
   end

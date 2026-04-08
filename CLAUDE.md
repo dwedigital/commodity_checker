@@ -4,11 +4,26 @@ This file provides context for AI assistants working on this codebase.
 
 ## Required: Implementation Documentation
 
-After implementing any significant feature (new models, services, controllers, or major modifications to existing functionality), you MUST create an implementation summary markdown file at:
+After implementing any significant feature (new models, services, controllers, or major modifications to existing functionality), you MUST create or update implementation documentation at:
 
 ```
 ./claude/implementations/<feature-name>.md
 ```
+
+### When to Create vs Update
+
+- **New feature**: Create a new implementation doc
+- **Modifying existing feature**: Update the existing implementation doc if one exists (check `./claude/implementations/` first)
+- **Bug fixes**: No doc needed unless it changes architecture or behavior significantly
+
+### Finding Existing Docs
+
+Before creating a new doc, check if one already exists:
+```bash
+ls ./claude/implementations/
+```
+
+### Template
 
 Use `./claude/implementations/product-url-lookup-and-scraping.md` as the template. Each implementation doc must include:
 
@@ -28,6 +43,116 @@ Do this automatically at the end of implementing a feature - do not wait to be a
 
 **Tariffik** ([tariffik.com](https://tariffik.com)) - A Rails 8 app that helps users track online orders and get EU/UK commodity tariff code suggestions. Users forward tracking emails, the app extracts order info, and uses Claude AI + UK Trade Tariff API to suggest HS codes.
 
+## Brand Design System
+
+Tariffik uses a retro/minimalist aesthetic with a custom color palette. All UI changes must follow these guidelines.
+
+### Brand Colors
+
+| Name | Hex | Tailwind Class | Usage |
+|------|-----|----------------|-------|
+| Primary (Red) | `#E3170A` | `bg-primary`, `text-primary`, `border-primary` | CTAs, active states, links, errors |
+| Mint | `#A9E5BB` | `bg-brand-mint`, `text-brand-mint` | Success states, positive badges |
+| Yellow/Highlight | `#FCF6B1` | `bg-highlight`, `text-highlight` | Warnings, pending states, info banners |
+| Orange | `#F7B32B` | `bg-brand-orange`, `text-brand-orange` | Secondary actions, accents |
+| Aubergine (Dark) | `#2D1E2F` | `bg-brand-dark`, `text-brand-dark` | Headers, high-contrast sections, table headers |
+
+### Design Tokens (Tailwind v4)
+
+Colors are defined in `app/assets/tailwind/application.css` using `@theme`:
+```css
+@theme {
+  --color-primary: #E3170A;
+  --color-primary-hover: #c91409;
+  --color-brand-mint: #A9E5BB;
+  --color-highlight: #FCF6B1;
+  --color-brand-orange: #F7B32B;
+  --color-brand-dark: #2D1E2F;
+}
+```
+
+### Component Patterns
+
+| Element | Pattern | Example |
+|---------|---------|---------|
+| Cards | `rounded-2xl` with `border border-gray-200` | Outer containers |
+| Inner elements | `rounded-xl` | Form inputs, inner boxes |
+| Buttons | `rounded-full` | All buttons |
+| Form inputs | `rounded-xl border border-gray-200 py-2.5 px-4` | Text fields |
+| Tables | `bg-brand-dark` header with `text-white` | High contrast |
+
+### Status Badges
+
+```erb
+<%# Success/Complete %>
+<span class="inline-flex items-center rounded-full bg-brand-mint px-3 py-1 text-sm font-medium text-brand-dark">Complete</span>
+
+<%# Pending/Processing %>
+<span class="inline-flex items-center rounded-full bg-highlight px-3 py-1 text-sm font-medium text-brand-dark">Pending</span>
+
+<%# Error/Failed %>
+<span class="inline-flex items-center rounded-full bg-primary/10 px-3 py-1 text-sm font-medium text-primary">Failed</span>
+```
+
+### Page Header Badges
+
+Use colored badges above page titles for visual hierarchy:
+```erb
+<span class="inline-flex items-center rounded-full bg-brand-mint px-3 py-1 text-xs font-semibold text-brand-dark mb-2">SECTION NAME</span>
+```
+
+Color usage by context:
+- **Mint** (`bg-brand-mint`) - Primary actions, getting started, success states
+- **Highlight/Yellow** (`bg-highlight`) - Information, warnings
+- **Orange** (`bg-brand-orange`) - Secondary actions, password/security
+- **Aubergine** (`bg-brand-dark text-white`) - Settings, admin areas
+
+### High-Contrast Tables
+
+All dashboard tables use aubergine headers for readability:
+```erb
+<table class="min-w-full">
+  <thead class="bg-brand-dark">
+    <tr>
+      <th class="px-4 py-3 text-left text-xs font-medium text-white uppercase tracking-wider">Column</th>
+    </tr>
+  </thead>
+  <tbody class="bg-white divide-y divide-gray-200">
+    <tr>
+      <td class="px-4 py-4 text-sm text-gray-900">Content</td>
+    </tr>
+  </tbody>
+</table>
+```
+
+### Dark CTA Sections
+
+For high-contrast call-to-action areas (e.g., upsells, feature promos):
+```erb
+<div class="bg-brand-dark rounded-2xl p-8 text-center">
+  <h3 class="text-xl font-bold text-white mb-2">Heading</h3>
+  <p class="text-gray-300 mb-6">Description text</p>
+  <%= link_to "Action", path, class: "inline-flex items-center rounded-full bg-white px-6 py-3 text-sm font-semibold text-brand-dark hover:bg-gray-100 transition-colors" %>
+</div>
+```
+
+### Stimulus Controllers for Interactivity
+
+CSP blocks inline JavaScript. Use Stimulus controllers instead:
+- `tabs_controller.js` - Tab switching with `border-primary` active state
+- `clipboard_controller.js` - Copy to clipboard functionality
+- `password_strength_controller.js` - Password validation (uses `text-brand-mint` for valid)
+- `simple_chart_controller.js` - CSP-compliant Canvas-based line charts (used in analytics dashboard)
+
+### Key Files for Styling
+
+| File | Purpose |
+|------|---------|
+| `app/assets/tailwind/application.css` | Brand color definitions |
+| `app/javascript/controllers/tabs_controller.js` | Tab active state styling |
+| `app/views/shared/_navbar.html.erb` | Navigation styling |
+| `app/views/layouts/application.html.erb` | Base layout |
+
 ## Key Architectural Decisions
 
 ### Why Rails 8?
@@ -35,9 +160,11 @@ Do this automatically at the end of implementing a feature - do not wait to be a
 - Action Mailbox for email processing
 - Hotwire for modern frontend without heavy JS
 
-### Why SQLite in development?
-- Zero setup, works immediately
-- Production can use PostgreSQL
+### Why PostgreSQL in development?
+- Production parity with staging and production environments
+- Full feature support (jsonb, GIN indexes, etc.)
+- Docker Compose for local PostgreSQL (port 5444)
+- SQLite fallback available with `USE_SQLITE=true` env var
 
 ### Email Processing Flow
 ```
@@ -124,6 +251,8 @@ Product Description → TariffLookupService (UK API) → LlmCommoditySuggester (
 | `app/models/api_key.rb` | API key with tier, usage tracking, authentication |
 | `app/services/api_commodity_service.rb` | Wraps scraper + suggester for API use |
 | `config/initializers/rack_attack.rb` | Per-tier API rate limiting configuration |
+| `app/controllers/admin/analytics_controller.rb` | Admin analytics dashboard with visitor/lookup/signup stats |
+| `app/controllers/users/registrations_controller.rb` | Custom Devise controller for sign-up tracking |
 
 ## Blog System
 
@@ -479,11 +608,39 @@ See `claude/implementations/api-layer-premium-feature.md` for full implementatio
 
 ## Git Branching & Deployment Strategy
 
-**IMPORTANT**: This app uses a feature branch → develop → production workflow.
+**IMPORTANT**: This app uses a feature branch → develop → production workflow with GitHub Actions CI/CD.
+
+### Infrastructure
+
+| Environment | URL | Server | Deploys From |
+|-------------|-----|--------|--------------|
+| Production | https://tariffik.com | Hetzner VPS (116.203.77.140) | `main` branch |
+| Staging | https://staging.tariffik.com | Hetzner VPS (91.99.171.192) | `develop` branch |
+
+See `claude/implementations/hetzner-infrastructure-deployment.md` for full deployment documentation.
+
+### GitHub Actions Workflows
+
+| Workflow | File | Trigger | What It Does |
+|----------|------|---------|--------------|
+| CI | `ci.yml` | PRs, push to `main` | Runs security scans, linting, and tests |
+| Deploy Production | `deploy-production.yml` | Push to `main` | Runs tests, deploys to production |
+| Deploy Staging | `deploy-staging.yml` | Push to `develop` | Runs tests, deploys to staging, **auto-stops after 15 min** |
+| Staging Control | `staging-control.yml` | Manual | Start/stop/restart staging server |
+
+### Staging Auto-Stop
+
+Staging automatically stops 15 minutes after deployment to conserve database connections (shared DigitalOcean PostgreSQL).
+
+**To keep staging running longer:**
+- Actions → Deploy Staging → Run workflow → set `keep_running: true`
+
+**To manually start/stop staging:**
+- Actions → Staging Control → Run workflow → select `start`, `stop`, or `restart`
 
 ### Branches
 - `feature/*`, `bugfix/*`, `hotfix/*` → Feature branches for development
-- `develop` → Auto-deploys to **staging** (`tariffik-staging.onrender.com`)
+- `develop` → Auto-deploys to **staging** (`staging.tariffik.com`)
 - `main` → Auto-deploys to **production** (`tariffik.com`)
 
 ### Branch Naming (Gitflow)
@@ -519,7 +676,7 @@ Use these prefixes for branch names:
    gh pr merge --merge
    ```
 
-6. **Test on staging** - Verify on `tariffik-staging.onrender.com`
+6. **Test on staging** - Verify on `staging.tariffik.com` (start staging if stopped)
 
 7. **Deploy to production** - Create PR from `develop` → `main`:
    ```bash
@@ -541,6 +698,14 @@ git checkout develop
 git merge main
 git push origin develop
 ```
+
+### Manual Deployments (Kamal)
+You can still deploy manually from your local machine:
+```bash
+kamal deploy -d staging      # Deploy to staging
+kamal deploy -d production   # Deploy to production
+```
+Requires `.kamal/secrets.staging` and `.kamal/secrets.production` files locally.
 
 ### Never
 - Commit directly to `main` or `develop`
@@ -599,6 +764,27 @@ change_column :products, :count, :string  # ❌ DANGEROUS
 
 ## Running the App
 
+### Prerequisites
+
+Start PostgreSQL via Docker (uses port 5444 to avoid conflicts):
+```bash
+docker compose up -d          # Start PostgreSQL
+docker compose down           # Stop PostgreSQL
+docker compose logs postgres  # View logs
+```
+
+### Initial Setup (Fresh Clone)
+
+```bash
+docker compose up -d              # Start PostgreSQL
+bin/rails db:create db:migrate    # Create and migrate database
+bin/rails db:schema:load:queue    # Create Solid Queue tables
+bin/rails db:seed                 # Create admin user (dev only)
+bin/rails analytics:seed          # Optional: seed 90 days of mock analytics
+```
+
+### Development Commands
+
 ```bash
 # Development (RECOMMENDED - runs Tailwind watcher)
 bin/dev
@@ -611,9 +797,59 @@ bin/rails solid_queue:start
 
 # Console
 bin/rails console
+
+# Seed mock analytics data (for testing dashboard)
+bin/rails analytics:seed
+bin/rails analytics:clear
 ```
 
 **Important**: Always use `bin/dev` in development. It runs both Rails and the Tailwind CSS watcher via Procfile.dev. Using `bin/rails server` alone means new Tailwind utility classes won't be compiled.
+
+**SQLite fallback**: Set `USE_SQLITE=true` env var to use SQLite instead of PostgreSQL (no Docker required).
+
+### Default Admin User (Development)
+
+Created by `db:seed`:
+- Email: `dave@dwedigital.com`
+- Password: `T0p$ecret!`
+
+## Admin Dashboards
+
+Admin-only routes require `user.admin? == true` (Devise authentication).
+
+| Dashboard | URL | Purpose |
+|-----------|-----|---------|
+| Analytics | `/admin/analytics` | Privacy-first analytics: visitors, lookups, sign-ups, usage trends |
+| Solid Queue | `/admin/jobs` | Monitor background jobs, retry failed jobs, view recurring schedules |
+| PgHero | `/admin/pghero` | PostgreSQL monitoring (production only) |
+
+### Analytics Dashboard
+
+Privacy-first analytics using Ahoy (no third-party services, no cookies). Features:
+- Visitors over time with date range selection (7d/30d/90d/1y)
+- Lookups by source (homepage guest/user, extension, photo upload, email forwarding)
+- Sign-up tracking and conversion rates
+- Active/repeat user metrics
+- Top referrers and device breakdown
+
+See `claude/implementations/ahoy-analytics.md` for implementation details.
+
+### Solid Queue Dashboard
+
+Provided by `mission_control-jobs` gem. Features:
+- View pending, running, and failed jobs
+- Retry or discard failed jobs
+- Monitor recurring job schedules
+- Queue health metrics
+
+### Recurring Jobs
+
+Configured in `config/recurring.yml`:
+
+| Job | Schedule | Purpose |
+|-----|----------|---------|
+| `clear_solid_queue_finished_jobs` | Hourly | Prevent queue table bloat |
+| `cleanup_orphaned_emails` | 3am daily | Delete orphaned inbound emails older than 30 days |
 
 ## Production Configuration (Render)
 

@@ -1,0 +1,79 @@
+name: Staging Control
+
+on:
+  workflow_dispatch:
+    inputs:
+      action:
+        description: 'Action to perform'
+        required: true
+        type: choice
+        options:
+          - start
+          - stop
+          - restart
+
+jobs:
+  control:
+    name: ${{ github.event.inputs.action }} Staging
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v6
+
+      - name: Set up Ruby
+        uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: '3.3'
+          bundler-cache: true
+
+      - name: Install Kamal
+        run: gem install kamal
+
+      - name: Set up SSH key
+        run: |
+          mkdir -p ~/.ssh
+          printf '%s\n' "${{ secrets.SSH_PRIVATE_KEY }}" > ~/.ssh/id_ed25519
+          chmod 600 ~/.ssh/id_ed25519
+          cat >> ~/.ssh/config << 'SSHEOF'
+          Host *
+            StrictHostKeyChecking no
+            UserKnownHostsFile /dev/null
+            RequestTTY no
+          SSHEOF
+          chmod 600 ~/.ssh/config
+
+      - name: Create secrets file
+        run: |
+          mkdir -p .kamal
+          echo "KAMAL_REGISTRY_PASSWORD=${{ secrets.GHCR_TOKEN }}" > .kamal/secrets.staging
+          echo "RAILS_MASTER_KEY=${{ secrets.RAILS_MASTER_KEY }}" >> .kamal/secrets.staging
+          echo "DATABASE_URL=${{ secrets.STAGING_DATABASE_URL }}" >> .kamal/secrets.staging
+          echo "ANTHROPIC_API_KEY=${{ secrets.ANTHROPIC_API_KEY }}" >> .kamal/secrets.staging
+          echo "TAVILY_API_KEY=${{ secrets.TAVILY_API_KEY }}" >> .kamal/secrets.staging
+          echo "RESEND_API_KEY=${{ secrets.RESEND_API_KEY }}" >> .kamal/secrets.staging
+          echo "RESEND_WEBHOOK_SECRET=${{ secrets.STAGING_RESEND_WEBHOOK_SECRET }}" >> .kamal/secrets.staging
+          echo "HETZNER_STORAGE_ACCESS_KEY_ID=${{ secrets.HETZNER_STORAGE_ACCESS_KEY_ID }}" >> .kamal/secrets.staging
+          echo "HETZNER_STORAGE_SECRET_ACCESS_KEY=${{ secrets.HETZNER_STORAGE_SECRET_ACCESS_KEY }}" >> .kamal/secrets.staging
+          echo "SCRAPE_DO_API_TOKEN=${{ secrets.SCRAPE_DO_API_TOKEN }}" >> .kamal/secrets.staging
+
+      - name: Start Staging
+        if: ${{ github.event.inputs.action == 'start' }}
+        run: kamal app boot -d staging
+
+      - name: Stop Staging
+        if: ${{ github.event.inputs.action == 'stop' }}
+        run: kamal app stop -d staging
+
+      - name: Restart Staging
+        if: ${{ github.event.inputs.action == 'restart' }}
+        run: |
+          kamal app stop -d staging
+          kamal app boot -d staging
+
+      - name: Summary
+        run: |
+          echo "## Staging ${{ github.event.inputs.action }} Complete" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "**Server:** 91.99.171.192" >> $GITHUB_STEP_SUMMARY
+          echo "**URL:** https://staging.tariffik.com" >> $GITHUB_STEP_SUMMARY

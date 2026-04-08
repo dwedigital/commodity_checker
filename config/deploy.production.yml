@@ -1,0 +1,73 @@
+# Tariffik Production Deployment Configuration
+# Usage:
+#   kamal setup -d production     # First-time setup
+#   kamal deploy -d production    # Deploy to production
+#   kamal console -d production   # Rails console
+#   kamal logs -d production      # View logs
+
+service: tariffik
+image: dwedigital/tariffik
+
+# Server
+servers:
+  web:
+    hosts:
+      - 116.203.77.140
+
+# Proxy configuration (kamal-proxy handles TLS via Let's Encrypt)
+proxy:
+  ssl: true
+  host: tariffik.com
+  response_timeout: 120  # Longer timeout for scraping/AI requests (seconds)
+
+# GitHub Container Registry
+registry:
+  server: ghcr.io
+  username: dwedigital
+  password:
+    - KAMAL_REGISTRY_PASSWORD
+
+# Build for x86/AMD (Hetzner CPX servers use AMD processors)
+builder:
+  arch: amd64
+
+# Environment variables
+env:
+  secret:
+    - RAILS_MASTER_KEY
+    - DATABASE_URL
+    - ANTHROPIC_API_KEY
+    - TAVILY_API_KEY
+    - RESEND_API_KEY
+    - RESEND_WEBHOOK_SECRET
+    - HETZNER_STORAGE_ACCESS_KEY_ID
+    - HETZNER_STORAGE_SECRET_ACCESS_KEY
+    - SCRAPE_DO_API_TOKEN
+  clear:
+    RAILS_ENV: production
+    SOLID_QUEUE_IN_PUMA: true
+    RAILS_LOG_TO_STDOUT: true
+    RAILS_SERVE_STATIC_FILES: true
+    WEB_CONCURRENCY: 0
+    RAILS_MAX_THREADS: 5
+    APP_HOST: tariffik.com
+    INBOUND_EMAIL_DOMAIN: inbound.tariffik.com
+    HETZNER_STORAGE_BUCKET: tariffik
+    HETZNER_STORAGE_REGION: nbg1
+    HETZNER_STORAGE_ENDPOINT: https://nbg1.your-objectstorage.com
+    CHROME_EXTENSION_ID: gkjpgbgongkgdjfapjclandjhglnpmpn
+
+# Kamal command aliases
+aliases:
+  console: app exec --interactive --reuse "bin/rails console"
+  shell: app exec --interactive --reuse "bash"
+  logs: app logs -f
+  dbc: app exec --interactive --reuse "bin/rails dbconsole"
+
+# Bridging assets between deployments to avoid 404s during transitions
+asset_path: /rails/public/assets
+
+# SSH configuration
+ssh:
+  keys:
+    - ~/.ssh/id_ed25519
