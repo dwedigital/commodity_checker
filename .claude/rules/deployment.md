@@ -17,7 +17,6 @@ paths:
 | Environment | URL | Server | Deploys From |
 |-------------|-----|--------|--------------|
 | Production | https://tariffik.com | Hetzner VPS (116.203.77.140) | `main` branch |
-| Staging | https://staging.tariffik.com | Hetzner VPS (91.99.171.192) | `develop` branch |
 
 See `claude/implementations/hetzner-infrastructure-deployment.md` for full docs.
 
@@ -27,17 +26,11 @@ See `claude/implementations/hetzner-infrastructure-deployment.md` for full docs.
 |----------|------|---------|--------------|
 | CI | `ci.yml` | PRs, push to `main` | Security scans, linting, tests |
 | Deploy Production | `deploy-production.yml` | Push to `main` | Tests + deploy to production |
-| Deploy Staging | `deploy-staging.yml` | Push to `develop` | Tests + deploy, **auto-stops after 15 min** |
-| Staging Control | `staging-control.yml` | Manual | Start/stop/restart staging |
-
-### Staging Auto-Stop
-
-Staging stops 15 min after deployment to conserve DB connections. To keep running: Actions → Deploy Staging → `keep_running: true`. Manual control: Actions → Staging Control.
 
 ## Branches
 
 - `feature/*`, `bugfix/*`, `hotfix/*` → Development branches
-- `develop` → Auto-deploys to staging
+- `develop` → Integration branch
 - `main` → Auto-deploys to production
 
 ## Standard Workflow
@@ -49,7 +42,7 @@ git checkout -b feature/my-new-feature
 git push -u origin feature/my-new-feature
 gh pr create --base develop --title "Feature: My new feature"
 gh pr merge --merge
-# Test on staging, then:
+# Promote to production:
 gh pr create --base main --head develop --title "Release: Description"
 gh pr merge --merge
 ```
@@ -66,11 +59,10 @@ git checkout develop && git merge main && git push origin develop
 ## Manual Deployments (Kamal)
 
 ```bash
-kamal deploy -d staging      # Deploy to staging
 kamal deploy -d production   # Deploy to production
 ```
 
-Requires `.kamal/secrets.staging` and `.kamal/secrets.production` locally.
+Requires `.kamal/secrets.production` locally.
 
 ## Production Configuration
 
@@ -81,4 +73,3 @@ Puma auto-detects workers from RAM (reserves 512MB system, 512MB per worker, max
 - Commit directly to `main` or `develop`
 - Force push to `main`
 - Deploy untested code to production
-- Merge to `main` without testing on staging first

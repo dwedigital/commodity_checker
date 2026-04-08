@@ -225,7 +225,6 @@ Your markdown content here...
 The app is configured for deployment on Render with auto-deploy:
 
 - `main` branch → Production (`tariffik.com`)
-- `develop` branch → Staging (`tariffik-staging.onrender.com`)
 
 ### Key Considerations
 

@@ -142,7 +142,7 @@ This document tracks potential future developments for Tariffik, organized by pr
 - [ ] Improve AI classification accuracy for edge cases
 - [ ] Better image preprocessing (brightness/contrast)
 - [ ] Rate limiting for web scraping
-- [ ] Monitor ScrapingBee credit usage
+- [ ] Monitor Scrape.do credit usage
 
 ---
 

@@ -35,7 +35,6 @@
 /config/master.key
 
 # Kamal secrets (contain actual API keys)
-/.kamal/secrets.staging
 /.kamal/secrets.production
 
 /app/assets/builds/*

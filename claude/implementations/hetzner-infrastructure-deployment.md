@@ -432,7 +432,7 @@ Set these in repository Settings → Secrets and variables → Actions:
 | `PRODUCTION_RESEND_WEBHOOK_SECRET` | Production webhook signing secret |
 | `HETZNER_STORAGE_ACCESS_KEY_ID` | Object storage access key |
 | `HETZNER_STORAGE_SECRET_ACCESS_KEY` | Object storage secret key |
-| `SCRAPINGBEE_API_KEY` | ScrapingBee API key (optional) |
+| `SCRAPE_DO_API_TOKEN` | Scrape.do API token (optional) |
 
 ### SSH Key Setup
 
@@ -584,7 +584,7 @@ AND pid <> pg_backend_pid();
 | `HETZNER_STORAGE_ACCESS_KEY_ID` | Object storage access key |
 | `HETZNER_STORAGE_SECRET_ACCESS_KEY` | Object storage secret key |
 | `TAVILY_API_KEY` | Tavily search API (optional) |
-| `SCRAPINGBEE_API_KEY` | ScrapingBee fallback (optional) |
+| `SCRAPE_DO_API_TOKEN` | Scrape.do fallback (optional) |
 
 ### Clear (Non-Secret) Variables
 
