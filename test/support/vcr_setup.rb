@@ -10,7 +10,7 @@ VCR.configure do |config|
   # Filter sensitive data from recordings
   config.filter_sensitive_data("<ANTHROPIC_API_KEY>") { ENV["ANTHROPIC_API_KEY"] }
   config.filter_sensitive_data("<TAVILY_API_KEY>") { ENV["TAVILY_API_KEY"] }
-  config.filter_sensitive_data("<SCRAPINGBEE_API_KEY>") { ENV["SCRAPINGBEE_API_KEY"] }
+  config.filter_sensitive_data("<SCRAPE_DO_API_TOKEN>") { ENV["SCRAPE_DO_API_TOKEN"] }
   config.filter_sensitive_data("<RESEND_API_KEY>") { ENV["RESEND_API_KEY"] }
 
   # Don't record Claude API calls - use fixtures/mocks instead for LLM responses

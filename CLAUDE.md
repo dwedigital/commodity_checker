@@ -112,7 +112,7 @@ Product Description → TariffLookupService (UK API) → LlmCommoditySuggester (
 | `app/services/tariff_lookup_service.rb` | UK Trade Tariff API client |
 | `app/services/llm_commodity_suggester.rb` | Claude AI integration for code suggestions |
 | `app/services/tracking_scraper_service.rb` | Scrapes carrier tracking pages |
-| `app/services/product_scraper_service.rb` | Scrapes product pages for descriptions (with ScrapingBee fallback) |
+| `app/services/product_scraper_service.rb` | Scrapes product pages for descriptions (with Scrape.do fallback) |
 | `app/services/blog_post_service.rb` | Loads and renders markdown blog posts with YAML front matter |
 | `app/mailboxes/tracking_mailbox.rb` | Routes inbound emails to users, saves HTML body |
 | `app/jobs/process_inbound_email_job.rb` | Main email processing orchestration with AI |
@@ -657,7 +657,7 @@ ANTHROPIC_API_KEY                  # Required for commodity suggestions and emai
 TAVILY_API_KEY                     # For AI web search (product info from emails without URLs)
 
 # Web Scraping
-SCRAPINGBEE_API_KEY                # Optional, for scraping protected websites
+SCRAPE_DO_API_TOKEN                # Optional, for scraping protected websites
 
 # Cloudflare R2 Storage
 CLOUDFLARE_R2_ACCESS_KEY_ID        # R2 API token access key
