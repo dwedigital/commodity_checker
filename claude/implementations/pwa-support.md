@@ -58,6 +58,10 @@ curl -si localhost:3000/service-worker        # 200 text/javascript
 
 On a phone: Share → Add to Home Screen (iOS) / install prompt or ⋮ → Add to Home screen (Android). App should open standalone (no browser chrome) with the red T icon. In Chrome DevTools: Application → Manifest shows no warnings.
 
+## Icon Cache Busting (follow-up fix)
+
+`public/` files are served with `Cache-Control: max-age=31556952` (1 year), so Safari kept serving the old red-dot `/icon.png` when adding to home screen. Fix: iOS icon moved to a fresh URL — dedicated 180×180 `public/apple-touch-icon.png` (also the conventional path iOS probes) — and favicon/manifest references got `?v=2`. **If the icon art ever changes again, change these URLs again** (bump `?v=`, regenerate `apple-touch-icon.png` is not enough on its own since that URL will then be cached too — bump a version there as well, e.g. link to `/apple-touch-icon.png?v=3`).
+
 ## Limitations & Future Improvements
 
 - No offline support — the SW has no fetch handler by design. Add a cache strategy only if an offline page is genuinely wanted.
