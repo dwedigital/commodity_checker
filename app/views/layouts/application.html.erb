@@ -3,8 +3,10 @@
   <head>
     <title><%= content_for(:title) || "Tariffik - never guess a code again" %></title>
     <meta name="viewport" content="width=device-width,initial-scale=1">
+    <meta name="theme-color" content="#ffffff">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-title" content="Tariffik">
     <meta name="description" content="Forward your order confirmation emails and get accurate EU/UK commodity tariff codes suggested automatically using AI.">
 
     <!-- Open Graph -->
@@ -32,6 +34,7 @@
     <link rel="icon" href="/icon.png" type="image/png">
     <link rel="icon" href="/icon.svg" type="image/svg+xml">
     <link rel="apple-touch-icon" href="/icon.png">
+    <link rel="manifest" href="/manifest.json">
 
     <%= stylesheet_link_tag :app, "data-turbo-track": "reload" %>
     <%= javascript_importmap_tags %>

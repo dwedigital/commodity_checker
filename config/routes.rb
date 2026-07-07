@@ -97,6 +97,10 @@ Rails.application.routes.draw do
   # Reveal health status on /up that returns 200 if the app boots with no exceptions, otherwise 500.
   get "up" => "rails/health#show", as: :rails_health_check
 
+  # PWA manifest and service worker (views in app/views/pwa/)
+  get "manifest" => "rails/pwa#manifest", as: :pwa_manifest
+  get "service-worker" => "rails/pwa#service_worker", as: :pwa_service_worker
+
   # Sitemap for SEO
   get "sitemap.xml", to: "sitemap#index", as: :sitemap, defaults: { format: "xml" }
 
