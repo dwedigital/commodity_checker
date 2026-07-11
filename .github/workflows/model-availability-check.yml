@@ -1,0 +1,75 @@
+name: Model availability check
+
+# Weekly guard against the failure that silently broke commodity lookups in
+# Jul 2026: Anthropic retired the Claude model snapshots the app had pinned
+# (Sonnet 4, Haiku 3), so every request 404'd. Nothing caught it — /up only
+# checks the app boots, and the test suite mocks the Anthropic endpoint, so a
+# retired model ID passes CI.
+#
+# This job discovers every Claude model ID pinned under app/ and probes each
+# one against the Anthropic Models API. A retired/unknown model returns 404 and
+# fails the run; GitHub emails on a failed scheduled workflow.
+#
+# Scheduled workflows only fire from the default branch, so this must live on
+# main to run on its cadence. Trigger it manually any time via "Run workflow".
+
+on:
+  schedule:
+    - cron: "0 8 * * 1"   # Mondays 08:00 UTC
+  workflow_dispatch:
+
+jobs:
+  probe:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Probe pinned Claude model IDs against the Models API
+        env:
+          ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+        run: |
+          set -euo pipefail
+
+          if [ -z "${ANTHROPIC_API_KEY:-}" ]; then
+            echo "::error::ANTHROPIC_API_KEY secret is not set (Settings → Secrets and variables → Actions)."
+            exit 1
+          fi
+
+          # Discover every Claude model ID the app pins: model: "claude-..."
+          models=$(grep -rhoE 'model:[[:space:]]*"claude-[a-z0-9.-]+"' app/ \
+            | grep -oE 'claude-[a-z0-9.-]+' | sort -u || true)
+
+          if [ -z "$models" ]; then
+            echo "::error::No pinned Claude model IDs found under app/ — the grep pattern likely needs updating."
+            exit 1
+          fi
+
+          echo "Probing model IDs:"
+          echo "$models" | sed 's/^/  - /'
+          echo
+
+          failed=0
+          while IFS= read -r model; do
+            [ -z "$model" ] && continue
+            code=$(curl -sS -o /dev/null -w "%{http_code}" \
+              --retry 2 --retry-delay 3 \
+              -H "x-api-key: $ANTHROPIC_API_KEY" \
+              -H "anthropic-version: 2023-06-01" \
+              "https://api.anthropic.com/v1/models/$model")
+
+            case "$code" in
+              200)     echo "✅ $model — available" ;;
+              404)     echo "::error::$model is RETIRED or unknown (404). Update the model ID in the code to a current one."; failed=1 ;;
+              401|403) echo "::error::$model — auth failed ($code). Check the ANTHROPIC_API_KEY secret."; failed=1 ;;
+              *)       echo "::error::$model — unexpected response ($code)."; failed=1 ;;
+            esac
+          done <<< "$models"
+
+          if [ "$failed" -ne 0 ]; then
+            echo
+            echo "::error::One or more pinned Claude models are no longer callable. See the annotations above."
+            exit 1
+          fi
+
+          echo
+          echo "All pinned Claude models are available."
