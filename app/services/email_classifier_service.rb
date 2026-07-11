@@ -85,7 +85,7 @@ class EmailClassifierService
     user_content = build_prompt(subject, truncated_body, from_address)
 
     response = @client.messages.create(
-      model: "claude-3-haiku-20240307",  # Fast and cheap for classification
+      model: "claude-haiku-4-5",  # Fast and cheap for classification
       max_tokens: 1000,
       system: SYSTEM_PROMPT,
       messages: [

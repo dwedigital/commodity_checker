@@ -151,7 +151,7 @@ class ProductInfoFinderService
     context = build_extraction_context(product_name, retailer, search_results)
 
     response = @anthropic.messages.create(
-      model: "claude-3-haiku-20240307",  # Fast and cheap
+      model: "claude-haiku-4-5",  # Fast and cheap
       max_tokens: 1000,
       system: EXTRACTION_PROMPT,
       messages: [

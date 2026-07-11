@@ -14,7 +14,7 @@ module LlmMockHelper
           type: "message",
           role: "assistant",
           content: [ { type: "text", text: response_body } ],
-          model: "claude-sonnet-4-20250514",
+          model: "claude-sonnet-5",
           stop_reason: "end_turn"
         }.to_json
       )
