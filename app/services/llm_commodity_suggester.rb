@@ -61,8 +61,9 @@ class LlmCommoditySuggester
     context = build_context(product_description, api_suggestions)
 
     response = @client.messages.create(
-      model: "claude-sonnet-4-20250514",
+      model: "claude-sonnet-5",
       max_tokens: 500,
+      thinking: { type: "disabled" },
       system: SYSTEM_PROMPT,
       messages: [
         { role: "user", content: context }
@@ -70,7 +71,7 @@ class LlmCommoditySuggester
     )
 
     parse_llm_response(response)
-  rescue Anthropic::Error => e
+  rescue Anthropic::Errors::Error => e
     Rails.logger.error("Claude API error: #{e.message}")
     nil
   end

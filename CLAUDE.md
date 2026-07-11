@@ -528,8 +528,8 @@ users (Devise auth + inbound_email_token + subscription_tier)
 
 ### Anthropic Claude API
 - Used via `anthropic` gem
-- Model: `claude-sonnet-4-20250514` for commodity suggestions
-- Model: `claude-3-haiku-20240307` for email classification (fast/cheap)
+- Model: `claude-sonnet-5` for commodity suggestions and product-image vision (`thinking` disabled to preserve the small `max_tokens` budget for JSON output)
+- Model: `claude-haiku-4-5` for email classification and product-info extraction (fast/cheap)
 - Returns JSON with commodity_code, confidence, reasoning
 
 ### Tavily API (Web Search)

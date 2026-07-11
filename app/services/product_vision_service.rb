@@ -80,8 +80,9 @@ class ProductVisionService
 
   def query_claude_vision(image_data)
     response = @client.messages.create(
-      model: "claude-sonnet-4-20250514",
+      model: "claude-sonnet-5",
       max_tokens: 1000,
+      thinking: { type: "disabled" },
       system: SYSTEM_PROMPT,
       messages: [
         {
@@ -105,7 +106,7 @@ class ProductVisionService
     )
 
     response
-  rescue Anthropic::Error => e
+  rescue Anthropic::Errors::Error => e
     Rails.logger.error("Claude Vision API error: #{e.message}")
     nil
   end
