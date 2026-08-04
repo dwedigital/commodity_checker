@@ -25,8 +25,9 @@ class ProductScraperService
     amazon john_lewis argos currys marks_spencer boots wayfair lululemon
   ].freeze
 
-  # Cache key prefix for learned retailers
+  # Cache key prefixes for learned retailers
   RETAILER_CACHE_PREFIX = "proxy_required:".freeze
+  SUPER_PROXY_CACHE_PREFIX = "super_proxy_required:".freeze
   RETAILER_CACHE_EXPIRY = 30.days
 
   # Errors that should trigger proxy fallback
@@ -38,9 +39,15 @@ class ProductScraperService
     "Connection failed"
   ].freeze
 
-  # Errors from standard proxy that should trigger super proxy fallback
+  # Errors from standard proxy that should trigger super proxy fallback.
+  # 502 is what Scrape.do returns when the target's bot protection (e.g.
+  # Etsy's DataDome) defeats the datacenter proxy.
   SUPER_FALLBACK_ERRORS = [
     "Scrape.do HTTP 500",
+    "Scrape.do HTTP 502",
+    "Scrape.do HTTP 503",
+    "Scrape.do HTTP 504",
+    "Scrape.do HTTP 429",
     "Scrape.do HTTP 403",
     "Scrape.do HTTP 401"
   ].freeze
@@ -80,41 +87,52 @@ class ProductScraperService
     fetch_attempts = []
     direct_fetch_failed = false
 
-    # Skip direct fetch for retailers that already require a proxy
-    if requires_proxy?(retailer)
-      Rails.logger.info("ProductScraperService: #{retailer} requires proxy, skipping direct fetch")
-      response = { error: "Retailer requires proxy" }
+    # Skip straight to super proxy for retailers we've learned need it
+    # (avoids burning ~60s on a standard proxy attempt that will fail)
+    if requires_super_proxy?(retailer)
+      Rails.logger.info("ProductScraperService: #{retailer} requires super proxy, skipping direct fetch and standard proxy")
+      fetch_attempts << { method: "super_proxy", status: "attempting", message: "Site has strong protection, using super proxy..." }
+      response = fetch_via_scrape_do(clean_url, super_proxy: true)
     else
-      # Try direct fetch first
-      fetch_attempts << { method: "direct", status: "attempting", message: "Fetching page..." }
-      response = fetch_page(clean_url)
-      direct_fetch_failed = response[:error].present?
-    end
-
-    # If direct fetch failed with a recoverable error, try Scrape.do with standard proxy
-    if response[:error] && (requires_proxy?(retailer) || should_use_fallback?(response[:error]))
-      if fetch_attempts.any?
-        fetch_attempts.last[:status] = "failed"
-        fetch_attempts.last[:message] = "Direct fetch blocked (#{response[:error]})"
+      # Skip direct fetch for retailers that already require a proxy
+      if requires_proxy?(retailer)
+        Rails.logger.info("ProductScraperService: #{retailer} requires proxy, skipping direct fetch")
+        response = { error: "Retailer requires proxy" }
+      else
+        # Try direct fetch first
+        fetch_attempts << { method: "direct", status: "attempting", message: "Fetching page..." }
+        response = fetch_page(clean_url)
+        direct_fetch_failed = response[:error].present?
       end
 
-      fetch_attempts << { method: "standard_proxy", status: "attempting", message: "Trying with proxy..." }
-      Rails.logger.info("ProductScraperService: Direct fetch failed (#{response[:error]}), trying Scrape.do standard proxy")
-      response = fetch_via_scrape_do(clean_url, super_proxy: false)
+      # If direct fetch failed with a recoverable error, try Scrape.do with standard proxy
+      if response[:error] && (requires_proxy?(retailer) || should_use_fallback?(response[:error]))
+        if fetch_attempts.any?
+          fetch_attempts.last[:status] = "failed"
+          fetch_attempts.last[:message] = "Direct fetch blocked (#{response[:error]})"
+        end
 
-      # If Scrape.do succeeded and direct fetch had failed, learn this retailer for future
-      if response[:error].nil? && direct_fetch_failed
-        remember_retailer_requires_proxy(retailer)
-      end
+        fetch_attempts << { method: "standard_proxy", status: "attempting", message: "Trying with proxy..." }
+        Rails.logger.info("ProductScraperService: Direct fetch failed (#{response[:error]}), trying Scrape.do standard proxy")
+        response = fetch_via_scrape_do(clean_url, super_proxy: false)
 
-      # If standard proxy failed, try super proxy as last resort
-      if response[:error] && should_use_super_fallback?(response[:error])
-        fetch_attempts.last[:status] = "failed"
-        fetch_attempts.last[:message] = "Standard proxy blocked (#{response[:error]})"
+        # If Scrape.do succeeded and direct fetch had failed, learn this retailer for future
+        if response[:error].nil? && direct_fetch_failed
+          remember_retailer_requires_proxy(retailer)
+        end
 
-        fetch_attempts << { method: "super_proxy", status: "attempting", message: "Site has strong protection, using super proxy..." }
-        Rails.logger.info("ProductScraperService: Standard proxy failed (#{response[:error]}), trying Scrape.do super proxy")
-        response = fetch_via_scrape_do(clean_url, super_proxy: true)
+        # If standard proxy failed, try super proxy as last resort
+        if response[:error] && should_use_super_fallback?(response[:error])
+          fetch_attempts.last[:status] = "failed"
+          fetch_attempts.last[:message] = "Standard proxy blocked (#{response[:error]})"
+
+          fetch_attempts << { method: "super_proxy", status: "attempting", message: "Site has strong protection, using super proxy..." }
+          Rails.logger.info("ProductScraperService: Standard proxy failed (#{response[:error]}), trying Scrape.do super proxy")
+          response = fetch_via_scrape_do(clean_url, super_proxy: true)
+
+          # Learn that this retailer needs the super proxy so future lookups skip the slow path
+          remember_retailer_requires_super_proxy(retailer) if response[:error].nil?
+        end
       end
     end
 
@@ -203,6 +221,22 @@ class ProductScraperService
       expires_in: RETAILER_CACHE_EXPIRY
     )
     Rails.logger.info("ProductScraperService: Learned that #{retailer} requires proxy (cached for 30 days)")
+  end
+
+  def requires_super_proxy?(retailer)
+    return false unless ScrapeDoClient.configured?
+
+    Rails.cache.exist?("#{SUPER_PROXY_CACHE_PREFIX}#{retailer.to_s.downcase}")
+  end
+
+  def remember_retailer_requires_super_proxy(retailer)
+    retailer_key = retailer.to_s.downcase
+    Rails.cache.write(
+      "#{SUPER_PROXY_CACHE_PREFIX}#{retailer_key}",
+      true,
+      expires_in: RETAILER_CACHE_EXPIRY
+    )
+    Rails.logger.info("ProductScraperService: Learned that #{retailer} requires super proxy (cached for 30 days)")
   end
 
   def should_use_super_fallback?(error)
