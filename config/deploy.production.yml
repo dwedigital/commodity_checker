@@ -18,7 +18,7 @@ servers:
 proxy:
   ssl: true
   host: tariffik.com
-  response_timeout: 120  # Longer timeout for scraping/AI requests (seconds)
+  response_timeout: 180  # Worst-case lookup: standard proxy fail (~60s) + super proxy (~60s) + AI suggestion (~10s)
 
 # GitHub Container Registry
 registry:

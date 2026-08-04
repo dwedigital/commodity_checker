@@ -10,12 +10,17 @@ export default class extends Controller {
   }
 
   // Progress messages for URL-based lookups (longer process)
+  // Protected sites (e.g. Etsy) can take 1-2 minutes via proxy fallbacks,
+  // so keep messages coming or the button looks frozen
   static urlMessages = [
     { delay: 0, message: "Fetching product page..." },
     { delay: 3000, message: "Analyzing page content..." },
     { delay: 6000, message: "Trying enhanced fetch methods..." },
     { delay: 10000, message: "Using advanced techniques..." },
-    { delay: 15000, message: "Almost there, please wait..." }
+    { delay: 15000, message: "Almost there, please wait..." },
+    { delay: 30000, message: "Site has strong bot protection, working on it..." },
+    { delay: 60000, message: "Still working, this site is a tough one..." },
+    { delay: 90000, message: "Nearly done, hang tight..." }
   ]
 
   // Progress messages for description-based lookups (faster)
