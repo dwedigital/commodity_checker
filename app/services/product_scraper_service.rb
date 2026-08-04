@@ -297,16 +297,25 @@ class ProductScraperService
 
   def extract_and_normalize_image(sources, html, url)
     image = first_available(
-      sources[:json_ld]&.dig("image"),
+      json_ld_image_url(sources[:json_ld]&.dig("image")),
       sources[:og][:image],
       extract_product_image(html)
     )
 
-    # Handle array and hash formats
-    image = image.first if image.is_a?(Array)
-    image = image["url"] if image.is_a?(Hash) && image["url"]
-
     normalize_image_url(image, url) if image.present?
+  end
+
+  # JSON-LD "image" can be a string, an array, or an ImageObject hash
+  # (Etsy uses {"@type" => "ImageObject", "contentURL" => ...}), nested arbitrarily
+  def json_ld_image_url(image)
+    case image
+    when String
+      image
+    when Array
+      image.lazy.map { |item| json_ld_image_url(item) }.find(&:present?)
+    when Hash
+      json_ld_image_url(image["url"] || image["contentUrl"] || image["contentURL"] || image["thumbnailUrl"])
+    end
   end
 
   def extract_json_ld(html)
@@ -552,6 +561,7 @@ class ProductScraperService
   end
 
   def normalize_image_url(image_url, page_url)
+    return nil unless image_url.is_a?(String)
     return nil if image_url.blank?
 
     # Handle protocol-relative URLs
