@@ -50,14 +50,6 @@ if ENV["RAILS_ENV"] == "production"
 
   # Preload app for faster worker boot and memory savings via copy-on-write
   preload_app!
-
-  # kamal-proxy pools keep-alive connections to Puma. Puma 7's keep-alive
-  # handling closes the socket when a response completes past the keep-alive
-  # deadline, so requests running longer than ~20s (scraping lookups) die
-  # with an EOF at the proxy and the browser gets a 502. Fresh connections
-  # per request avoid the race; the proxy is on the same host so the extra
-  # TCP handshake is negligible.
-  enable_keep_alives false
 end
 
 # Specifies the `port` that Puma will listen on to receive requests; default is 3000.
