@@ -32,11 +32,14 @@ class ScrapeProductPageJob < ApplicationJob
     broadcast_update(lookup)
   rescue => e
     Rails.logger.error("Failed to scrape product page for lookup #{product_lookup_id}: #{e.message}")
-    ProductLookup.find(product_lookup_id).update!(
+    lookup = ProductLookup.find(product_lookup_id)
+    lookup.update!(
       scrape_status: :failed,
       scrape_error: e.message,
       scraped_at: Time.current
     )
+    # Without this the show page sits on the pending spinner forever
+    broadcast_update(lookup)
   end
 
   def process_order_item(order_item_id)
