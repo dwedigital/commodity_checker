@@ -352,6 +352,7 @@ The content script extracts product information in this priority order:
 
 - **Token hashing**: Extension tokens use SHA256 digest (same as API keys)
 - **OAuth codes**: 5-minute expiry, single-use, tied to extension_id
+- **Redirect allowlist (Sep 2026 fix)**: `ExtensionAuthController#validate_redirect_uri` only accepts `chrome-extension://<CHROME_EXTENSION_ID>/callback/callback.html` (exact path, no query/fragment/userinfo/port) on both `authorize` and `create_code`. Previously any `redirect_uri` was followed with `allow_other_host: true`, so a crafted link could have sent a user's auth code to another site. Without `CHROME_EXTENSION_ID` (dev/test) any well-formed 32-char Chrome ID is accepted, mirroring `config/initializers/cors.rb`. Note `extension_id` in the request is the extension's random `ext_…` identifier, not its Chrome ID, so the check uses the env var. A blank `redirect_uri` still falls back to the manual-copy code page. Covered by `test/controllers/extension_auth_controller_test.rb`
 - **CORS**: Restricted to `chrome-extension://` origins
 - **No credentials in extension**: OAuth redirect keeps passwords server-side
 - **Rate limiting**: Prevents abuse of both anonymous and authenticated endpoints
