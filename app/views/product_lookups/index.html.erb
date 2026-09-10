@@ -1,71 +1,13 @@
-<div class="md:flex md:items-center md:justify-between mb-8">
-  <div class="min-w-0 flex-1">
-    <h2 class="text-2xl font-bold leading-7 text-brand-dark sm:truncate sm:text-3xl sm:tracking-tight">
-      Product Lookups
-    </h2>
-    <p class="mt-1 text-sm text-gray-500">Your recent product commodity code lookups</p>
-  </div>
-  <div class="mt-4 flex md:ml-4 md:mt-0">
-    <%= link_to new_product_lookup_path, class: "inline-flex items-center rounded-full bg-primary px-4 py-2 text-sm font-semibold text-white hover:bg-primary-hover transition-colors" do %>
-      <svg class="-ml-0.5 mr-1.5 size-5" viewBox="0 0 20 20" fill="currentColor">
-        <path d="M10.75 4.75a.75.75 0 00-1.5 0v4.5h-4.5a.75.75 0 000 1.5h4.5v4.5a.75.75 0 001.5 0v-4.5h4.5a.75.75 0 000-1.5h-4.5v-4.5z" />
-      </svg>
-      New Lookup
-    <% end %>
-  </div>
-</div>
-
+<%= render "shared/page_header", eyebrow: "YOUR PRODUCTS", title: "Lookup history", description: "Every product you’ve looked up, ready when you need it.", actions: link_to("New lookup ↗", new_product_lookup_path, class: "tf-button tf-button-primary") %>
 <% if current_user.free? %>
-  <% remaining = current_user.lookups_remaining %>
-  <% if remaining > 0 %>
-    <div class="mb-6 rounded-2xl bg-brand-dark p-4">
-      <div class="flex">
-        <div class="shrink-0">
-          <div class="inline-flex items-center justify-center rounded-xl bg-white/20 size-10">
-            <svg class="size-5 text-white" viewBox="0 0 20 20" fill="currentColor">
-              <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a.75.75 0 000 1.5h.253a.25.25 0 01.244.304l-.459 2.066A1.75 1.75 0 0010.747 15H11a.75.75 0 000-1.5h-.253a.25.25 0 01-.244-.304l.459-2.066A1.75 1.75 0 009.253 9H9z" clip-rule="evenodd" />
-            </svg>
-          </div>
-        </div>
-        <div class="ml-4 flex-1 md:flex md:justify-between md:items-center">
-          <p class="text-sm text-white">
-            <span class="font-semibold"><%= remaining %> of <%= User::FREE_MONTHLY_LOOKUP_LIMIT %></span>
-            free lookups remaining this month.
-          </p>
-          <p class="mt-3 text-sm md:ml-6 md:mt-0">
-            <%= link_to "Upgrade for unlimited", root_path(anchor: "pricing"), class: "whitespace-nowrap font-semibold text-white hover:text-white/80 transition-colors underline" %>
-          </p>
-        </div>
-      </div>
-    </div>
-  <% else %>
-    <div class="mb-6 rounded-2xl bg-brand-orange/20 border border-brand-orange/30 p-4">
-      <div class="flex">
-        <div class="shrink-0">
-          <div class="inline-flex items-center justify-center rounded-xl bg-brand-orange size-10">
-            <svg class="size-5 text-white" viewBox="0 0 20 20" fill="currentColor">
-              <path fill-rule="evenodd" d="M8.485 2.495c.673-1.167 2.357-1.167 3.03 0l6.28 10.875c.673 1.167-.17 2.625-1.516 2.625H3.72c-1.347 0-2.189-1.458-1.515-2.625L8.485 2.495zM10 5a.75.75 0 01.75.75v3.5a.75.75 0 01-1.5 0v-3.5A.75.75 0 0110 5zm0 9a1 1 0 100-2 1 1 0 000 2z" clip-rule="evenodd" />
-            </svg>
-          </div>
-        </div>
-        <div class="ml-4 flex-1 md:flex md:justify-between md:items-center">
-          <p class="text-sm text-brand-dark">
-            You've used all <span class="font-semibold"><%= User::FREE_MONTHLY_LOOKUP_LIMIT %></span> free lookups this month.
-            Your limit resets on <span class="font-semibold"><%= Time.current.next_month.beginning_of_month.strftime("%d %B") %></span>.
-          </p>
-          <p class="mt-3 text-sm md:ml-6 md:mt-0">
-            <%= link_to "Upgrade for unlimited", root_path(anchor: "pricing"), class: "whitespace-nowrap font-semibold text-primary hover:text-primary-hover transition-colors" %>
-          </p>
-        </div>
-      </div>
-    </div>
-  <% end %>
+  <%= render "product_lookups/allowance" %>
 <% end %>
 
 <% if @product_lookups.any? %>
-  <div class="bg-white rounded-2xl border border-gray-200 overflow-hidden">
-    <div class="overflow-x-auto">
-    <table class="min-w-full">
+  <p class="tf-scroll-hint">Scroll across to see all columns →</p>
+  <div class="tf-panel">
+    <div class="overflow-x-auto" tabindex="0" role="region" aria-label="Lookup history table">
+    <table class="min-w-full tf-history-table">
       <thead class="bg-brand-dark">
         <tr>
           <th scope="col" class="py-3.5 pl-4 pr-3 text-left text-sm font-semibold text-white sm:pl-6">Product</th>
@@ -92,13 +34,13 @@
                     <img class="size-10 rounded-lg object-contain bg-gray-100 border border-gray-100" src="<%= lookup.image_url %>" alt="">
                   </div>
                 <% end %>
-                <div class="max-w-xs">
+                <div class="max-w-xs tf-table-product">
                   <div class="font-semibold text-brand-dark truncate">
                     <%= link_to lookup, class: "hover:text-primary transition-colors" do %>
                       <%= lookup.title.presence || "Untitled" %>
                     <% end %>
                     <% if lookup.photo? %>
-                      <span class="ml-1 inline-flex items-center rounded-full bg-highlight px-1.5 py-0.5 text-xs font-medium text-brand-dark">Photo</span>
+                      <span class="tf-badge tf-badge-neutral">Photo</span>
                     <% end %>
                   </div>
                   <% if lookup.url? && lookup.url.present? %>
@@ -110,38 +52,24 @@
               </div>
             </td>
             <td class="whitespace-nowrap px-3 py-4 text-sm text-gray-600">
-              <%= lookup.retailer_name&.titleize || "-" %>
+              <%= lookup.retailer_name&.titleize || "–" %>
             </td>
             <td class="whitespace-nowrap px-3 py-4 text-sm">
-              <% if lookup.commodity_code_confirmed? %>
-                <span class="inline-flex items-center rounded-full bg-brand-mint px-2.5 py-0.5 text-xs font-medium text-brand-dark">
-                  <%= lookup.confirmed_commodity_code %>
-                </span>
-              <% elsif lookup.suggested_commodity_code.present? %>
-                <span class="inline-flex items-center rounded-full bg-highlight px-2.5 py-0.5 text-xs font-medium text-brand-dark">
-                  <%= lookup.suggested_commodity_code %>
-                </span>
+              <% if lookup.display_commodity_code.present? %>
+                <span class="tf-code-inline"><%= commodity_code_display(lookup.display_commodity_code) %></span>
+                <span class="tf-code-state"><%= lookup.commodity_code_confirmed? ? "Confirmed" : "Suggested" %></span>
               <% else %>
-                <span class="text-gray-400">-</span>
+                <span class="text-gray-400">–</span>
               <% end %>
             </td>
             <td class="whitespace-nowrap px-3 py-4 text-sm">
-              <% case lookup.scrape_status %>
-              <% when "pending" %>
-                <span class="inline-flex items-center rounded-full bg-gray-100 px-2.5 py-0.5 text-xs font-medium text-gray-600">Processing</span>
-              <% when "completed" %>
-                <span class="inline-flex items-center rounded-full bg-brand-mint px-2.5 py-0.5 text-xs font-medium text-brand-dark">Complete</span>
-              <% when "partial" %>
-                <span class="inline-flex items-center rounded-full bg-highlight px-2.5 py-0.5 text-xs font-medium text-brand-dark">Partial</span>
-              <% when "failed" %>
-                <span class="inline-flex items-center rounded-full bg-primary/10 px-2.5 py-0.5 text-xs font-medium text-primary">Failed</span>
-              <% end %>
+              <%= lookup_status_badge(lookup) %>
             </td>
             <td class="whitespace-nowrap px-3 py-4 text-sm text-gray-600">
               <%= lookup.created_at.strftime("%d %b %Y") %>
             </td>
             <td class="relative whitespace-nowrap py-4 pl-3 pr-4 text-right text-sm font-medium sm:pr-6">
-              <%= link_to "View", lookup, class: "text-primary hover:text-primary-hover font-semibold transition-colors" %>
+              <%= link_to "View", lookup, class: "tf-text-link" %>
             </td>
           </tr>
         <% end %>
@@ -150,21 +78,7 @@
     </div>
   </div>
 <% else %>
-  <div class="text-center bg-white rounded-2xl border border-gray-200 px-5 py-12">
-    <div class="inline-flex items-center justify-center rounded-xl bg-gray-100 size-14 mb-4">
-      <svg class="size-7 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
-      </svg>
-    </div>
-    <h3 class="text-sm font-semibold text-brand-dark">No lookups yet</h3>
-    <p class="mt-1 text-sm text-gray-500">Get started by looking up a product.</p>
-    <div class="mt-6">
-      <%= link_to new_product_lookup_path, class: "inline-flex items-center rounded-full bg-primary px-4 py-2 text-sm font-semibold text-white hover:bg-primary-hover transition-colors" do %>
-        <svg class="-ml-0.5 mr-1.5 size-5" viewBox="0 0 20 20" fill="currentColor">
-          <path d="M10.75 4.75a.75.75 0 00-1.5 0v4.5h-4.5a.75.75 0 000 1.5h4.5v4.5a.75.75 0 001.5 0v-4.5h4.5a.75.75 0 000-1.5h-4.5v-4.5z" />
-        </svg>
-        New Lookup
-      <% end %>
-    </div>
-  </div>
+  <section class="tf-panel">
+    <div class="tf-empty-state"><span aria-hidden="true">#</span><h3>A home for your codes.</h3><p>Every product you look up is saved here, with its code and the reasoning behind it.</p><%= link_to "Find your first code ↗", new_product_lookup_path, class: "tf-button tf-button-outline" %></div>
+  </section>
 <% end %>

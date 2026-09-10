@@ -1,35 +1,45 @@
-<% content_for(:title) { "Privacy Policy - Tariffik" } %>
+<% content_for(:full_width, true) %>
 
-<div class="mx-auto max-w-3xl">
-  <!-- Header -->
-  <div class="mb-12">
-    <span class="inline-flex items-center rounded-full bg-brand-mint/50 px-4 py-1.5 text-sm font-semibold text-brand-dark mb-4">
-      LEGAL
-    </span>
-    <h1 class="text-4xl font-bold tracking-tight text-brand-dark mb-4">Privacy Policy</h1>
-    <p class="text-gray-500">
-      Last updated: <%= Date.current.strftime("%d %B %Y") %>
-    </p>
-  </div>
+<div class="tf-wrap tf-page">
+  <%= render "shared/page_header", eyebrow: "LEGAL", title: "Privacy policy", description: "Last updated: 3 June 2026" %>
 
-  <div class="prose-custom">
-    <p class="text-gray-700 text-lg mb-8">
+  <div class="tf-legal">
+    <nav class="tf-legal-toc" aria-label="On this page">
+      <p class="tf-eyebrow">ON THIS PAGE</p>
+      <ol>
+        <li><a href="#who-we-are">1. Who we are</a></li>
+        <li><a href="#data-we-collect">2. Data we collect</a></li>
+        <li><a href="#data-we-do-not-collect">3. Data we do not collect</a></li>
+        <li><a href="#how-we-use-your-data">4. How we use your data</a></li>
+        <li><a href="#sub-processors-and-third-party-services">5. Sub-processors and third-party services</a></li>
+        <li><a href="#data-retention">6. Data retention</a></li>
+        <li><a href="#your-rights">7. Your rights</a></li>
+        <li><a href="#data-security">8. Data security</a></li>
+        <li><a href="#international-data-transfers">9. International data transfers</a></li>
+        <li><a href="#cookies-and-analytics">10. Cookies and analytics</a></li>
+        <li><a href="#changes-to-this-policy">11. Changes to this policy</a></li>
+        <li><a href="#contact-us">12. Contact us</a></li>
+      </ol>
+    </nav>
+
+    <div class="tf-prose">
+    <p class="tf-legal-lede">
       Tariffik is operated from Jersey, Channel Islands. We are committed to protecting your privacy and being transparent about how we handle your data. This policy explains what information we collect, why we collect it, and how it is processed.
     </p>
 
-    <h2>1. Who We Are</h2>
+    <h2 id="who-we-are">1. Who we are</h2>
     <p>
       Tariffik provides commodity code lookup services to help individuals and businesses importing goods to the UK and Channel Islands identify the correct HS (Harmonized System) tariff codes for customs declarations.
     </p>
 
-    <h2>2. Data We Collect</h2>
+    <h2 id="data-we-collect">2. Data we collect</h2>
 
-    <h3>2.1 Chrome Extension Data</h3>
+    <h3>2.1 Chrome extension data</h3>
     <p>
       The Tariffik Chrome Extension helps you look up commodity codes while browsing online stores. This section specifically addresses data collection by the extension, as required by the Chrome Web Store.
     </p>
 
-    <h4>What the Extension Collects</h4>
+    <h4>What the extension collects</h4>
     <ul>
       <li><strong>Product page URLs</strong> - The URL of product pages you choose to look up</li>
       <li><strong>Product information</strong> - Title, description, price, and brand extracted from the current page when you initiate a lookup</li>
@@ -37,7 +47,7 @@
       <li><strong>IP address</strong> - Used solely for rate limiting and abuse prevention</li>
     </ul>
 
-    <h4>What the Extension Does NOT Collect</h4>
+    <h4>What the extension does not collect</h4>
     <ul>
       <li>Browsing history or pages you visit (we only see pages where you actively click the extension)</li>
       <li>Personal information from web pages (passwords, form data, payment details)</li>
@@ -45,8 +55,8 @@
       <li>Any data when the extension is not actively being used</li>
     </ul>
 
-    <h4>Extension Permissions Explained</h4>
-    <div class="overflow-x-auto my-6">
+    <h4>Extension permissions explained</h4>
+    <div class="tf-table-scroll">
       <table>
         <thead>
           <tr>
@@ -71,7 +81,7 @@
       </table>
     </div>
 
-    <h4>How Extension Data is Processed</h4>
+    <h4>How extension data is processed</h4>
     <p>
       When you perform a lookup, the extension sends product information to our servers via HTTPS. The data is processed by:
     </p>
@@ -81,7 +91,7 @@
       <li><strong>UK Trade Tariff API</strong> - To validate codes against official government data</li>
     </ul>
 
-    <h4>Anonymous vs. Authenticated Usage</h4>
+    <h4>Anonymous vs. authenticated usage</h4>
     <p>
       <strong>Anonymous users</strong> (not signed in) receive 3 free lifetime lookups. We track this using a randomly generated extension ID stored locally in your browser - no personal information is required.
     </p>
@@ -89,7 +99,7 @@
       <strong>Signed-in users</strong> can optionally save lookups to their account for future reference. You control whether each lookup is saved via the extension settings.
     </p>
 
-    <h3>2.2 Account Information</h3>
+    <h3>2.2 Account information</h3>
     <p>When you create an account, we collect:</p>
     <ul>
       <li><strong>Email address</strong> - Used for account identification and authentication</li>
@@ -97,7 +107,7 @@
       <li><strong>Unique email forwarding address</strong> - Generated automatically for your account</li>
     </ul>
 
-    <h3>2.3 Order and Product Data</h3>
+    <h3>2.3 Order and product data</h3>
     <p>When you use our service, we collect:</p>
     <ul>
       <li><strong>Product URLs</strong> - Links you submit for commodity code lookup</li>
@@ -108,7 +118,7 @@
       <li><strong>Commodity codes</strong> - Both AI-suggested and user-confirmed codes</li>
     </ul>
 
-    <h3>2.4 Email Forwarding Data</h3>
+    <h3>2.4 Email forwarding data</h3>
     <p>When you forward emails to your unique Tariffik address, we process:</p>
     <ul>
       <li><strong>Email subject line</strong></li>
@@ -116,13 +126,14 @@
       <li><strong>Email body content</strong> - Both plain text and HTML versions</li>
       <li><strong>Tracking URLs</strong> - Extracted from shipping notification emails</li>
     </ul>
-    <div class="rounded-xl border border-brand-dark/20 bg-highlight/30 p-4 my-6">
-      <p class="text-brand-dark font-medium mb-0">
-        <strong>Important:</strong> We only process emails sent to your unique Tariffik forwarding address. We do not have access to your email inbox or any other emails.
+    <div class="tf-note">
+      <p class="tf-eyebrow">IMPORTANT</p>
+      <p>
+        We only process emails sent to your unique Tariffik forwarding address. We do not have access to your email inbox or any other emails.
       </p>
     </div>
 
-    <h3>2.5 Guest User Data</h3>
+    <h3>2.5 Guest user data</h3>
     <p>For users without an account, we collect minimal data for rate limiting:</p>
     <ul>
       <li><strong>Anonymous session token</strong> - Stored as a cookie to track lookup limits</li>
@@ -131,7 +142,7 @@
     </ul>
     <p>Guest lookup data is automatically deleted after 7 days.</p>
 
-    <h3>2.6 Usage Analytics</h3>
+    <h3>2.6 Usage analytics</h3>
     <p>To improve our service, we collect anonymised usage data:</p>
     <ul>
       <li><strong>Pages visited</strong> - Which pages you view on Tariffik</li>
@@ -143,7 +154,7 @@
       <strong>Privacy-first approach:</strong> All analytics data is stored in our own database - we do not use third-party analytics services like Google Analytics. We use cookieless tracking, meaning no analytics cookies are placed on your device. For logged-in users, usage data is associated with your account to provide a better experience. IP addresses are masked for privacy.
     </p>
 
-    <h2>3. Data We Do NOT Collect</h2>
+    <h2 id="data-we-do-not-collect">3. Data we do not collect</h2>
     <p>We want to be clear about what we do not collect or store:</p>
     <ul>
       <li><strong>Payment or financial information</strong> - Tariffik is currently a free service</li>
@@ -155,7 +166,7 @@
       <li><strong>Data from your email inbox</strong> - We only see emails you explicitly forward to us</li>
     </ul>
 
-    <h2>4. How We Use Your Data</h2>
+    <h2 id="how-we-use-your-data">4. How we use your data</h2>
     <p>Your data is used exclusively for:</p>
     <ul>
       <li><strong>Providing commodity code suggestions</strong> - The core service functionality</li>
@@ -168,12 +179,12 @@
       We do <strong>not</strong> sell your data, use it for advertising, or share it with third parties for marketing purposes.
     </p>
 
-    <h2>5. Sub-Processors and Third-Party Services</h2>
+    <h2 id="sub-processors-and-third-party-services">5. Sub-processors and third-party services</h2>
     <p>
       To provide our service, we use the following third-party providers who may process your data:
     </p>
 
-    <div class="overflow-x-auto my-6">
+    <div class="tf-table-scroll">
       <table>
         <thead>
           <tr>
@@ -234,7 +245,7 @@
       All sub-processors are bound by data processing agreements and are required to protect your data in accordance with applicable data protection laws.
     </p>
 
-    <h2>6. Data Retention</h2>
+    <h2 id="data-retention">6. Data retention</h2>
     <ul>
       <li><strong>Account data</strong> - Retained until you delete your account</li>
       <li><strong>Order and product data</strong> - Retained until you delete your account or the specific order</li>
@@ -243,7 +254,7 @@
       <li><strong>Usage analytics</strong> - Retained for service improvement; deleted upon account deletion</li>
     </ul>
 
-    <h2>7. Your Rights</h2>
+    <h2 id="your-rights">7. Your rights</h2>
     <p>You have the right to:</p>
     <ul>
       <li><strong>Access</strong> - Request a copy of all data we hold about you</li>
@@ -257,7 +268,7 @@
       To exercise any of these rights, please contact us at the email address below.
     </p>
 
-    <h2>8. Data Security</h2>
+    <h2 id="data-security">8. Data security</h2>
     <p>
       We implement appropriate technical and organisational measures to protect your data, including:
     </p>
@@ -269,12 +280,12 @@
       <li>Access controls limiting who can view data</li>
     </ul>
 
-    <h2>9. International Data Transfers</h2>
+    <h2 id="international-data-transfers">9. International data transfers</h2>
     <p>
       Some of our sub-processors are located in the United States. Where data is transferred outside the UK/EEA, we ensure appropriate safeguards are in place, such as Standard Contractual Clauses or reliance on adequacy decisions.
     </p>
 
-    <h2>10. Cookies and Analytics</h2>
+    <h2 id="cookies-and-analytics">10. Cookies and analytics</h2>
     <p>
       We use only essential cookies required for the service to function:
     </p>
@@ -289,32 +300,21 @@
       Our usage analytics (see Section 2.6) are collected server-side without placing any cookies on your device. This privacy-first approach means we can improve our service while respecting your privacy.
     </p>
 
-    <h2>11. Changes to This Policy</h2>
+    <h2 id="changes-to-this-policy">11. Changes to this policy</h2>
     <p>
       We may update this privacy policy from time to time. We will notify you of any significant changes by posting the new policy on this page and updating the "Last updated" date.
     </p>
 
-    <h2>12. Contact Us</h2>
+    <h2 id="contact-us">12. Contact us</h2>
     <p>
       If you have any questions about this privacy policy or how we handle your data, please contact us at:
     </p>
-    <div class="rounded-xl border border-gray-200 bg-white p-6 my-6">
-      <p class="mb-2"><strong>Email:</strong> <a href="mailto:privacy@tariffik.com" class="text-primary hover:text-primary-hover">privacy@tariffik.com</a></p>
-      <p class="mb-0"><strong>Location:</strong> Jersey, Channel Islands</p>
+    <div class="tf-panel">
+      <dl class="tf-panel-body tf-detail-list">
+        <div><dt>Email</dt><dd><a href="mailto:privacy@tariffik.com">privacy@tariffik.com</a></dd></div>
+        <div><dt>Location</dt><dd>Jersey, Channel Islands</dd></div>
+      </dl>
+    </div>
     </div>
   </div>
 </div>
-
-<style>
-  .prose-custom h2 { margin-top: 2.5rem; margin-bottom: 1rem; font-size: 1.5rem; font-weight: 600; color: #2D1E2F; }
-  .prose-custom h3 { margin-top: 2rem; margin-bottom: 0.75rem; font-size: 1.25rem; font-weight: 600; color: #2D1E2F; }
-  .prose-custom h4 { margin-top: 1.5rem; margin-bottom: 0.5rem; font-size: 1rem; font-weight: 600; color: #2D1E2F; }
-  .prose-custom p { margin-bottom: 1rem; color: #374151; line-height: 1.75; }
-  .prose-custom ul { margin-bottom: 1rem; padding-left: 1.5rem; list-style-type: disc; }
-  .prose-custom li { margin-bottom: 0.5rem; color: #374151; }
-  .prose-custom table { width: 100%; border-collapse: collapse; border-radius: 0.75rem; overflow: hidden; border: 1px solid #e5e7eb; }
-  .prose-custom th { background-color: #FCF6B1; padding: 0.75rem 1rem; text-align: left; font-weight: 600; color: #2D1E2F; font-size: 0.875rem; }
-  .prose-custom td { padding: 0.75rem 1rem; border-top: 1px solid #e5e7eb; font-size: 0.875rem; color: #374151; }
-  .prose-custom a { color: #E3170A; text-decoration: underline; }
-  .prose-custom a:hover { color: #c91409; }
-</style>

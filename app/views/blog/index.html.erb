@@ -1,28 +1,17 @@
-<% content_for :title, "Blog - Tariffik" %>
+<% content_for(:full_width, true) %>
 
-<div class="max-w-2xl mx-auto">
-  <div class="mb-12">
-    <span class="inline-flex items-center rounded-full bg-highlight px-4 py-1.5 text-sm font-semibold text-brand-dark mb-4">
-      BLOG
-    </span>
-    <h1 class="text-4xl font-bold text-brand-dark mb-3">Guides & Insights</h1>
-    <p class="text-gray-600 text-lg">Everything you need to know about commodity codes and importing</p>
-  </div>
+<div class="tf-wrap tf-page">
+  <%= render "shared/page_header", eyebrow: "GUIDES", title: "Commodity codes, explained.", page_title: "Blog — Tariffik", description: "Practical guides to classifying the things you import, from clothing to electronics." %>
 
   <% if @posts.empty? %>
-    <div class="rounded-2xl border border-gray-200 bg-white p-8 text-center">
-      <div class="inline-flex items-center justify-center rounded-xl bg-brand-dark size-14 mb-4">
-        <svg class="size-7 text-white" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
-          <path stroke-linecap="round" stroke-linejoin="round" d="M12 6.042A8.967 8.967 0 0 0 6 3.75c-1.052 0-2.062.18-3 .512v14.25A8.987 8.987 0 0 1 6 18c2.305 0 4.408.867 6 2.292m0-14.25a8.966 8.966 0 0 1 6-2.292c1.052 0 2.062.18 3 .512v14.25A8.987 8.987 0 0 0 18 18a8.967 8.967 0 0 0-6 2.292m0-14.25v14.25" />
-        </svg>
-      </div>
-      <p class="text-gray-500">No posts yet. Check back soon!</p>
-    </div>
+    <section class="tf-panel">
+      <div class="tf-empty-state"><span aria-hidden="true">≡</span><h3>The first guide is on its way.</h3><p>In the meantime, try a lookup and see the reasoning behind a code.</p><%= link_to "Find my code ↗", root_path(anchor: "lookup"), class: "tf-button tf-button-outline" %></div>
+    </section>
   <% else %>
-    <div class="space-y-1">
+    <ul class="tf-post-list">
       <% @posts.each do |post| %>
         <%= render "post_card", post: post %>
       <% end %>
-    </div>
+    </ul>
   <% end %>
 </div>

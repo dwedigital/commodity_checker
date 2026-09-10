@@ -1,0 +1,15 @@
+<% content_for(:title, local_assigns[:page_title] || "#{title} — Tariffik") %>
+<header class="tf-page-header<%= " tf-detail-header" if local_assigns[:breadcrumbs] %>">
+  <div>
+    <% if local_assigns[:breadcrumbs] %>
+      <nav aria-label="Breadcrumb">
+        <%= safe_join(breadcrumbs.map { |label, path| path ? link_to(label, path) : tag.span(label, aria: { current: "page" }) }, tag.span(" / ", aria: { hidden: true })) %>
+      </nav>
+    <% else %>
+      <p class="tf-eyebrow"><%= eyebrow %></p>
+    <% end %>
+    <h1><%= title %></h1>
+    <% if local_assigns[:description].present? %><p class="tf-page-description"><%= description %></p><% end %>
+  </div>
+  <% if local_assigns[:actions].present? %><div class="tf-page-actions"><%= actions %></div><% end %>
+</header>

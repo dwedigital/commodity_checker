@@ -1,38 +1,28 @@
 import { Controller } from "@hotwired/stimulus"
 
+// Tabs are styled from aria-selected (see .tf-tabs in tariffik_workspace.css)
 export default class extends Controller {
   static targets = ["tab", "content", "info"]
+  static values = { initial: { type: String, default: "url" } }
+
+  connect() {
+    const initialTab = this.tabTargets.find(tab => tab.dataset.tab === this.initialValue)
+    if (initialTab) this.switch({ currentTarget: initialTab })
+  }
 
   switch(event) {
     const tab = event.currentTarget.dataset.tab
 
-    // Update tab buttons
     this.tabTargets.forEach(btn => {
-      btn.classList.remove("border-primary", "text-primary")
-      btn.classList.add("border-transparent", "text-gray-500")
+      btn.setAttribute("aria-selected", btn === event.currentTarget ? "true" : "false")
     })
 
-    event.currentTarget.classList.remove("border-transparent", "text-gray-500")
-    event.currentTarget.classList.add("border-primary", "text-primary")
-
-    // Update content panels
     this.contentTargets.forEach(content => {
-      content.classList.add("hidden")
+      content.classList.toggle("hidden", content.dataset.tab !== tab)
     })
 
-    const activeContent = this.contentTargets.find(c => c.dataset.tab === tab)
-    if (activeContent) {
-      activeContent.classList.remove("hidden")
-    }
-
-    // Update info sections
     this.infoTargets.forEach(info => {
-      info.classList.add("hidden")
+      info.classList.toggle("hidden", info.dataset.tab !== tab)
     })
-
-    const activeInfo = this.infoTargets.find(i => i.dataset.tab === tab)
-    if (activeInfo) {
-      activeInfo.classList.remove("hidden")
-    }
   }
 }

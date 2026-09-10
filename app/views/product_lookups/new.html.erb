@@ -1,236 +1,80 @@
-<div class="max-w-2xl mx-auto">
-  <div class="md:flex md:items-center md:justify-between mb-8">
-    <div class="min-w-0 flex-1">
-      <h2 class="text-2xl font-bold leading-7 text-brand-dark sm:truncate sm:text-3xl sm:tracking-tight">
-        Product Lookup
-      </h2>
-      <p class="mt-1 text-sm text-gray-500">
-        Get a commodity code suggestion for any product.
-      </p>
-    </div>
-  </div>
+<div class="tf-narrow">
+  <%= render "shared/page_header", eyebrow: "NEW LOOKUP", title: "Find a commodity code", description: "A product link or a photo is all you need to get started." %>
 
-  <% unless user_signed_in? %>
-    <div class="rounded-2xl bg-brand-dark p-4 mb-6">
-      <div class="flex">
-        <div class="shrink-0">
-          <div class="inline-flex items-center justify-center rounded-xl bg-white/20 size-10">
-            <svg class="size-5 text-white" viewBox="0 0 20 20" fill="currentColor">
-              <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a.75.75 0 000 1.5h.253a.25.25 0 01.244.304l-.459 2.066A1.75 1.75 0 0010.747 15H11a.75.75 0 000-1.5h-.253a.25.25 0 01-.244-.304l.459-2.066A1.75 1.75 0 009.253 9H9z" clip-rule="evenodd" />
-            </svg>
-          </div>
-        </div>
-        <div class="ml-4 flex-1 md:flex md:justify-between md:items-center">
-          <p class="text-sm text-white">Quick lookup mode - results won't be saved.</p>
-          <p class="mt-3 text-sm md:ml-6 md:mt-0">
-            <%= link_to "Sign in", new_user_session_path, class: "whitespace-nowrap font-semibold text-white hover:text-white/80 transition-colors underline" %> to save lookups
-          </p>
-        </div>
-      </div>
-    </div>
+  <% if !user_signed_in? %>
+    <p class="tf-allowance-bar">
+      <span>Quick lookup — results aren’t saved.</span>
+      <%= link_to "Sign in to save lookups", new_user_session_path, class: "tf-text-link" %>
+    </p>
+  <% elsif current_user.free? && current_user.lookups_remaining > 0 %>
+    <%= render "product_lookups/allowance" %>
   <% end %>
 
-  <% if user_signed_in? && current_user.free? %>
-    <% remaining = current_user.lookups_remaining %>
-    <% if remaining > 0 %>
-      <div class="rounded-2xl bg-brand-dark p-4 mb-6">
-        <div class="flex">
-          <div class="shrink-0">
-            <div class="inline-flex items-center justify-center rounded-xl bg-white/20 size-10">
-              <svg class="size-5 text-white" viewBox="0 0 20 20" fill="currentColor">
-                <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a.75.75 0 000 1.5h.253a.25.25 0 01.244.304l-.459 2.066A1.75 1.75 0 0010.747 15H11a.75.75 0 000-1.5h-.253a.25.25 0 01-.244-.304l.459-2.066A1.75 1.75 0 009.253 9H9z" clip-rule="evenodd" />
-              </svg>
-            </div>
-          </div>
-          <div class="ml-4 flex-1 md:flex md:justify-between md:items-center">
-            <p class="text-sm text-white">
-              <span class="font-semibold"><%= remaining %> of <%= User::FREE_MONTHLY_LOOKUP_LIMIT %></span> free lookups remaining this month.
-            </p>
-            <p class="mt-3 text-sm md:ml-6 md:mt-0">
-              <%= link_to "Upgrade for unlimited", root_path(anchor: "pricing"), class: "whitespace-nowrap font-semibold text-white hover:text-white/80 transition-colors underline" %>
-            </p>
-          </div>
+  <% if user_signed_in? && !current_user.can_perform_lookup? %>
+    <%= render "product_lookups/limit_reached" %>
+  <% else %>
+    <div id="lookup_form" data-controller="tabs" data-tabs-initial-value="<%= user_signed_in? && params[:tab] == 'photo' ? 'photo' : 'url' %>">
+      <div class="tf-panel">
+        <div class="tf-tabs" role="tablist" aria-label="Lookup method">
+          <button type="button" role="tab" aria-selected="true" data-tabs-target="tab" data-tab="url" data-action="click->tabs#switch">Product link</button>
+          <% if user_signed_in? %>
+            <button type="button" role="tab" aria-selected="false" data-tabs-target="tab" data-tab="photo" data-action="click->tabs#switch">Photo <span class="tf-badge tf-badge-neutral">Beta</span></button>
+          <% else %>
+            <%= link_to new_user_session_path do %>Photo <span class="tf-badge tf-badge-muted">Sign in to use</span><% end %>
+          <% end %>
         </div>
-      </div>
-    <% else %>
-      <div class="rounded-2xl bg-brand-orange/20 border border-brand-orange/30 p-4 mb-6">
-        <div class="flex">
-          <div class="shrink-0">
-            <div class="inline-flex items-center justify-center rounded-xl bg-brand-orange size-10">
-              <svg class="size-5 text-white" viewBox="0 0 20 20" fill="currentColor">
-                <path fill-rule="evenodd" d="M8.485 2.495c.673-1.167 2.357-1.167 3.03 0l6.28 10.875c.673 1.167-.17 2.625-1.516 2.625H3.72c-1.347 0-2.189-1.458-1.515-2.625L8.485 2.495zM10 5a.75.75 0 01.75.75v3.5a.75.75 0 01-1.5 0v-3.5A.75.75 0 0110 5zm0 9a1 1 0 100-2 1 1 0 000 2z" clip-rule="evenodd" />
-              </svg>
-            </div>
-          </div>
-          <div class="ml-4">
-            <h3 class="text-sm font-semibold text-brand-dark">Monthly limit reached</h3>
-            <p class="mt-1 text-sm text-gray-600">
-              You've used all <%= User::FREE_MONTHLY_LOOKUP_LIMIT %> free lookups this month.
-              Your limit resets on <span class="font-semibold"><%= Time.current.next_month.beginning_of_month.strftime("%d %B") %></span>.
-            </p>
-            <div class="mt-4">
-              <%= link_to "Upgrade for unlimited lookups", root_path(anchor: "pricing"), class: "inline-flex items-center rounded-full bg-primary px-4 py-2 text-sm font-semibold text-white hover:bg-primary-hover transition-colors" %>
-            </div>
-          </div>
-        </div>
-      </div>
-    <% end %>
-  <% end %>
 
-  <!-- Tabs -->
-  <div data-controller="tabs">
-  <div class="bg-white rounded-2xl border border-gray-200 overflow-hidden">
-    <div class="border-b border-gray-200">
-      <nav class="-mb-px flex" aria-label="Tabs">
-        <button type="button"
-                data-tabs-target="tab"
-                data-tab="url"
-                data-action="click->tabs#switch"
-                class="w-1/2 border-b-2 border-primary py-4 px-1 text-center text-sm font-medium text-primary">
-          <svg class="inline-block size-5 mr-2 -mt-0.5" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
-            <path stroke-linecap="round" stroke-linejoin="round" d="M13.19 8.688a4.5 4.5 0 0 1 1.242 7.244l-4.5 4.5a4.5 4.5 0 0 1-6.364-6.364l1.757-1.757m13.35-.622 1.757-1.757a4.5 4.5 0 0 0-6.364-6.364l-4.5 4.5a4.5 4.5 0 0 0 1.242 7.244" />
-          </svg>
-          URL Lookup
-        </button>
+        <div class="tf-tab-panel" role="tabpanel" data-tabs-target="content" data-tab="url" data-controller="lookup-progress">
+          <%= form_with model: @product_lookup, url: product_lookups_path, method: :post, data: { action: "submit->lookup-progress#submit" } do |f| %>
+            <% if @product_lookup.errors.any? %>
+              <div class="tf-result-notice" role="alert">
+                <p class="tf-eyebrow">CHECK THE LINK</p>
+                <ul>
+                  <% @product_lookup.errors.full_messages.each do |error| %>
+                    <li><%= error %></li>
+                  <% end %>
+                </ul>
+              </div>
+            <% end %>
+
+            <%= f.label :url, "Link to the product page", class: "tf-field-label" %>
+            <div class="tf-input-row">
+              <%= f.url_field :url, class: "tf-url", placeholder: "https://shop.com/your-product", autocomplete: "url", autofocus: true, aria: { describedby: "lookup-help" } %>
+              <button type="submit" data-lookup-progress-target="button" class="tf-button tf-button-primary">
+                <span data-lookup-progress-target="buttonText">Find my code</span>
+                <svg data-lookup-progress-target="spinner" class="hidden animate-spin size-4" viewBox="0 0 24 24" fill="none" aria-hidden="true"><circle cx="12" cy="12" r="9" stroke="currentColor" stroke-width="3" opacity=".3"/><path d="M12 3a9 9 0 0 1 9 9" stroke="currentColor" stroke-width="3"/></svg>
+                <span aria-hidden="true">↗</span>
+              </button>
+            </div>
+            <p class="tf-lookup-help" id="lookup-help">Paste the full link to a product page from any shop.</p>
+            <p data-lookup-progress-target="status" class="hidden tf-lookup-status" aria-live="polite"></p>
+          <% end %>
+        </div>
+
         <% if user_signed_in? %>
-          <button type="button"
-                  data-tabs-target="tab"
-                  data-tab="photo"
-                  data-action="click->tabs#switch"
-                  class="w-1/2 border-b-2 border-transparent py-4 px-1 text-center text-sm font-medium text-gray-500 transition-colors">
-            <svg class="inline-block size-5 mr-2 -mt-0.5" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
-              <path stroke-linecap="round" stroke-linejoin="round" d="M6.827 6.175A2.31 2.31 0 0 1 5.186 7.23c-.38.054-.757.112-1.134.175C2.999 7.58 2.25 8.507 2.25 9.574V18a2.25 2.25 0 0 0 2.25 2.25h15A2.25 2.25 0 0 0 21.75 18V9.574c0-1.067-.75-1.994-1.802-2.169a47.865 47.865 0 0 0-1.134-.175 2.31 2.31 0 0 1-1.64-1.055l-.822-1.316a2.192 2.192 0 0 0-1.736-1.039 48.774 48.774 0 0 0-5.232 0 2.192 2.192 0 0 0-1.736 1.039l-.821 1.316Z" />
-              <path stroke-linecap="round" stroke-linejoin="round" d="M16.5 12.75a4.5 4.5 0 1 1-9 0 4.5 4.5 0 0 1 9 0ZM18.75 10.5h.008v.008h-.008V10.5Z" />
-            </svg>
-            Photo Lookup
-            <span class="ml-1 inline-flex items-center rounded-full bg-highlight px-2 py-0.5 text-xs font-medium text-brand-dark">Beta</span>
-          </button>
-        <% else %>
-          <div class="w-1/2 py-4 px-1 text-center text-sm font-medium text-gray-400 cursor-not-allowed" title="Sign in to use photo lookup">
-            <svg class="inline-block size-5 mr-2 -mt-0.5" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
-              <path stroke-linecap="round" stroke-linejoin="round" d="M6.827 6.175A2.31 2.31 0 0 1 5.186 7.23c-.38.054-.757.112-1.134.175C2.999 7.58 2.25 8.507 2.25 9.574V18a2.25 2.25 0 0 0 2.25 2.25h15A2.25 2.25 0 0 0 21.75 18V9.574c0-1.067-.75-1.994-1.802-2.169a47.865 47.865 0 0 0-1.134-.175 2.31 2.31 0 0 1-1.64-1.055l-.822-1.316a2.192 2.192 0 0 0-1.736-1.039 48.774 48.774 0 0 0-5.232 0 2.192 2.192 0 0 0-1.736 1.039l-.821 1.316Z" />
-              <path stroke-linecap="round" stroke-linejoin="round" d="M16.5 12.75a4.5 4.5 0 1 1-9 0 4.5 4.5 0 0 1 9 0ZM18.75 10.5h.008v.008h-.008V10.5Z" />
-            </svg>
-            Photo Lookup
-            <span class="ml-1 inline-flex items-center rounded-full bg-gray-100 px-2 py-0.5 text-xs font-medium text-gray-500">
-              <svg class="size-3 mr-0.5" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
-                <path stroke-linecap="round" stroke-linejoin="round" d="M16.5 10.5V6.75a4.5 4.5 0 1 0-9 0v3.75m-.75 11.25h10.5a2.25 2.25 0 0 0 2.25-2.25v-6.75a2.25 2.25 0 0 0-2.25-2.25H6.75a2.25 2.25 0 0 0-2.25 2.25v6.75a2.25 2.25 0 0 0 2.25 2.25Z" />
-              </svg>
-              Sign in
-            </span>
+          <div class="tf-tab-panel hidden" role="tabpanel" data-tabs-target="content" data-tab="photo">
+            <%= render "photo_form" %>
           </div>
         <% end %>
-      </nav>
-    </div>
-
-    <!-- URL Lookup Tab Content -->
-    <div data-tabs-target="content" data-tab="url" data-controller="lookup-progress">
-      <%= form_with model: @product_lookup, url: product_lookups_path, method: :post, data: { action: "submit->lookup-progress#submit" }, class: "p-6 space-y-6" do |f| %>
-        <% if @product_lookup.errors.any? %>
-          <div class="rounded-xl border border-primary/30 bg-primary/5 p-4">
-            <div class="flex">
-              <div class="shrink-0">
-                <div class="inline-flex items-center justify-center rounded-lg bg-primary size-8">
-                  <svg class="size-4 text-white" viewBox="0 0 20 20" fill="currentColor">
-                    <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.28 7.22a.75.75 0 00-1.06 1.06L8.94 10l-1.72 1.72a.75.75 0 101.06 1.06L10 11.06l1.72 1.72a.75.75 0 101.06-1.06L11.06 10l1.72-1.72a.75.75 0 00-1.06-1.06L10 8.94 8.28 7.22z" clip-rule="evenodd" />
-                  </svg>
-                </div>
-              </div>
-              <div class="ml-3">
-                <h3 class="text-sm font-medium text-brand-dark">There were errors with your submission</h3>
-                <div class="mt-2 text-sm text-gray-600">
-                  <ul role="list" class="list-disc space-y-1 pl-5">
-                    <% @product_lookup.errors.full_messages.each do |error| %>
-                      <li><%= error %></li>
-                    <% end %>
-                  </ul>
-                </div>
-              </div>
-            </div>
-          </div>
-        <% end %>
-
-        <div>
-          <%= f.label :url, "Product Page URL", class: "block text-sm font-medium leading-6 text-brand-dark" %>
-          <div class="mt-2">
-            <%= f.url_field :url, class: "block w-full rounded-xl border border-gray-200 py-2.5 text-brand-dark placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-primary sm:text-sm px-4", placeholder: "https://www.amazon.co.uk/dp/B08N5WRWNW", autofocus: true %>
-          </div>
-          <p class="mt-1 text-sm text-gray-500">Paste the full URL of the product page from any retailer</p>
-        </div>
-
-        <!-- Status message area -->
-        <p data-lookup-progress-target="status" class="hidden text-sm text-primary font-medium text-center"></p>
-
-        <div class="bg-gray-50 -mx-6 -mb-6 px-6 py-4 rounded-b-2xl">
-          <div class="flex items-center justify-between">
-            <%= link_to "Cancel", (user_signed_in? ? product_lookups_path : root_path), class: "text-sm font-semibold text-brand-dark hover:text-brand-dark/70 transition-colors" %>
-            <button type="submit" data-lookup-progress-target="button" class="rounded-full bg-primary px-5 py-2.5 text-sm font-semibold text-white hover:bg-primary-hover transition-colors cursor-pointer inline-flex items-center gap-2 disabled:opacity-60 disabled:cursor-not-allowed disabled:hover:bg-primary">
-              <span data-lookup-progress-target="buttonText">Look Up Product</span>
-              <svg data-lookup-progress-target="spinner" class="hidden animate-spin h-4 w-4" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-                <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
-                <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-              </svg>
-            </button>
-          </div>
-        </div>
-      <% end %>
-    </div>
-
-    <!-- Photo Lookup Tab Content -->
-    <% if user_signed_in? %>
-      <div data-tabs-target="content" data-tab="photo" class="hidden">
-        <%= render "photo_form" %>
       </div>
-    <% end %>
-  </div>
 
-  <!-- Info section for URL lookup -->
-  <div data-tabs-target="info" data-tab="url" class="mt-8 rounded-2xl bg-brand-dark p-4">
-    <div class="flex">
-      <div class="shrink-0">
-        <div class="inline-flex items-center justify-center rounded-xl bg-white/20 size-10">
-          <svg class="size-5 text-white" viewBox="0 0 20 20" fill="currentColor">
-            <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a.75.75 0 000 1.5h.253a.25.25 0 01.244.304l-.459 2.066A1.75 1.75 0 0010.747 15H11a.75.75 0 000-1.5h-.253a.25.25 0 01-.244-.304l.459-2.066A1.75 1.75 0 009.253 9H9z" clip-rule="evenodd" />
-          </svg>
-        </div>
-      </div>
-      <div class="ml-4 flex-1">
-        <h3 class="text-sm font-semibold text-white">Supported retailers</h3>
-        <p class="mt-2 text-sm text-white/80">
-          Amazon, eBay, ASOS, John Lewis, Argos, Currys, Etsy, AliExpress, Wayfair, and most other retailers with product pages.
-        </p>
-        <p class="mt-2 text-sm text-white/80">
-          We'll extract product details and suggest the most appropriate UK commodity code for customs declarations.
-        </p>
-      </div>
-    </div>
-  </div>
+      <aside class="tf-note" data-tabs-target="info" data-tab="url">
+        <p class="tf-eyebrow">WORKS WITH MOST SHOPS</p>
+        <p>Amazon, eBay, ASOS, John Lewis, Argos, Currys, Etsy, AliExpress, Wayfair, and most other shops with product pages.</p>
+        <p>We’ll read the product details and suggest the UK commodity code for your customs declaration.</p>
+      </aside>
 
-  <!-- Info section for Photo lookup -->
-  <% if user_signed_in? %>
-    <div data-tabs-target="info" data-tab="photo" class="mt-8 rounded-2xl bg-highlight/50 border border-highlight p-4 hidden">
-      <div class="flex">
-        <div class="shrink-0">
-          <div class="inline-flex items-center justify-center rounded-xl bg-brand-orange size-10">
-            <svg class="size-5 text-white" viewBox="0 0 20 20" fill="currentColor">
-              <path fill-rule="evenodd" d="M8.485 2.495c.673-1.167 2.357-1.167 3.03 0l6.28 10.875c.673 1.167-.17 2.625-1.516 2.625H3.72c-1.347 0-2.189-1.458-1.515-2.625L8.485 2.495zM10 5a.75.75 0 01.75.75v3.5a.75.75 0 01-1.5 0v-3.5A.75.75 0 0110 5zm0 9a1 1 0 100-2 1 1 0 000 2z" clip-rule="evenodd" />
-            </svg>
-          </div>
-        </div>
-        <div class="ml-4 flex-1">
-          <h3 class="text-sm font-semibold text-brand-dark">Beta Feature - Tips for best results</h3>
-          <ul class="mt-2 text-sm text-gray-600 list-disc pl-5 space-y-1">
+      <% if user_signed_in? %>
+        <aside class="tf-note hidden" data-tabs-target="info" data-tab="photo">
+          <p class="tf-eyebrow">PHOTO LOOKUP · BETA</p>
+          <ul class="tf-check-list">
             <li>Take a clear, well-lit photo of the product</li>
             <li>Include any visible labels, brand names, or tags</li>
-            <li>Avoid blurry or dark images</li>
-            <li>Photograph the entire product, not just a detail</li>
+            <li>Photograph the whole product, not just a detail</li>
           </ul>
-          <p class="mt-2 text-sm text-gray-600">
-            Our AI will analyze the image to identify the product and suggest the appropriate commodity code.
-          </p>
-        </div>
-      </div>
+          <p>We’ll identify the product from the image and suggest a commodity code.</p>
+        </aside>
+      <% end %>
     </div>
   <% end %>
-  </div>
 </div>

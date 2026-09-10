@@ -1,119 +1,54 @@
-<div class="md:flex md:items-center md:justify-between mb-8">
-  <div class="min-w-0 flex-1">
-    <h2 class="text-2xl font-bold leading-7 text-brand-dark sm:truncate sm:text-3xl sm:tracking-tight">
-      Dashboard
-    </h2>
-  </div>
+<%= render "shared/page_header", eyebrow: "YOUR WORKSPACE", title: "Your import desk.", description: "Products, parcels, and their paperwork. All in one place.", actions: link_to("New lookup ↗", new_product_lookup_path, class: "tf-button tf-button-primary") %>
+
+<dl class="tf-workspace-stats">
+  <div><dt>Orders</dt><dd><%= @total_orders %></dd><span>In your workspace</span></div>
+  <div><dt>Items</dt><dd><%= @total_items %></dd><span>Across your orders</span></div>
+  <div><dt>In transit</dt><dd><%= @in_transit %></dd><span>On their way</span></div>
+  <div><dt>Saved lookups</dt><dd><%= @total_lookups %></dd><span>Ready to revisit</span></div>
+</dl>
+
+<div class="tf-desk-actions">
+  <section class="tf-desk-lookup">
+    <p class="tf-eyebrow">01 — FIND A CODE</p>
+    <h2>What’s coming your way?</h2>
+    <p>Start with a product link or a photo. We’ll help you find its commodity code.</p>
+    <div class="tf-desk-links"><%= link_to "Paste a product link ↗", new_product_lookup_path, class: "tf-button tf-button-dark" %><%= link_to "Use a photo →", new_product_lookup_path(tab: "photo"), class: "tf-text-link" %></div>
+    <% if current_user.free? %><p class="tf-allowance"><strong><%= current_user.lookups_remaining %> of <%= User::FREE_MONTHLY_LOOKUP_LIMIT %></strong> free lookups left this month</p><% else %><p class="tf-allowance">Your <%= current_user.subscription_tier.titleize %> workspace</p><% end %>
+  </section>
+  <section class="tf-desk-forward">
+    <p class="tf-eyebrow">02 — KEEP ORDERS TOGETHER</p>
+    <h2>Forward it. Find it here.</h2>
+    <p>Send order confirmations and tracking emails to your personal forwarding address.</p>
+    <div data-controller="clipboard" class="tf-forward-copy">
+      <button type="button" data-action="clipboard#copy" aria-label="Copy your forwarding email address"><code data-clipboard-target="source" aria-live="polite"><%= current_user.inbound_email_address %></code><span aria-hidden="true">Copy ↗</span></button>
+    </div>
+    <%= link_to "Or add an order manually →", new_order_path, class: "tf-text-link" %>
+  </section>
 </div>
 
-<!-- Stats and Email - email shows first on mobile -->
-<div class="flex flex-col">
-  <!-- Email forwarding info -->
-  <div class="rounded-2xl bg-brand-dark px-4 py-5 sm:p-5 mb-8 order-first md:order-last">
-    <div class="flex">
-      <div class="shrink-0 hidden sm:block">
-        <div class="inline-flex items-center justify-center rounded-xl bg-white/20 size-10">
-          <svg class="size-5 text-white" viewBox="0 0 20 20" fill="currentColor">
-            <path d="M3 4a2 2 0 00-2 2v1.161l8.441 4.221a1.25 1.25 0 001.118 0L19 7.162V6a2 2 0 00-2-2H3z" />
-            <path d="M19 8.839l-7.77 3.885a2.75 2.75 0 01-2.46 0L1 8.839V14a2 2 0 002 2h14a2 2 0 002-2V8.839z" />
-          </svg>
-        </div>
-      </div>
-      <div class="sm:ml-4 flex-1">
-        <h3 class="text-sm font-semibold text-white">Your forwarding email address</h3>
-        <div class="mt-2 text-sm text-white/80">
-          <p>Forward order & tracking emails to:</p>
-          <div data-controller="clipboard" class="mt-2">
-            <button data-action="clipboard#copy" class="group w-full text-left bg-white/10 rounded-xl px-3 py-2 hover:bg-white/20 transition-colors cursor-pointer">
-              <div class="flex items-start gap-2">
-                <code data-clipboard-target="source" class="font-mono text-xs text-white break-all leading-relaxed"><%= current_user.inbound_email_address %></code>
-                <svg class="size-4 text-white/60 group-hover:text-white shrink-0 mt-0.5" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
-                  <path stroke-linecap="round" stroke-linejoin="round" d="M15.666 3.888A2.25 2.25 0 0 0 13.5 2.25h-3c-1.03 0-1.9.693-2.166 1.638m7.332 0c.055.194.084.4.084.612v0a.75.75 0 0 1-.75.75H9a.75.75 0 0 1-.75-.75v0c0-.212.03-.418.084-.612m7.332 0c.646.049 1.288.11 1.927.184 1.1.128 1.907 1.077 1.907 2.185V19.5a2.25 2.25 0 0 1-2.25 2.25H6.75A2.25 2.25 0 0 1 4.5 19.5V6.257c0-1.108.806-2.057 1.907-2.185a48.208 48.208 0 0 1 1.927-.184" />
-                </svg>
-              </div>
-            </button>
-          </div>
-        </div>
-        <div class="mt-4">
-          <%= link_to new_order_path, class: "inline-flex items-center justify-center rounded-full bg-white px-4 py-2 text-sm font-semibold text-brand-dark hover:bg-white/90 transition-colors" do %>
-            <svg class="-ml-0.5 mr-1.5 size-4" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
-              <path stroke-linecap="round" stroke-linejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
-            </svg>
-            Add Order Manually
-          <% end %>
-        </div>
-      </div>
-    </div>
-  </div>
-
-  <!-- Stats -->
-  <div class="grid grid-cols-3 gap-3 sm:gap-5 mb-8 order-last md:order-first">
-    <div class="overflow-hidden rounded-2xl bg-white px-4 py-4 border border-gray-200 sm:px-5 sm:py-5">
-      <dt class="truncate text-xs sm:text-sm font-medium text-gray-500">Total Orders</dt>
-      <dd class="mt-1 text-2xl sm:text-3xl font-bold tracking-tight text-brand-dark"><%= current_user.orders.count %></dd>
-    </div>
-    <div class="overflow-hidden rounded-2xl bg-white px-4 py-4 border border-gray-200 sm:px-5 sm:py-5">
-      <dt class="truncate text-xs sm:text-sm font-medium text-gray-500">Total Items</dt>
-      <dd class="mt-1 text-2xl sm:text-3xl font-bold tracking-tight text-brand-dark"><%= @total_items %></dd>
-    </div>
-    <div class="overflow-hidden rounded-2xl bg-white px-4 py-4 border border-gray-200 sm:px-5 sm:py-5">
-      <dt class="truncate text-xs sm:text-sm font-medium text-gray-500">In Transit</dt>
-      <dd class="mt-1 text-2xl sm:text-3xl font-bold tracking-tight text-brand-dark"><%= current_user.orders.where(status: :in_transit).count %></dd>
-    </div>
-  </div>
-</div>
-
-<!-- Recent Orders -->
-<div class="bg-white rounded-2xl border border-gray-200 overflow-hidden">
-  <div class="px-5 py-4 border-b border-gray-200">
-    <div class="flex items-center justify-between">
-      <h3 class="text-base font-semibold leading-6 text-brand-dark">Recent Orders</h3>
-      <%= link_to "View all", orders_path, class: "text-sm font-semibold text-primary hover:text-primary-hover transition-colors" %>
-    </div>
-  </div>
-
-  <% if @orders.any? %>
-    <ul role="list" class="divide-y divide-gray-100">
-      <% @orders.each do |order| %>
-        <li>
-          <%= link_to order_path(order), class: "block px-5 py-4 hover:bg-gray-50 transition-colors" do %>
-            <div class="flex items-center justify-between">
-              <div class="truncate">
-                <p class="truncate text-sm font-semibold text-brand-dark"><%= order.retailer_name || "Unknown retailer" %></p>
-                <p class="text-sm text-gray-500"><%= order.order_reference || "No reference" %></p>
-              </div>
-              <div class="ml-2 flex shrink-0">
-                <% case order.status %>
-                <% when "pending" %>
-                  <span class="inline-flex items-center rounded-full bg-highlight px-2.5 py-0.5 text-xs font-medium text-brand-dark">Pending</span>
-                <% when "in_transit" %>
-                  <span class="inline-flex items-center rounded-full bg-brand-mint/50 px-2.5 py-0.5 text-xs font-medium text-brand-dark">In Transit</span>
-                <% when "delivered" %>
-                  <span class="inline-flex items-center rounded-full bg-brand-mint px-2.5 py-0.5 text-xs font-medium text-brand-dark">Delivered</span>
-                <% end %>
-              </div>
-            </div>
-            <div class="mt-2">
-              <p class="text-sm text-gray-500">
-                <%= pluralize(order.order_items.count, "item") %>
-                <% if order.estimated_delivery.present? %>
-                  &middot; Expected <%= order.estimated_delivery.strftime("%d %b %Y") %>
-                <% end %>
-              </p>
-            </div>
-          <% end %>
-        </li>
-      <% end %>
-    </ul>
-  <% else %>
-    <div class="px-5 py-12 text-center">
-      <div class="inline-flex items-center justify-center rounded-xl bg-gray-100 size-14 mb-4">
-        <svg class="size-7 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M20 13V6a2 2 0 00-2-2H6a2 2 0 00-2 2v7m16 0v5a2 2 0 01-2 2H6a2 2 0 01-2-2v-5m16 0h-2.586a1 1 0 00-.707.293l-2.414 2.414a1 1 0 01-.707.293h-3.172a1 1 0 01-.707-.293l-2.414-2.414A1 1 0 006.586 13H4" />
-        </svg>
-      </div>
-      <h3 class="text-sm font-semibold text-brand-dark">No orders yet</h3>
-      <p class="mt-1 text-sm text-gray-500">Forward your first tracking email to get started.</p>
-    </div>
-  <% end %>
+<div class="tf-desk-recents">
+  <section class="tf-panel">
+    <div class="tf-panel-heading"><div><p class="tf-eyebrow">YOUR PARCELS</p><h2>Recent orders</h2></div><%= link_to "View all →", orders_path, class: "tf-text-link" %></div>
+    <% if @orders.any? %>
+      <ul class="tf-record-list">
+        <% @orders.each do |order| %>
+          <li><%= link_to order_path(order) do %><span class="tf-record-icon" aria-hidden="true">↗</span><div class="tf-record-copy"><strong><%= order.retailer_name.presence || "Unknown retailer" %></strong><span><%= order.order_reference.presence || "No reference" %> · <%= pluralize(order.order_items.size, "item") %></span></div><%= order_status_badge(order) %><% end %></li>
+        <% end %>
+      </ul>
+    <% else %>
+      <div class="tf-empty-state"><span aria-hidden="true">↳</span><h3>Your first order starts here.</h3><p>Forward an order email or add the details yourself.</p><%= link_to "Add an order ↗", new_order_path, class: "tf-button tf-button-outline" %></div>
+    <% end %>
+  </section>
+  <section class="tf-panel">
+    <div class="tf-panel-heading"><div><p class="tf-eyebrow">YOUR PRODUCTS</p><h2>Recent lookups</h2></div><%= link_to "View all →", product_lookups_path, class: "tf-text-link" %></div>
+    <% if @recent_lookups.any? %>
+      <ul class="tf-record-list">
+        <% @recent_lookups.each do |lookup| %>
+          <li><%= link_to product_lookup_path(lookup) do %><span class="tf-record-icon" aria-hidden="true">#</span><div class="tf-record-copy"><strong><%= lookup.title.presence || "Untitled product" %></strong><span><%= lookup_type_label(lookup) %> · <%= lookup.created_at.strftime("%-d %b") %></span></div><% if lookup.display_commodity_code.present? %><span class="tf-record-code"><%= commodity_code_display(lookup.display_commodity_code) %></span><% else %><%= lookup_status_badge(lookup) %><% end %><% end %></li>
+        <% end %>
+      </ul>
+    <% else %>
+      <div class="tf-empty-state"><span aria-hidden="true">#</span><h3>A home for your codes.</h3><p>Your saved product lookups will appear here.</p><%= link_to "Find your first code ↗", new_product_lookup_path, class: "tf-button tf-button-outline" %></div>
+    <% end %>
+  </section>
 </div>
