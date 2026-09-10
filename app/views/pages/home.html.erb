@@ -38,7 +38,7 @@
         </div>
         <%= turbo_frame_tag "lookup_result", class: "block no-loading-indicator", aria: { live: "polite" } %>
       </div>
-      <p class="tf-photo-link">No link? <%= link_to "Look up a photo instead →", user_signed_in? ? new_product_lookup_path : new_user_registration_path %> <span>Free account</span></p>
+      <p class="tf-photo-link">No link? <%= link_to "Look up a photo instead →", user_signed_in? ? new_product_lookup_path(tab: "photo") : new_user_registration_path %> <span>Free account</span></p>
     </div>
     <div class="tf-hero-art" aria-label="Illustrative product classification">
       <div class="tf-art-header"><span>FROM PRODUCT TO PAPERWORK</span><span>01 / 03</span></div>
@@ -72,7 +72,7 @@
     <div class="tf-section-heading"><p class="tf-eyebrow">02 — A LITTLE MORE ORGANISED</p><h2 id="tools-title">Less admin.<br>More getting on with it.</h2><p>One place for your products,<br>orders, and that all-important code.</p></div>
     <div class="tf-tools-grid">
       <article class="tf-tool-feature"><span class="tf-tool-icon" aria-hidden="true">↳</span><div><p class="tf-eyebrow">YOUR IMPORTS, TOGETHER</p><h3>A home for every order.</h3><p>Forward your order confirmations. Keep products and suggested codes together, review your history, and export confirmed codes to CSV.</p><%= link_to "Get organised for free ↗", new_user_registration_path, class: "tf-text-link" %></div><div class="tf-order-preview" aria-hidden="true"><div><span>YOUR ORDERS</span><span>STATUS</span></div><div><strong>Cotton T-shirt</strong><span>Ready to review</span></div><div><strong>Ceramic coffee cup</strong><span>Ready to review</span></div><div><strong>Desk lamp</strong><span>Ready to review</span></div></div></article>
-      <article class="tf-tool-small"><span class="tf-tool-icon" aria-hidden="true">◎</span><span class="tf-small-label">PHOTO LOOKUP · BETA</span><h3>Point. Snap. Classify.</h3><p>Got the product, but no link? Upload a photo and let Tariffik work out what it is.</p><%= link_to "Try photo lookup ↗", user_signed_in? ? new_product_lookup_path : new_user_registration_path, class: "tf-text-link" %></article>
+      <article class="tf-tool-small"><span class="tf-tool-icon" aria-hidden="true">◎</span><span class="tf-small-label">PHOTO LOOKUP · BETA</span><h3>Point. Snap. Classify.</h3><p>Got the product, but no link? Upload a photo and let Tariffik work out what it is.</p><%= link_to "Try photo lookup ↗", user_signed_in? ? new_product_lookup_path(tab: "photo") : new_user_registration_path, class: "tf-text-link" %></article>
       <article class="tf-tool-small tf-tool-mint"><span class="tf-tool-icon" aria-hidden="true">≡</span><span class="tf-small-label">THE REASONING INCLUDED</span><h3>More than a number.</h3><p>Understand why a code was suggested, with a confidence rating to help guide your review.</p><a href="#lookup" class="tf-text-link">Find your first code ↗</a></article>
     </div>
   </div></section>

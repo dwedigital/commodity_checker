@@ -32,7 +32,7 @@ class PagesControllerTest < ActionDispatch::IntegrationTest
     assert_select "[data-lookup-limit-authenticated-value=true]"
     assert_select "[data-remaining-wrapper]", count: 0
     assert_select "a[href=?]", dashboard_path, minimum: 1
-    assert_select "a[href=?]", new_product_lookup_path, minimum: 1
+    assert_select "a[href=?]", new_product_lookup_path(tab: "photo"), minimum: 1
   end
 
   test "empty lookup returns an error in the result frame" do

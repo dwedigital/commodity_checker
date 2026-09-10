@@ -1,89 +1,55 @@
-<div class="max-w-2xl mx-auto">
-  <div class="md:flex md:items-center md:justify-between mb-8">
-    <div class="min-w-0 flex-1">
-      <h2 class="text-2xl font-bold leading-7 text-brand-dark sm:truncate sm:text-3xl sm:tracking-tight">
-        Add Order Manually
-      </h2>
-      <p class="mt-1 text-sm text-gray-500">
-        Create an order without email forwarding.
-      </p>
-    </div>
-  </div>
+<div class="tf-narrow">
+  <%= render "shared/page_header", eyebrow: "YOUR PARCELS", title: "Add an order", description: "Enter the order details and the products you’re importing." %>
 
-  <div class="bg-white rounded-2xl border border-gray-200 overflow-hidden">
-    <%= form_with model: @order, class: "p-6 space-y-6" do |f| %>
+  <section class="tf-panel">
+    <%= form_with model: @order, class: "tf-settings-form" do |f| %>
       <% if @order.errors.any? %>
-        <div class="rounded-xl border border-primary/30 bg-primary/5 p-4">
-          <div class="flex">
-            <div class="shrink-0">
-              <div class="inline-flex items-center justify-center rounded-lg bg-primary size-8">
-                <svg class="size-4 text-white" viewBox="0 0 20 20" fill="currentColor">
-                  <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.28 7.22a.75.75 0 00-1.06 1.06L8.94 10l-1.72 1.72a.75.75 0 101.06 1.06L10 11.06l1.72 1.72a.75.75 0 101.06-1.06L11.06 10l1.72-1.72a.75.75 0 00-1.06-1.06L10 8.94 8.28 7.22z" clip-rule="evenodd" />
-                </svg>
-              </div>
-            </div>
-            <div class="ml-3">
-              <h3 class="text-sm font-medium text-brand-dark"><%= pluralize(@order.errors.count, "error") %>:</h3>
-              <div class="mt-2 text-sm text-gray-600">
-                <ul role="list" class="list-disc space-y-1 pl-5">
-                  <% @order.errors.full_messages.each do |message| %>
-                    <li><%= message %></li>
-                  <% end %>
-                </ul>
-              </div>
-            </div>
-          </div>
+        <div class="tf-result-notice" role="alert">
+          <p class="tf-eyebrow">CHECK THE DETAILS</p>
+          <ul>
+            <% @order.errors.full_messages.each do |message| %>
+              <li><%= message %></li>
+            <% end %>
+          </ul>
         </div>
       <% end %>
 
-      <div class="grid grid-cols-1 gap-6 sm:grid-cols-2">
-        <div>
-          <%= f.label :retailer_name, "Retailer Name", class: "block text-sm font-medium leading-6 text-brand-dark" %>
-          <div class="mt-2">
-            <%= f.text_field :retailer_name, class: "block w-full rounded-xl border border-gray-200 py-2.5 text-brand-dark placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-primary sm:text-sm px-4", placeholder: "e.g., Amazon, eBay" %>
+      <fieldset>
+        <legend>Order details</legend>
+        <div class="grid grid-cols-1 gap-x-5 sm:grid-cols-2">
+          <div class="tf-field">
+            <%= f.label :retailer_name, "Shop" %>
+            <%= f.text_field :retailer_name, placeholder: "e.g. Amazon, eBay" %>
+          </div>
+          <div class="tf-field">
+            <%= f.label :order_reference, "Order reference" %>
+            <%= f.text_field :order_reference, placeholder: "e.g. ABC-123456" %>
+          </div>
+          <div class="tf-field">
+            <%= f.label :estimated_delivery, "Expected delivery" %>
+            <%= f.date_field :estimated_delivery %>
+          </div>
+          <div class="tf-field">
+            <%= f.label :status, "Status" %>
+            <%= f.select :status, Order.statuses.keys.map { |s| [ s.humanize, s ] }, {}, class: "block w-full border" %>
           </div>
         </div>
+      </fieldset>
 
-        <div>
-          <%= f.label :order_reference, "Order Reference", class: "block text-sm font-medium leading-6 text-brand-dark" %>
-          <div class="mt-2">
-            <%= f.text_field :order_reference, class: "block w-full rounded-xl border border-gray-200 py-2.5 text-brand-dark placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-primary sm:text-sm px-4", placeholder: "e.g., ABC-123456" %>
-          </div>
-        </div>
-      </div>
-
-      <div class="grid grid-cols-1 gap-6 sm:grid-cols-2">
-        <div>
-          <%= f.label :estimated_delivery, "Estimated Delivery", class: "block text-sm font-medium leading-6 text-brand-dark" %>
-          <div class="mt-2">
-            <%= f.date_field :estimated_delivery, class: "block w-full rounded-xl border border-gray-200 py-2.5 text-brand-dark focus:ring-2 focus:ring-inset focus:ring-primary sm:text-sm px-4" %>
-          </div>
-        </div>
-
-        <div>
-          <%= f.label :status, "Status", class: "block text-sm font-medium leading-6 text-brand-dark" %>
-          <div class="mt-2">
-            <%= f.select :status, Order.statuses.keys.map { |s| [s.titleize, s] }, {}, class: "block w-full rounded-xl border border-gray-200 py-2.5 text-brand-dark focus:ring-2 focus:ring-inset focus:ring-primary sm:text-sm px-4" %>
-          </div>
-        </div>
-      </div>
-
-      <div>
-        <label class="block text-sm font-medium leading-6 text-brand-dark">Items (one per line)</label>
-        <div class="mt-2 space-y-2">
+      <fieldset>
+        <legend>Items</legend>
+        <div class="grid gap-2">
           <% 3.times do |i| %>
-            <input type="text" name="items[]" class="block w-full rounded-xl border border-gray-200 py-2.5 text-brand-dark placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-primary sm:text-sm px-4" placeholder="Item description (e.g., Wireless Bluetooth Headphones)">
+            <input type="text" name="items[]" aria-label="Item <%= i + 1 %> description" class="block w-full border" placeholder="Item description, e.g. wireless Bluetooth headphones">
           <% end %>
         </div>
-        <p class="mt-1 text-sm text-gray-500">Describe each item for commodity code classification</p>
-      </div>
+        <p class="tf-lookup-help">Add up to three items. A clear description helps us suggest the right commodity code.</p>
+      </fieldset>
 
-      <div class="bg-gray-50 -mx-6 -mb-6 px-6 py-4 rounded-b-2xl">
-        <div class="flex items-center justify-between">
-          <%= link_to "Cancel", orders_path, class: "text-sm font-semibold text-brand-dark hover:text-brand-dark/70 transition-colors" %>
-          <%= f.submit "Create Order", class: "rounded-full bg-primary px-5 py-2.5 text-sm font-semibold text-white hover:bg-primary-hover transition-colors cursor-pointer" %>
-        </div>
+      <div class="tf-form-actions">
+        <%= link_to "Cancel", orders_path, class: "tf-text-link" %>
+        <%= f.submit "Add order", class: "tf-button tf-button-primary" %>
       </div>
     <% end %>
-  </div>
+  </section>
 </div>

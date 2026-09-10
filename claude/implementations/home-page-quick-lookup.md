@@ -32,9 +32,46 @@ No schema or route changes. Browser URL form → existing `PagesController#looku
 - Browser review at desktop and 390px mobile width: hero, pricing, FAQ expansion, empty URL validation, mobile menu, and sign-in screen.
 - Local preview: `USE_SQLITE=true bin/rails server -b 127.0.0.1 -p 3101` using installed Ruby 3.3.5. Existing SQLite development data renders successfully; the test schema requires PostgreSQL because it contains `jsonb`.
 
+### Coherence pass (10 Sep 2026)
+
+| File | Change |
+|---|---|
+| `app/views/layouts/application.html.erb` | Removed `bg-white` from `<html>` so the paper background covers the whole canvas (it used to stop after the first viewport, leaving later sections white); `theme-color` → `#f8f7f2` |
+| `app/views/pwa/manifest.json.erb` | Theme/background colours → paper |
+| `app/assets/stylesheets/tariffik_workspace.css` | Legacy Tailwind token remap moved from `.tf-workspace, .tf-auth-page` to `.tariffik-site`, so blog, legal, extension auth and flashes also use the refresh palette |
+| `app/views/pages/_lookup_result.html.erb` + `.tf-result*` in `tariffik.css` | Live result restyled as the working version of the hero's sample label: `6109 10 0010` split code, raw 10-digit code kept for copying, confidence bar, ink sign-up strip |
+| `app/helpers/application_helper.rb` | `commodity_code_display` splits a code into heading / subheading / national digits |
+| `app/views/product_lookups/_limit_reached.html.erb` | Amber gradient card → `tf-limit` panel |
+| `app/controllers/pages_controller.rb` | Guest limit copy now matches pricing (free account = 5 lookups/month, not "unlimited") |
+| `app/assets/stylesheets/application.css` | Turbo loading spinner indigo → Tariffik red |
+
+### Workspace completion (10 Sep 2026)
+
+| File | Change |
+|---|---|
+| `product_lookups/new` + `_photo_form` + `_allowance` (new) + `tabs_controller.js` | Rebuilt on `tf-*`: aria-driven tabs, homepage-style input row ("Find my code"), allowance bar, notes. Free users at their limit now see the limit panel instead of a form whose submit silently did nothing (the `lookup_form` Turbo target never existed) |
+| `product_lookups/show` + `_product_lookup` + `_status_badge` | Detail grid: code panel (split code, raw code, confidence, reasoning, confirm), product details, add-to-order picker. Partials carry their own ids so repeated Turbo broadcasts keep working |
+| `orders/show`, `orders/new` | Same detail grid and breadcrumbs; order form uses settings-form fieldsets with sentence-case labels |
+| `product_lookups/index`, `orders/index`, `dashboard/index` | Split codes everywhere, sentence-case badge helpers, `tf-empty-state` (orders empty state shows the forwarding address) |
+| `shared/_page_header` | Optional `breadcrumbs:`; sets the page `<title>` on detail pages too |
+| `application_helper.rb` | `order_status_badge`, `lookup_status_badge`, `lookup_type_label` (+ `test/helpers/application_helper_test.rb`) |
+| `tariffik_workspace.css` | Workspace content now 1280px (aligns with the nav wordmark); tabs, detail grid, panels, notes, allowance bar, item list, processing state |
+| `layouts/application` | Flash messages sit on the same `tf-wrap` grid |
+
+### Blog, legal and extension consent (10 Sep 2026)
+
+| File | Change |
+|---|---|
+| `blog/index`, `blog/_post_card`, `blog/show` | Full-width on `tf-wrap`; ruled post list (date / title + summary + tags / read); article column with mono meta line, `tf-prose` body and a "Find my code" note. Inline `<style>` removed |
+| `pages/privacy`, `pages/terms` | `page_header` + sticky "On this page" contents (`tf-legal`), `tf-prose` body, sentence-case headings with anchor ids, callouts as `tf-note` / `tf-result-notice.is-warning`, contact as a `tf-panel`. Inline `<style>` removed; wording unchanged |
+| `extension_auth/authorize`, `extension_auth/callback` | Consent screen on the dotted auth ground (`auth_page?` helper): permissions list, signed-in account row, "Connect extension" / "Cancel", manual code in the copy component |
+| `tariffik.css` | `tf-page`, `tf-post-list`, `tf-article*`, `tf-prose` (tables, code, Rouge colours), `tf-legal*`, `tf-consent*` |
+| `shared/_page_header` | Optional `page_title:` override |
+| `test/controllers/public_pages_test.rb` | Blog index/show render, legal contents links match section ids, consent form posts extension details, callback renders |
+
 ### Limits
 
-External scraper/AI calls are mocked in the integration test; no paid live lookup was used for design verification. This change refreshes the homepage, shared shell and authentication styling; it does not rebuild the authenticated order dashboard or extension UI. Production deployment is separate from preview review.
+External scraper/AI calls are mocked in the integration test; no paid live lookup was used for design verification. The homepage, shared shell, authentication styling and the signed-in workspace (dashboard, lookups, orders, settings) are on the refresh. Blog, privacy, terms and the extension consent flow were migrated on 10 Sep 2026 (see below). The API upsell page, the sign-in screens' pill badges, admin analytics, the dev-only test-email page and the browser extension UI still use legacy markup (legacy colours are remapped, shapes are not). Production deployment is separate from preview review.
 
 
 ## Overview
