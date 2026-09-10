@@ -1,5 +1,42 @@
 # Implementation: Home Page Quick Lookup
 
+## September 2026 design refresh (current)
+
+The public homepage now uses a warm paper background, dark ink typography, a restrained red accent, shipping-label details, and an inline SVG parcel illustration. This section supersedes the historical landing-page descriptions below. Guest allowance is **3 lifetime lookups**; free accounts receive **5 per month**, as defined by the existing backend.
+
+### Design and implementation
+
+The hero keeps the real Rails lookup form beside a clearly labelled illustrative result. Subsequent sections cover the workflow, order tools, photo lookup, browser extension, pricing, native FAQ disclosures, and a final lookup action. Existing testimonials were removed from the redesigned page. The parcel and example product illustration are inline SVG, with no new external asset or runtime dependency.
+
+The global navigation and footer share a lowercase wordmark and arrow symbol. Public desktop and mobile menus link to features, pricing and the workflow. Authentication screens inherit the paper background and focus styling; authenticated dashboard navigation and existing forms remain available.
+
+### Files
+
+| File | Change |
+|---|---|
+| `app/assets/stylesheets/tariffik.css` | New scoped design tokens, responsive layout, focus and reduced-motion styles |
+| `app/views/pages/home.html.erb` | Rebuilt homepage with existing Rails form and Stimulus targets |
+| `app/views/layouts/application.html.erb` | Wordmark, public links, language, skip link, auth styling class |
+| `app/views/shared/_footer.html.erb` | Shared footer design |
+| `app/views/pages/_lookup_result.html.erb` | Bordered result card |
+| `test/controllers/pages_controller_test.rb` | Guest, exhausted allowance, authenticated, validation, and mocked success coverage |
+
+### Database, routes and data flow
+
+No schema or route changes. Browser URL form → existing `PagesController#lookup` → scraper + classifier → existing `lookup_result` Turbo frame. The existing lookup-limit and lookup-progress Stimulus controllers are retained. The illustrative sample is static, explicitly labelled, and never presented as a live response.
+
+### Verification
+
+- Tailwind build and whitespace checks.
+- Homepage + product lookup controller tests against temporary PostgreSQL: 14 tests, 53 assertions, no failures/errors.
+- Browser review at desktop and 390px mobile width: hero, pricing, FAQ expansion, empty URL validation, mobile menu, and sign-in screen.
+- Local preview: `USE_SQLITE=true bin/rails server -b 127.0.0.1 -p 3101` using installed Ruby 3.3.5. Existing SQLite development data renders successfully; the test schema requires PostgreSQL because it contains `jsonb`.
+
+### Limits
+
+External scraper/AI calls are mocked in the integration test; no paid live lookup was used for design verification. This change refreshes the homepage, shared shell and authentication styling; it does not rebuild the authenticated order dashboard or extension UI. Production deployment is separate from preview review.
+
+
 ## Overview
 
 Added an inline product URL lookup feature to the home page hero section, allowing visitors to instantly get commodity code suggestions without signing up. Includes a limit of 3 free lookups per 72-hour period for unauthenticated users.

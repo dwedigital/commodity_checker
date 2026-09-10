@@ -45,6 +45,8 @@ Do this automatically at the end of implementing a feature - do not wait to be a
 
 ## Brand Design System
 
+**September 2026 refresh:** The public homepage and shared shell now use `app/assets/stylesheets/tariffik.css` (`tf-*` classes): warm paper `#f8f7f2`, ink `#292725`, red `#d93120`, compact rounded rectangular CTAs, and shipping-label details. These patterns supersede the older public-page conventions below. Existing dashboard Tailwind tokens remain unchanged. See `claude/implementations/home-page-quick-lookup.md` for scope and verification. Local preview uses fixed port **3101**.
+
 Tariffik uses a retro/minimalist aesthetic with a custom color palette. All UI changes must follow these guidelines.
 
 ### Brand Colors
