@@ -1,9 +1,9 @@
 <!DOCTYPE html>
-<html class="h-full bg-white">
+<html lang="en" class="h-full">
   <head>
     <title><%= content_for(:title) || "Tariffik - never guess a code again" %></title>
     <meta name="viewport" content="width=device-width,initial-scale=1">
-    <meta name="theme-color" content="#ffffff">
+    <meta name="theme-color" content="#f8f7f2">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-title" content="Tariffik">
@@ -40,33 +40,36 @@
     <%= javascript_importmap_tags %>
   </head>
 
-  <body class="h-full">
+  <body class="h-full tariffik-site <%= workspace_page? ? 'tf-workspace' : ('tf-auth-page' if auth_page?) %>">
+    <a href="#main-content" class="tf-skip-link">Skip to content</a>
     <div class="min-h-screen flex flex-col">
       <!-- Navigation -->
-      <nav class="bg-white border-b border-gray-200">
+      <nav class="tf-nav bg-white border-b border-gray-200" aria-label="Main navigation">
         <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
           <div class="flex h-16 items-center justify-between">
             <div class="flex items-center">
               <div class="shrink-0">
-                <%= link_to root_path, class: "text-brand-dark font-bold text-2xl tracking-tight" do %>
-                  TARIFFIK
+                <%= link_to root_path, class: "tf-wordmark", aria: { label: "Tariffik home" } do %>
+                  <span class="tf-logo-mark" aria-hidden="true">↗</span> tariffik<span class="tf-wordmark-period">.</span>
                 <% end %>
               </div>
+              <% unless user_signed_in? %>
+                <div class="tf-public-nav">
+                  <%= link_to "How it works", root_path(anchor: "how-it-works") %>
+                  <%= link_to "Features", root_path(anchor: "features") %>
+                  <%= link_to "Pricing", root_path(anchor: "pricing") %>
+                </div>
+              <% end %>
               <% if user_signed_in? %>
                 <div class="hidden md:block">
-                  <div class="ml-10 flex items-baseline space-x-1">
-                    <%= link_to "Dashboard", dashboard_path, class: "px-4 py-2 text-sm font-medium transition-colors #{request.path == dashboard_path ? 'text-brand-dark bg-highlight rounded-full' : 'text-gray-600 hover:text-brand-dark'}" %>
-                    <%= link_to "Lookup", product_lookups_path, class: "px-4 py-2 text-sm font-medium transition-colors #{request.path.start_with?('/dashboard/product_lookups') ? 'text-brand-dark bg-highlight rounded-full' : 'text-gray-600 hover:text-brand-dark'}" %>
-                    <%= link_to "Orders", orders_path, class: "px-4 py-2 text-sm font-medium transition-colors #{request.path.start_with?('/dashboard/orders') ? 'text-brand-dark bg-highlight rounded-full' : 'text-gray-600 hover:text-brand-dark'}" %>
-                    <%= link_to "API", developer_path, class: "px-4 py-2 text-sm font-medium transition-colors #{request.path.start_with?('/dashboard/developer') ? 'text-brand-dark bg-highlight rounded-full' : 'text-gray-600 hover:text-brand-dark'}" %>
-                  </div>
+                  <div class="tf-workspace-links"><%= render "shared/workspace_links" %></div>
                 </div>
               <% end %>
             </div>
             <div class="hidden md:block">
               <div class="ml-4 flex items-center md:ml-6 gap-3">
                 <% if user_signed_in? %>
-                  <span class="text-gray-500 text-sm"><%= current_user.email %></span>
+                  <span class="tf-account-identity" title="<%= current_user.email %>"><span class="tf-account-avatar" aria-hidden="true"><%= current_user.email.first.upcase %></span><span><%= current_user.email %></span></span>
                   <%= button_to "Sign out", destroy_user_session_path, method: :delete, class: "rounded-full border border-gray-300 px-4 py-2 text-sm font-medium text-brand-dark hover:bg-gray-50 transition-colors cursor-pointer" %>
                 <% else %>
                   <%= link_to "Sign in", new_user_session_path, class: "px-4 py-2 text-sm font-medium text-gray-600 hover:text-brand-dark transition-colors" %>
@@ -91,11 +94,13 @@
             </svg>
           </summary>
           <div class="space-y-1 px-4 pb-3 pt-2 border-t border-gray-200">
+            <% unless user_signed_in? %>
+              <%= link_to "How it works", root_path(anchor: "how-it-works"), class: "block px-3 py-3 text-sm" %>
+              <%= link_to "Features", root_path(anchor: "features"), class: "block px-3 py-3 text-sm" %>
+              <%= link_to "Pricing", root_path(anchor: "pricing"), class: "block px-3 py-3 text-sm" %>
+            <% end %>
             <% if user_signed_in? %>
-              <%= link_to "Dashboard", dashboard_path, class: "block px-3 py-2 text-base font-medium #{request.path == dashboard_path ? 'text-brand-dark bg-highlight rounded-full' : 'text-gray-600 hover:text-brand-dark'}" %>
-              <%= link_to "Lookup", product_lookups_path, class: "block px-3 py-2 text-base font-medium #{request.path.start_with?('/dashboard/product_lookups') ? 'text-brand-dark bg-highlight rounded-full' : 'text-gray-600 hover:text-brand-dark'}" %>
-              <%= link_to "Orders", orders_path, class: "block px-3 py-2 text-base font-medium #{request.path.start_with?('/dashboard/orders') ? 'text-brand-dark bg-highlight rounded-full' : 'text-gray-600 hover:text-brand-dark'}" %>
-              <%= link_to "API", developer_path, class: "block px-3 py-2 text-base font-medium #{request.path.start_with?('/dashboard/developer') ? 'text-brand-dark bg-highlight rounded-full' : 'text-gray-600 hover:text-brand-dark'}" %>
+              <div class="tf-workspace-links-mobile"><%= render "shared/workspace_links" %></div>
             <% end %>
           </div>
           <div class="border-t border-gray-200 pb-3 pt-4 px-4">
@@ -116,8 +121,8 @@
 
       <!-- Flash messages (data-turbo-cache="false" prevents stale flashes with Turbo) -->
       <% if notice.present? %>
-        <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 mt-4" data-turbo-cache="false">
-          <div class="rounded-full border border-brand-mint bg-brand-mint/20 px-4 py-3">
+        <div class="tf-wrap mt-4" data-turbo-cache="false">
+          <div role="status" class="tf-flash rounded-xl border border-brand-mint bg-brand-mint/20 px-4 py-3">
             <div class="flex items-center gap-3">
               <span class="text-brand-mint">✓</span>
               <p class="text-sm font-medium text-brand-dark"><%= notice %></p>
@@ -127,8 +132,8 @@
       <% end %>
 
       <% if alert.present? %>
-        <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 mt-4" data-turbo-cache="false">
-          <div class="rounded-full border border-primary bg-primary/10 px-4 py-3">
+        <div class="tf-wrap mt-4" data-turbo-cache="false">
+          <div role="alert" class="tf-flash rounded-xl border border-primary bg-primary/10 px-4 py-3">
             <div class="flex items-center gap-3">
               <span class="text-primary">✗</span>
               <p class="text-sm font-medium text-brand-dark"><%= alert %></p>
@@ -138,11 +143,11 @@
       <% end %>
 
       <!-- Main content -->
-      <main class="grow">
+      <main id="main-content" class="grow">
         <% if content_for?(:full_width) %>
           <%= yield %>
         <% else %>
-          <div class="mx-auto max-w-7xl px-4 py-6 sm:px-6 lg:px-8">
+          <div class="<%= workspace_page? ? 'tf-workspace-content' : 'mx-auto max-w-7xl px-4 py-6 sm:px-6 lg:px-8' %>">
             <%= yield %>
           </div>
         <% end %>

@@ -1,0 +1,12 @@
+<% remaining = current_user.lookups_remaining %>
+<% if remaining > 0 %>
+  <p class="tf-allowance-bar">
+    <span><span class="font-semibold"><%= remaining %> of <%= User::FREE_MONTHLY_LOOKUP_LIMIT %></span> free lookups remaining this month.</span>
+    <%= link_to "Upgrade for unlimited", root_path(anchor: "pricing"), class: "tf-text-link" %>
+  </p>
+<% else %>
+  <p class="tf-allowance-bar is-limit" role="status">
+    <span>You’ve used all <strong><%= User::FREE_MONTHLY_LOOKUP_LIMIT %></strong> free lookups this month. Your limit resets on <strong><%= Time.current.next_month.beginning_of_month.strftime("%-d %B") %></strong>.</span>
+    <%= link_to "Upgrade for unlimited", root_path(anchor: "pricing"), class: "tf-text-link" %>
+  </p>
+<% end %>

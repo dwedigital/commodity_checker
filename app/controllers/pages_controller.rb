@@ -24,7 +24,7 @@ class PagesController < ApplicationController
     unless user_signed_in?
       if @guest_lookup_count >= GUEST_LOOKUP_LIMIT
         track_event("guest_limit_reached", guest_token: @guest_token, lookup_count: @guest_lookup_count)
-        @error = "You've reached your free lookup limit. Sign up for unlimited lookups!"
+        @error = "You’ve used your guest lookups. Create a free account for #{User::FREE_MONTHLY_LOOKUP_LIMIT} lookups every month."
         @limit_reached = true
         return render partial: "pages/lookup_result", formats: [ :html ]
       end

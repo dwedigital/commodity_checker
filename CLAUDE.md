@@ -45,7 +45,19 @@ Do this automatically at the end of implementing a feature - do not wait to be a
 
 ## Brand Design System
 
-Tariffik uses a retro/minimalist aesthetic with a custom color palette. All UI changes must follow these guidelines.
+**September 2026 refresh (current direction — use this for all new UI):** warm paper `#f8f7f2`, ink `#292725`, muted `#67645e`, hairline `#dddcd4`, red `#d93120`; Space Grotesk headings at weight 500 with tight tracking; mono uppercase eyebrows (`.tf-eyebrow`); 6px rounded-rectangle buttons (`.tf-button-primary/-dark/-outline`), never pills; sentence-case copy; shipping-label details. Commodity codes display as `6109 10 0010` with the subheading pair in red — use `commodity_code_display(code)` inside a `.tf-code` element.
+
+| File | Role |
+|------|------|
+| `app/assets/stylesheets/tariffik.css` | Public site + shared shell (`tf-*`): nav, footer, homepage, live lookup result (`.tf-result`), limit panel (`.tf-limit`) |
+| `app/assets/stylesheets/tariffik_workspace.css` | Signed-in workspace (`.tf-workspace`: page header, stats, panels, record lists, settings) and a **site-wide token remap** on `.tariffik-site` that maps the legacy Tailwind tokens below (`bg-primary`, `bg-brand-dark`, `bg-brand-mint`, `bg-highlight`, grays) onto the refresh palette |
+| `app/views/shared/_page_header.html.erb` | Eyebrow + h1 + description + actions header for workspace pages |
+
+Because of the token remap, legacy classes no longer render aubergine/bright-mint/yellow anywhere, but their *shapes* (pill badges, bold headings, Title Case) are still legacy. Don't write new markup with the legacy patterns below; migrate pages to `tf-*` when touching them. See `claude/implementations/home-page-quick-lookup.md`. Local preview uses fixed port **3101**.
+
+### Legacy design system (pre-September 2026 — reference only)
+
+The tables below describe the old retro palette. Keep them only to understand existing markup.
 
 ### Brand Colors
 

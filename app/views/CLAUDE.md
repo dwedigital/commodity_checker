@@ -2,7 +2,40 @@
 
 This document provides styling guidelines for all view templates in the Tariffik application.
 
-## Brand Design Overview
+## ⚠️ Current direction: September 2026 refresh
+
+**Everything below "Legacy" is superseded.** New and touched views use the `tf-*` system (see root `CLAUDE.md` → Brand Design System):
+
+| Need | Use | Reference view |
+|------|-----|----------------|
+| Workspace page header | `render "shared/page_header", eyebrow:, title:, description:, actions:` | `dashboard/index`, `orders/index` |
+| Buttons | `tf-button tf-button-primary` / `-dark` / `-outline`; text links `tf-text-link` | `dashboard/index` |
+| Panels & lists | `tf-panel`, `tf-panel-heading`, `tf-record-list` | `dashboard/index` |
+| Empty states | `tf-empty-state` (glyph + sentence-case heading + one action) | `dashboard/index` |
+| Status | `tf-badge tf-badge-success` / `tf-badge-neutral` | `dashboard/index` |
+| Limit reached | `tf-limit` | `product_lookups/_limit_reached`, homepage hero |
+| Commodity codes | `<p class="tf-code"><%= commodity_code_display(code) %></p>` | `pages/_lookup_result` |
+| Forms (settings style) | `tf-settings-form`, `fieldset` + `legend`, `tf-field` | `devise/registrations/edit`, `orders/new` |
+| Detail pages | `page_header` with `breadcrumbs: [[label, path], [label, nil]]`, then `tf-detail-grid` (main + aside of `tf-panel`s, `tf-panel-body`, `tf-detail-list`) | `product_lookups/show`, `orders/show` |
+| Status badges | `order_status_badge(order)`, `lookup_status_badge(lookup)` (sentence case, `tf-badge-*`) | `orders/index`, `product_lookups/index` |
+| Codes in tables/lists | `<span class="tf-code-inline"><%= commodity_code_display(code) %></span>` + `tf-code-state` | `product_lookups/index` |
+| Allowance / notices | `product_lookups/_allowance` (`tf-allowance-bar`), `tf-note`, `tf-result-notice` (`.is-warning`) | `product_lookups/new` |
+| Tabs | `tf-tabs` + `role="tab"` buttons; `tabs_controller.js` sets `aria-selected` | `product_lookups/new` |
+| Narrow forms | `tf-narrow` (left-aligned, 720px) so titles stay on the page grid | `product_lookups/new`, `orders/new` |
+| Public long-form pages | `content_for(:full_width, true)` + `<div class="tf-wrap tf-page">`, then `page_header` (`page_title:` to override the tab title) | `blog/index`, `pages/privacy` |
+| Long-form text | `tf-prose` (no inline `<style>` blocks) | `blog/show`, `pages/terms` |
+| Legal pages | `tf-legal` grid: `tf-legal-toc` contents list + `tf-prose`; every `h2` needs an `id` matching its contents link (tested) | `pages/privacy`, `pages/terms` |
+| Consent / auth-adjacent screens | `tf-consent` on the auth ground (`auth_page?`), `tf-consent-actions` for the button pair | `extension_auth/authorize` |
+
+Tailwind's `hidden` sits in a cascade layer, so unlayered `tf-*` display rules beat it; `.tf-button/.tf-panel/.tf-note/.tf-allowance-bar.hidden` are handled explicitly — add to that rule if you toggle `hidden` on another `tf-*` component.
+
+Turbo broadcast partials (`product_lookups/_product_lookup`, `_status_badge`) carry their own `id` on the root so repeated `broadcast_replace_to` calls keep working.
+
+Rules: sentence case everywhere (buttons, labels, card titles); mono uppercase `tf-eyebrow` above page titles, not pill badges; 6px radii, no pills; no `shadow-*`, gradients, or raw Tailwind palette colours (`amber-`, `indigo-`, `red-50`…).
+
+## Legacy (pre-September 2026 — do not use for new work)
+
+### Brand Design Overview
 
 Tariffik uses a retro/minimalist aesthetic with these core principles:
 - **Borders over shadows** - Use `border border-gray-200` instead of `shadow-*`

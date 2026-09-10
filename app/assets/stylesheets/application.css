@@ -17,8 +17,8 @@ turbo-frame[aria-busy="true"]:not(.no-loading-indicator)::before {
   margin: 1.5rem auto;
   width: 2rem;
   height: 2rem;
-  border: 3px solid #e5e7eb;
-  border-top-color: #4f46e5;
+  border: 3px solid #dddcd4;
+  border-top-color: #d93120;
   border-radius: 50%;
   animation: spin 0.8s linear infinite;
 }
@@ -28,7 +28,7 @@ turbo-frame[aria-busy="true"]:not(.no-loading-indicator)::after {
   display: block;
   text-align: center;
   font-size: 0.875rem;
-  color: #6b7280;
+  color: #67645e;
   margin-top: 0.75rem;
 }
 

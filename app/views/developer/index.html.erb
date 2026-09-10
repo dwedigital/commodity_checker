@@ -1,12 +1,4 @@
-<div class="md:flex md:items-center md:justify-between mb-8">
-  <div class="min-w-0 flex-1">
-    <h2 class="text-2xl font-bold leading-7 text-brand-dark sm:truncate sm:text-3xl sm:tracking-tight">
-      API Dashboard
-    </h2>
-    <p class="mt-1 text-sm text-gray-500">Manage your API keys and monitor usage</p>
-  </div>
-</div>
-
+<%= render "shared/page_header", eyebrow: "CONNECTED WORKFLOWS", title: "API & integrations", description: "Manage your keys, connected devices, and API usage." %>
 <% if flash[:api_key_created] %>
   <div class="rounded-2xl bg-brand-mint/30 border border-brand-mint p-4 mb-6">
     <div class="flex">
@@ -66,9 +58,9 @@
   <div class="px-5 py-4 border-b border-gray-200">
     <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
       <h3 class="text-base font-semibold leading-6 text-brand-dark">API Keys</h3>
-      <%= form_with url: create_api_key_path, method: :post, class: "flex items-center gap-3" do |f| %>
+      <%= form_with url: create_api_key_path, method: :post, class: "tf-api-key-form flex items-center gap-3" do |f| %>
         <div class="relative">
-          <%= f.text_field :name, placeholder: "Key name (optional)", class: "block w-44 sm:w-52 rounded-xl border border-gray-200 py-2.5 px-4 text-brand-dark placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-primary sm:text-sm" %>
+          <%= f.text_field :name, aria: { label: "API key name" }, placeholder: "Key name (optional)", class: "block w-44 sm:w-52 rounded-xl border border-gray-200 py-2.5 px-4 text-brand-dark placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-primary sm:text-sm" %>
         </div>
         <%= f.submit "Create Key", class: "rounded-full bg-primary px-4 py-2.5 text-sm font-semibold text-white hover:bg-primary-hover transition-colors cursor-pointer" %>
       <% end %>
@@ -133,7 +125,7 @@
         <h3 class="text-base font-semibold leading-6 text-brand-dark">Browser Extension</h3>
         <p class="text-sm text-gray-500 mt-1">Manage connected browser extension devices</p>
       </div>
-      <a href="https://chrome.google.com/webstore/detail/tariffik" target="_blank" class="inline-flex items-center rounded-full bg-white px-4 py-2.5 text-sm font-semibold text-brand-dark border border-gray-200 hover:bg-gray-50 transition-colors">
+      <a href="https://chromewebstore.google.com/detail/tariffik-commodity-code-l/gkjpgbgongkgdjfapjclandjhglnpmpn" target="_blank" class="inline-flex items-center rounded-full bg-white px-4 py-2.5 text-sm font-semibold text-brand-dark border border-gray-200 hover:bg-gray-50 transition-colors">
         <svg class="mr-2 size-5" viewBox="0 0 24 24" fill="currentColor">
           <path d="M12 0C5.373 0 0 5.373 0 12s5.373 12 12 12 12-5.373 12-12S18.627 0 12 0zm0 4.8a7.2 7.2 0 110 14.4 7.2 7.2 0 010-14.4z"/>
           <circle cx="12" cy="12" r="3.6"/>

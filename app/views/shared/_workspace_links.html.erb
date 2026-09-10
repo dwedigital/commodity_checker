@@ -1,0 +1,3 @@
+<% workspace_navigation.each do |label, path, active| %>
+  <%= link_to label, path, class: "tf-workspace-link", aria: { current: active ? "page" : nil } %>
+<% end %>

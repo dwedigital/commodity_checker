@@ -1,168 +1,117 @@
-<div class="md:flex md:items-center md:justify-between mb-8">
-  <div class="min-w-0 flex-1">
-    <nav class="flex mb-4" aria-label="Breadcrumb">
-      <ol role="list" class="flex items-center space-x-2">
-        <li>
-          <%= link_to "Orders", orders_path, class: "text-sm font-medium text-gray-500 hover:text-brand-dark transition-colors" %>
-        </li>
-        <li class="flex items-center">
-          <svg class="size-5 shrink-0 text-gray-400" viewBox="0 0 20 20" fill="currentColor">
-            <path fill-rule="evenodd" d="M8.22 5.22a.75.75 0 0 1 1.06 0l4.25 4.25a.75.75 0 0 1 0 1.06l-4.25 4.25a.75.75 0 0 1-1.06-1.06L11.94 10 8.22 6.28a.75.75 0 0 1 0-1.06Z" clip-rule="evenodd" />
-          </svg>
-          <span class="ml-2 text-sm font-medium text-gray-500"><%= @order.retailer_name || "Order" %></span>
-        </li>
-      </ol>
-    </nav>
-    <h2 class="text-2xl font-bold leading-7 text-brand-dark sm:truncate sm:text-3xl sm:tracking-tight pb-2">
-      <%= @order.retailer_name || "Unknown retailer" %>
-    </h2>
-    <p class="mt-1 text-sm text-gray-500"><%= @order.order_reference || "No reference" %></p>
-  </div>
-  <div class="mt-4 flex md:ml-4 md:mt-0">
-    <% case @order.status %>
-    <% when "pending" %>
-      <span class="inline-flex items-center rounded-full bg-highlight px-3 py-1 text-sm font-medium text-brand-dark">Pending</span>
-    <% when "in_transit" %>
-      <span class="inline-flex items-center rounded-full bg-brand-mint/50 px-3 py-1 text-sm font-medium text-brand-dark">In Transit</span>
-    <% when "delivered" %>
-      <span class="inline-flex items-center rounded-full bg-brand-mint px-3 py-1 text-sm font-medium text-brand-dark">Delivered</span>
-    <% end %>
-  </div>
-</div>
+<%= render "shared/page_header",
+      breadcrumbs: [ [ "Orders", orders_path ], [ @order.retailer_name.presence || "Order", nil ] ],
+      title: @order.retailer_name.presence || "Unknown retailer",
+      description: @order.order_reference.presence || "No reference",
+      actions: order_status_badge(@order) %>
 
-<div class="grid grid-cols-1 gap-6 lg:grid-cols-3">
-  <!-- Order Items -->
-  <div class="lg:col-span-2">
-    <div class="bg-white rounded-2xl border border-gray-200 overflow-hidden">
-      <div class="px-5 py-4 border-b border-gray-200">
-        <h3 class="text-base font-semibold leading-6 text-brand-dark">Items & Commodity Codes</h3>
+<div class="tf-detail-grid">
+  <div>
+    <section class="tf-panel">
+      <div class="tf-panel-heading">
+        <div>
+          <p class="tf-eyebrow">IN THIS PARCEL</p>
+          <h2>Items and codes</h2>
+        </div>
       </div>
-      <ul role="list" class="divide-y divide-gray-100">
-        <% @order.order_items.each do |item| %>
-          <li class="px-5 py-4">
-            <div class="flex items-start gap-4">
-              <% if item.image_url.present? %>
-                <div class="shrink-0">
-                  <img src="<%= item.image_url %>" alt="<%= item.description %>" class="size-16 rounded-xl object-cover bg-gray-100 border border-gray-100" loading="lazy">
+      <% if @order.order_items.any? %>
+        <ul class="tf-item-list">
+          <% @order.order_items.each do |item| %>
+            <li>
+              <div class="tf-item-head">
+                <% if item.image_url.present? %>
+                  <img src="<%= item.image_url %>" alt="" loading="lazy">
+                <% end %>
+                <div>
+                  <strong><%= item.description %></strong>
+                  <% if item.quantity && item.quantity > 1 %>
+                    <p>Quantity: <%= item.quantity %></p>
+                  <% end %>
+                  <% if item.product_url.present? %>
+                    <a href="<%= item.product_url %>" target="_blank" rel="noopener" class="tf-text-link">View product page ↗</a>
+                  <% end %>
                 </div>
-              <% end %>
-              <div class="flex-1 min-w-0">
-                <p class="text-sm font-semibold text-brand-dark"><%= item.description %></p>
-                <% if item.quantity && item.quantity > 1 %>
-                  <p class="text-sm text-gray-500">Quantity: <%= item.quantity %></p>
-                <% end %>
-                <% if item.product_url.present? %>
-                  <a href="<%= item.product_url %>" target="_blank" rel="noopener" class="text-xs text-primary hover:text-primary-hover transition-colors">View product page</a>
-                <% end %>
               </div>
-            </div>
 
-            <div class="mt-4">
-              <% if item.commodity_code_confirmed? %>
-                <div class="flex items-center">
-                  <span class="inline-flex items-center rounded-full bg-brand-mint px-3 py-1 text-sm font-medium text-brand-dark">
-                    <svg class="mr-1.5 size-4" viewBox="0 0 20 20" fill="currentColor">
-                      <path fill-rule="evenodd" d="M16.704 4.153a.75.75 0 01.143 1.052l-8 10.5a.75.75 0 01-1.127.075l-4.5-4.5a.75.75 0 011.06-1.06l3.894 3.893 7.48-9.817a.75.75 0 011.05-.143z" clip-rule="evenodd" />
-                    </svg>
-                    <%= item.confirmed_commodity_code %>
-                  </span>
-                  <span class="ml-2 text-sm text-gray-500">Confirmed</span>
-                </div>
-              <% elsif item.suggested_commodity_code.present? %>
-                <div class="rounded-xl bg-highlight/50 border border-highlight p-4">
-                  <div class="flex items-start">
-                    <div class="shrink-0">
-                      <div class="inline-flex items-center justify-center rounded-lg bg-brand-orange size-8">
-                        <svg class="size-4 text-white" viewBox="0 0 20 20" fill="currentColor">
-                          <path fill-rule="evenodd" d="M8.485 2.495c.673-1.167 2.357-1.167 3.03 0l6.28 10.875c.673 1.167-.17 2.625-1.516 2.625H3.72c-1.347 0-2.189-1.458-1.515-2.625L8.485 2.495zM10 5a.75.75 0 01.75.75v3.5a.75.75 0 01-1.5 0v-3.5A.75.75 0 0110 5zm0 9a1 1 0 100-2 1 1 0 000 2z" clip-rule="evenodd" />
-                        </svg>
-                      </div>
-                    </div>
-                    <div class="ml-3 flex-1">
-                      <h3 class="text-sm font-semibold text-brand-dark">Suggested code: <%= item.suggested_commodity_code %></h3>
-                      <% if item.commodity_code_confidence.present? %>
-                        <p class="mt-1 text-sm text-gray-600">Confidence: <%= number_to_percentage(item.commodity_code_confidence * 100, precision: 0) %></p>
-                      <% end %>
-                      <% if item.llm_reasoning.present? %>
-                        <p class="mt-1 text-sm text-gray-600"><%= item.llm_reasoning %></p>
-                      <% end %>
-                      <div class="mt-3">
-                        <%= button_to "Confirm this code", confirm_commodity_code_order_path(@order, order_item_id: item.id, commodity_code: item.suggested_commodity_code), method: :post, class: "inline-flex items-center rounded-full bg-brand-dark px-4 py-2 text-sm font-semibold text-white hover:bg-brand-dark/90 transition-colors" %>
-                      </div>
-                    </div>
+              <% if item.display_commodity_code.present? %>
+                <div class="tf-item-code">
+                  <div class="tf-item-code-top">
+                    <span class="tf-eyebrow">COMMODITY CODE</span>
+                    <% if item.commodity_code_confirmed? %>
+                      <span class="tf-badge tf-badge-success">✓ Confirmed</span>
+                    <% else %>
+                      <span class="tf-badge tf-badge-neutral">Suggested</span>
+                    <% end %>
                   </div>
+                  <p class="tf-code" aria-hidden="true"><%= commodity_code_display(item.display_commodity_code) %></p>
+                  <div class="tf-result-meta">
+                    <span>Code <strong><%= item.display_commodity_code %></strong></span>
+                    <% if !item.commodity_code_confirmed? && item.commodity_code_confidence.present? %>
+                      <span class="tf-confidence">
+                        <span class="tf-confidence-bar"><span style="width: <%= (item.commodity_code_confidence * 100).clamp(0, 100) %>%"></span></span>
+                        <%= number_to_percentage(item.commodity_code_confidence * 100, precision: 0) %> confidence
+                      </span>
+                    <% end %>
+                  </div>
+                  <% if !item.commodity_code_confirmed? && item.llm_reasoning.present? %>
+                    <p class="tf-result-reasoning"><%= item.llm_reasoning %></p>
+                  <% end %>
+                  <% unless item.commodity_code_confirmed? %>
+                    <%= button_to "Confirm this code", confirm_commodity_code_order_path(@order, order_item_id: item.id, commodity_code: item.suggested_commodity_code), method: :post, class: "tf-button tf-button-dark" %>
+                  <% end %>
                 </div>
               <% else %>
-                <span class="inline-flex items-center rounded-full bg-gray-100 px-3 py-1 text-sm font-medium text-gray-600">
-                  Awaiting classification
-                </span>
+                <p class="tf-item-code tf-code-empty">Awaiting classification</p>
               <% end %>
-            </div>
-          </li>
-        <% end %>
-      </ul>
-    </div>
+            </li>
+          <% end %>
+        </ul>
+      <% else %>
+        <div class="tf-empty-state"><span aria-hidden="true">#</span><h3>No items yet.</h3><p>Look up a product, then add it to this order from its lookup page.</p><%= link_to "Find a code ↗", new_product_lookup_path, class: "tf-button tf-button-outline" %></div>
+      <% end %>
+    </section>
   </div>
 
-  <!-- Sidebar: Delivery Info & Tracking -->
-  <div class="lg:col-span-1 space-y-6">
-    <!-- Delivery Info -->
-    <div class="bg-white rounded-2xl border border-gray-200 overflow-hidden">
-      <div class="px-5 py-4 border-b border-gray-200">
-        <h3 class="text-base font-semibold leading-6 text-brand-dark">Delivery Information</h3>
+  <div>
+    <section class="tf-panel">
+      <div class="tf-panel-heading">
+        <div>
+          <p class="tf-eyebrow">ON ITS WAY</p>
+          <h2>Delivery</h2>
+        </div>
       </div>
-      <div class="px-5 py-4">
-        <dl class="space-y-4">
-          <% if @order.estimated_delivery.present? %>
-            <div>
-              <dt class="text-sm font-medium text-gray-500">Expected delivery</dt>
-              <dd class="mt-1 text-sm text-brand-dark"><%= @order.estimated_delivery.strftime("%A, %d %B %Y") %></dd>
-            </div>
-          <% end %>
-          <div>
-            <dt class="text-sm font-medium text-gray-500">Created</dt>
-            <dd class="mt-1 text-sm text-brand-dark"><%= @order.created_at.strftime("%d %b %Y at %H:%M") %></dd>
-          </div>
-        </dl>
-      </div>
-    </div>
+      <dl class="tf-panel-body tf-detail-list">
+        <% if @order.estimated_delivery.present? %>
+          <div><dt>Expected delivery</dt><dd><%= @order.estimated_delivery.strftime("%A, %-d %B %Y") %></dd></div>
+        <% end %>
+        <div><dt>Added</dt><dd><%= @order.created_at.strftime("%-d %b %Y at %H:%M") %></dd></div>
+      </dl>
+    </section>
 
-    <!-- Tracking Events -->
     <% if @order.tracking_events.any? %>
-      <div class="bg-white rounded-2xl border border-gray-200 overflow-hidden">
-        <div class="px-5 py-4 border-b border-gray-200 flex items-center justify-between">
-          <h3 class="text-base font-semibold leading-6 text-brand-dark">Tracking</h3>
-          <%= button_to "Refresh", refresh_tracking_order_path(@order), method: :post, class: "inline-flex items-center rounded-full bg-white px-3 py-1.5 text-sm font-semibold text-brand-dark border border-gray-200 hover:bg-gray-50 transition-colors" %>
+      <section class="tf-panel">
+        <div class="tf-panel-heading">
+          <div>
+            <p class="tf-eyebrow">CARRIER UPDATES</p>
+            <h2>Tracking</h2>
+          </div>
+          <%= button_to "Refresh", refresh_tracking_order_path(@order), method: :post, class: "tf-button tf-button-outline" %>
         </div>
-        <div class="px-5 py-4">
+        <ul class="tf-panel-body tf-tracking-list">
           <% @order.tracking_events.order(event_timestamp: :desc).each do |event| %>
-            <div class="mb-4 last:mb-0">
-              <div class="flex items-center justify-between mb-2">
-                <span class="inline-flex items-center rounded-full bg-brand-dark px-2 py-0.5 text-xs font-medium text-white">
-                  <%= event.carrier&.titleize || "Unknown carrier" %>
-                </span>
-                <% if event.event_timestamp %>
-                  <span class="text-xs text-gray-500"><%= event.event_timestamp.strftime("%d %b %H:%M") %></span>
-                <% end %>
+            <li>
+              <div class="tf-item-code-top">
+                <span class="tf-badge tf-badge-muted"><%= event.carrier&.titleize || "Unknown carrier" %></span>
+                <% if event.event_timestamp %><span><%= event.event_timestamp.strftime("%-d %b %H:%M") %></span><% end %>
               </div>
-
-              <p class="text-sm font-medium text-brand-dark"><%= event.status %></p>
-              <% if event.location.present? %>
-                <p class="text-sm text-gray-500"><%= event.location %></p>
-              <% end %>
-
+              <strong><%= event.status %></strong>
+              <% if event.location.present? %><p><%= event.location %></p><% end %>
               <% if event.tracking_url.present? %>
-                <a href="<%= event.tracking_url %>" target="_blank" rel="noopener" class="mt-2 inline-flex items-center text-sm text-primary hover:text-primary-hover transition-colors">
-                  <svg class="mr-1 size-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
-                  </svg>
-                  Track on carrier site
-                </a>
+                <a href="<%= event.tracking_url %>" target="_blank" rel="noopener" class="tf-text-link">Track on carrier site ↗</a>
               <% end %>
-            </div>
+            </li>
           <% end %>
-        </div>
-      </div>
+        </ul>
+      </section>
     <% end %>
   </div>
 </div>
