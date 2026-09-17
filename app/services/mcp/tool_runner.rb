@@ -44,6 +44,8 @@ module Mcp
       return error("invalid_argument", "url is required") if url.blank?
       return error("invalid_argument", "url must be a valid http or https URL") unless valid_url?(url)
 
+      return allowance_error if out_of_lookups?
+
       result = commodity_service.suggest_from_url(url)
       return error("lookup_failed", result[:error], url: url, scraped_product: result[:scraped_product]) if result[:error]
 
@@ -53,6 +55,8 @@ module Mcp
     def lookup_from_description(args)
       description = args[:description].to_s.strip
       return error("invalid_argument", "description is required") if description.blank?
+
+      return allowance_error if out_of_lookups?
 
       result = commodity_service.suggest_from_description(description)
       return error("lookup_failed", result[:error], description: description) if result[:error]
@@ -176,6 +180,23 @@ module Mcp
         confirmed: lookup.commodity_code_confirmed?,
         confidence: lookup.commodity_code_confidence&.to_f
       }.compact
+    end
+
+    # A lookup counts the same wherever it comes from — the website, the
+    # extension, or an agent over MCP — so one monthly allowance covers them all.
+    # Searching the tariff and reading saved lookups are not lookups and are not
+    # metered.
+    def out_of_lookups?
+      !user.can_perform_lookup?
+    end
+
+    def allowance_error
+      error("monthly_limit_reached",
+            "This account has used its #{User::FREE_MONTHLY_LOOKUP_LIMIT} lookups for this month. " \
+            "The allowance is shared across the website, the browser extension and MCP, and resets " \
+            "at the start of next month.",
+            lookups_this_month: user.lookups_this_month,
+            lookups_remaining: 0)
     end
 
     def save?(args)

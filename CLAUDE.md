@@ -238,8 +238,13 @@ POST /mcp (no token) ──► 401 + WWW-Authenticate: Bearer resource_metadata=
 
 Tokens are audience-bound (RFC 8707): `resource` rides from the authorize request
 onto the grant and the token via Doorkeeper's `custom_access_token_attributes`,
-and `/mcp` refuses a token issued for anything else. MCP access requires a
-Starter subscription, enforced in the controller rather than by the credential.
+and `/mcp` refuses a token issued for anything else.
+
+**MCP is part of the free account.** What it is not is a way around the monthly
+allowance: `lookup_from_url` and `lookup_from_description` check
+`User#can_perform_lookup?`, so a lookup counts the same whether it came from the
+website, the browser extension or an agent. `search_codes`, `get_code` and
+`list_recent_lookups` are reads and are not metered.
 
 **Gotcha:** the consent forms must carry `data: { turbo: false }`. Turbo cannot
 follow the cross-origin redirect back to a client's callback, so with Turbo
@@ -586,6 +591,27 @@ The system uses AI to classify incoming emails and extract product information:
 - Product images are extracted from email HTML
 - Filters out logos, icons, tracking pixels, social buttons
 - Falls back to Tavily web search if no images in email
+
+## Tiers
+
+| | Free account | Business (starter/professional/enterprise) |
+|---|---|---|
+| Lookups | 5 a month, shared across web, extension and MCP | More; `can_perform_lookup?` is unlimited above free |
+| MCP | Yes | Yes |
+| Email forwarding, photo lookup, history, CSV | Yes | Yes |
+| API keys and batch | No | Yes (`has_api_access?`) |
+
+"Business" is a display name only. The `subscription_tier` enum is still
+`free/starter/professional/enterprise`, so nothing had to be migrated.
+
+Signed-out visitors get **one** demo lookup on the homepage
+(`PagesController::GUEST_LOOKUP_LIMIT`). That is deliberately not a tier and is
+not on the pricing page.
+
+**Known inconsistency:** `User::EXTENSION_LOOKUP_LIMITS` still caps `starter` at
+100 extension lookups a month while `can_perform_lookup?` gives paid accounts
+unlimited web and MCP lookups. Worth reconciling before the pricing page ever
+claims a number.
 
 ## Database Schema Summary
 

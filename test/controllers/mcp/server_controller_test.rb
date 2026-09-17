@@ -95,13 +95,61 @@ class Mcp::ServerControllerTest < ActionDispatch::IntegrationTest
     assert_response :forbidden
   end
 
-  test "a free account cannot use MCP even with a valid token" do
+  test "a free account can use MCP" do
+    # MCP is part of the free account now; the paid tier is about volume and API
+    # access, not about whether an agent can connect at all.
     token = create_access_token(user: users(:free_user))
 
     mcp_post rpc("tools/list"), token: token
 
-    assert_response :forbidden
-    assert_match(/Starter subscription/i, json_response[:error_description])
+    assert_response :success
+    assert_equal 5, json_response[:result][:tools].size
+  end
+
+  test "a free account at its monthly cap is refused a lookup, with a reason" do
+    # Without this, giving free accounts MCP would make the monthly allowance
+    # meaningless: an agent could call lookup_from_url all day.
+    free_user = users(:free_user)
+    User::FREE_MONTHLY_LOOKUP_LIMIT.times do |i|
+      free_user.product_lookups.create!(url: "https://example.com/#{i}", lookup_type: :url)
+    end
+    token = create_access_token(user: free_user)
+
+    mcp_post tool_call("lookup_from_description", { "description" => "Cotton t-shirt" }), token: token
+
+    assert_response :success
+    assert_equal true, json_response[:result][:isError]
+    payload = tool_payload(json_response[:result])
+    assert_equal "monthly_limit_reached", payload[:error]
+    assert_match(/website, the browser extension and MCP/i, payload[:message])
+  end
+
+  test "reading is still allowed at the monthly cap" do
+    # Searching the tariff and reading saved lookups are not lookups.
+    free_user = users(:free_user)
+    User::FREE_MONTHLY_LOOKUP_LIMIT.times do |i|
+      free_user.product_lookups.create!(url: "https://example.com/#{i}", lookup_type: :url)
+    end
+    token = create_access_token(user: free_user)
+    stub_tariff_api_search([ { code: "6109100010", description: "T-shirts, cotton", score: 95 } ])
+
+    mcp_post tool_call("search_codes", { "query" => "cotton" }), token: token
+
+    assert_equal false, json_response[:result][:isError]
+  end
+
+  test "a paid account is not capped" do
+    # users(:one) is starter, and can_perform_lookup? is unlimited above free.
+    User::FREE_MONTHLY_LOOKUP_LIMIT.times do |i|
+      @user.product_lookups.create!(url: "https://example.com/paid#{i}", lookup_type: :url)
+    end
+    stub_tariff_api_search([ { code: "6109100010", description: "T-shirts, cotton", score: 95 } ])
+    stub_tariff_api_commodity("6109100010", { code: "6109100010", description: "T-shirts, of cotton", duty_rate: "12%", notes: nil })
+    stub_commodity_suggestion(code: "6109100010", confidence: 0.9, reasoning: "Knitted cotton t-shirt")
+
+    mcp_post tool_call("lookup_from_description", { "description" => "Cotton t-shirt" }), token: @token
+
+    assert_equal false, json_response[:result][:isError]
   end
 
   # Protocol

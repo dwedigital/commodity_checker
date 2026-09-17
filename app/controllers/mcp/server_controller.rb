@@ -65,14 +65,6 @@ module Mcp
       return unauthorized!("invalid_token", "The access token was not issued for this MCP server") unless audience_matches?(token)
       return unauthorized!("invalid_token", "The access token has no user attached") unless resource_owner(token)
 
-      # MCP used to require an API key, which requires a Starter subscription.
-      # OAuth would otherwise hand the same tools to every free account, so the
-      # entitlement is enforced here instead of by the credential.
-      unless resource_owner(token).has_api_access?
-        return forbidden!("insufficient_scope",
-                          "MCP access requires a Starter subscription or higher")
-      end
-
       @access_token = token
     end
 
