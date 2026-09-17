@@ -1,0 +1,10 @@
+<% if resource.errors.any? %>
+  <div class="tf-form-errors" role="alert">
+    <p><%= resource.errors.count == 1 ? "There is a problem with this form" : "There are #{resource.errors.count} problems with this form" %></p>
+    <ul>
+      <% resource.errors.full_messages.each do |message| %>
+        <li><%= message %></li>
+      <% end %>
+    </ul>
+  </div>
+<% end %>

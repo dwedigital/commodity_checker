@@ -1,6 +1,9 @@
 # Google-Only Login Implementation
 
 **Date:** 2026-09-17
+**Status:** partly superseded on 2026-09-17 by `password-and-google-auth.md`,
+which restored email and password sign-in alongside Google. The Google flow,
+account linking and verified-email rules below still apply.
 **Feature:** Sign in with Google replaces email and password as the only way into Tariffik
 
 ## Overview

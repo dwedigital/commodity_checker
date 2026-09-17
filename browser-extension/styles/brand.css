@@ -1,0 +1,45 @@
+/* Tariffik brand tokens for extension pages. Mirrors the website's tf-* refresh (app/assets/stylesheets/tariffik.css). */
+@font-face { font-family: 'Space Grotesk'; font-style: normal; font-weight: 500 700; font-display: swap; src: url('../fonts/space-grotesk-latin.woff2') format('woff2'); }
+@font-face { font-family: 'Plus Jakarta Sans'; font-style: normal; font-weight: 400 600; font-display: swap; src: url('../fonts/plus-jakarta-sans-latin.woff2') format('woff2'); }
+
+:root {
+  --tf-paper: #f8f7f2;
+  --tf-ink: #292725;
+  --tf-muted: #67645e;
+  --tf-line: #dddcd4;
+  --tf-red: #d93120;
+  --tf-red-hover: #b62517;
+  --tf-sage: #526749;
+  --tf-sand: #f4efd8;
+  --font-heading: 'Space Grotesk', sans-serif;
+  --font-body: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, sans-serif;
+  --font-mono: ui-monospace, SFMono-Regular, Menlo, monospace;
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body { font-family: var(--font-body); font-size: 13px; line-height: 1.6; color: var(--tf-ink); background: var(--tf-paper); -webkit-font-smoothing: antialiased; }
+:focus-visible { outline: 3px solid var(--tf-red); outline-offset: 3px; }
+.hidden { display: none !important; }
+
+.tf-wordmark { display: inline-flex; align-items: center; font: 700 22px/1 var(--font-heading); letter-spacing: -1.2px; color: var(--tf-ink); text-decoration: none; }
+.tf-logo-mark { display: inline-grid; place-items: center; width: 22px; height: 22px; margin-right: 8px; border-radius: 4px; background: var(--tf-red); color: #fff; font: 21px/1 Arial, sans-serif; letter-spacing: 0; }
+.tf-wordmark-period { color: var(--tf-red); }
+.tf-eyebrow { font: 500 9px/1.6 var(--font-mono); letter-spacing: 1.4px; text-transform: uppercase; color: var(--tf-muted); }
+
+.btn { display: inline-flex; align-items: center; justify-content: center; gap: 10px; width: 100%; padding: 13px 18px; border: 1px solid transparent; border-radius: 6px; font: 600 12px/1.4 var(--font-body); text-decoration: none; cursor: pointer; transition: background .15s, color .15s; }
+.btn:disabled { opacity: .65; cursor: wait; }
+.btn-primary { background: var(--tf-red); color: #fff; }
+.btn-primary:hover:not(:disabled) { background: var(--tf-red-hover); }
+.btn-dark { background: var(--tf-ink); color: #fff; }
+.btn-dark:hover:not(:disabled) { background: #46403a; }
+.btn-outline { background: transparent; border-color: #b9b6ad; color: var(--tf-ink); }
+.btn-outline:hover:not(:disabled) { background: #fff; }
+/* Continue with Google, matching the website's .tf-google-button. */
+.btn-google { background: #fff; border-color: #b9b6ad; color: var(--tf-ink); font-size: 13px; }
+.btn-google:hover:not(:disabled) { background: var(--tf-paper); }
+.google-mark { width: 16px; height: 16px; flex: none; }
+.text-link { font-size: 11px; font-weight: 600; color: var(--tf-ink); text-decoration: underline; text-underline-offset: 4px; cursor: pointer; background: none; border: 0; }
+.text-link:hover { color: var(--tf-red); }
+
+@keyframes spin { to { transform: rotate(360deg); } }
+@media (prefers-reduced-motion: reduce) { * { transition: none !important; } }

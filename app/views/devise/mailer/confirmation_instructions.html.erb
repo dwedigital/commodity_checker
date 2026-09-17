@@ -1,0 +1,13 @@
+<p style="<%= email_eyebrow_style %>">CONFIRM YOUR EMAIL</p>
+<h1 style="<%= email_heading_style %>">One more step</h1>
+
+<p style="<%= email_text_style %>">Thanks for signing up to Tariffik. Confirm <strong><%= @email %></strong> and your account is ready to use.</p>
+
+<p style="margin:22px 0 24px;"><%= email_button "Confirm my email address", confirmation_url(@resource, confirmation_token: @token) %></p>
+
+<hr style="<%= email_rule_style %>">
+
+<p style="<%= email_muted_style %>">If the button does not work, paste this into your browser:<br>
+<a href="<%= confirmation_url(@resource, confirmation_token: @token) %>" style="<%= email_link_style %>"><%= confirmation_url(@resource, confirmation_token: @token) %></a></p>
+
+<p style="<%= email_muted_style %>">If you did not sign up to Tariffik, ignore this email and nothing will happen.</p>

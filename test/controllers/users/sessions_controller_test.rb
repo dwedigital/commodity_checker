@@ -7,13 +7,17 @@ class Users::SessionsControllerTest < ActionDispatch::IntegrationTest
   CHROME_ID = "gkjpgbgongkgdjfapjclandjhglnpmpn".freeze
   EXTENSION_CALLBACK = "chrome-extension://#{CHROME_ID}/callback/callback.html".freeze
 
-  test "the sign in page offers Google and nothing else" do
+  test "the sign in page offers both Google and an email and password" do
     get new_user_session_path
 
     assert_response :success
     assert_select "form[action=?]", "/users/auth/google_oauth2"
-    assert_select "input[type=password]", count: 0
-    assert_select "input[type=email]", count: 0
+    assert_select "form[action=?]", "/users/sign_in" do
+      assert_select "input[type=email]"
+      assert_select "input[type=password]"
+    end
+    assert_select "a[href=?]", new_user_password_path
+    assert_select "a[href^=?]", new_user_registration_path
   end
 
   # The account page and the navbar both show who you are signed in as, so they
@@ -58,16 +62,10 @@ class Users::SessionsControllerTest < ActionDispatch::IntegrationTest
     assert_redirected_to new_user_session_path
   end
 
-  test "the old password sign-in endpoint no longer exists" do
-    post "/users/sign_in", params: { user: { email: users(:one).email, password: "whatever" } }
-
-    assert_response :not_found
-  end
-
-  test "the old registration and password-reset pages no longer exist" do
+  test "the password, registration and confirmation pages are available" do
     [ "/users/sign_up", "/users/password/new", "/users/confirmation/new" ].each do |path|
       get path
-      assert_response :not_found, "#{path} should be gone"
+      assert_response :success, "#{path} should be reachable"
     end
   end
 
@@ -97,6 +95,25 @@ class Users::SessionsControllerTest < ActionDispatch::IntegrationTest
 
     sign_in_with_google(google_auth_hash(email: users(:one).email, uid: "google-uid-one"))
     assert_redirected_to connect
+  ensure
+    ENV["CHROME_EXTENSION_ID"] = original if original
+  end
+
+  # Signup attribution used to ride on a ?source= param, which Devise's redirect
+  # to the sign-in page cannot carry. The extension stamps the session instead,
+  # and Users::OmniauthCallbacksController reads it when it creates the user.
+  #
+  # The resulting user_registered event is not asserted here: ahoy.track is a
+  # no-op under the integration test rig (Ahoy.track_bots = false, and the rig
+  # sends a bot UA), so the assertion would only ever prove the rig. The session
+  # stamp is the part this app controls.
+  test "arriving from the extension stamps the signup source" do
+    original = ENV.delete("CHROME_EXTENSION_ID")
+
+    get extension_auth_path(extension_id: "ext_abc", redirect_uri: EXTENSION_CALLBACK)
+
+    assert_redirected_to new_user_session_path
+    assert_equal "extension", session[:signup_source]
   ensure
     ENV["CHROME_EXTENSION_ID"] = original if original
   end

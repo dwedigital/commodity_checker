@@ -179,10 +179,25 @@ CSP blocks inline JavaScript. Use Stimulus controllers instead:
 
 ### Authentication
 
-Sign in with Google is the only way in. There is no password anywhere in the
-app: `:database_authenticatable`, `:registerable`, `:recoverable`,
-`:confirmable` and `:validatable` are all removed from the `User` model, which
-carries `:rememberable` and `:omniauthable` only.
+Two ways in: an email and password, or Sign in with Google. A password signup
+must confirm its address first (`allow_unconfirmed_access_for` is `0.days`, so
+the verification step is real); a Google signup is confirmed on creation because
+Google has already verified the address.
+
+Two rules worth knowing before changing anything here:
+- **Password reset refuses a Google-only account** and points at the Google
+  button, so holding the inbox cannot create a password that walks past Google's
+  own protections.
+- **A signup cannot claim an address that already signs in with Google.** That
+  person adds a password from account settings instead, while signed in.
+
+`User#password_required?` and `#confirmation_required?` are overridden, because
+`:validatable` wants a password from every new record and `:confirmable` would
+otherwise hold a Google signup for an email it never needs. Google updates call
+`skip_reconfirmation!`, or `:reconfirmable` parks a changed Google address in
+`unconfirmed_email` and leaves the account on the old one.
+
+Full detail in `claude/implementations/password-and-google-auth.md`.
 
 ```
 /users/sign_in  (users/sessions#new, Google button only)
@@ -198,12 +213,13 @@ Google consent  ──►  GET /users/auth/google_oauth2/callback
                     └─ else creates the user             (signup)
 ```
 
-Signing in and signing up are the same action, so every "create an account" CTA
-points at `new_user_session_path(source: "...")`; the source is carried through
-the session and recorded on the `user_registered` event.
+Signup CTAs point at `new_user_registration_path(source: "...")`; the source is
+carried through the session and recorded on the `user_registered` event, because
+a `?source=` param cannot survive the Google round trip.
 
-Devise only generates session routes for `:database_authenticatable`, so sign in
-and sign out are declared by hand in `config/routes.rb`.
+**Gotcha:** the sign-in page is `app/views/users/sessions/new.html.erb`, not
+`devise/sessions/new` — `Users::SessionsController` comes first in the view
+lookup, so a file at the Devise path is silently ignored.
 
 ### MCP authorization (OAuth 2.1)
 
@@ -875,7 +891,8 @@ bin/rails analytics:clear
 
 Created by `db:seed`:
 - Email: `dave@dwedigital.com`
-- No password — sign in with Google using that address and `db:seed`'s record is matched on email.
+- Password: generated and printed by the seed. Set `SEED_ADMIN_PASSWORD` to choose your own.
+- Or sign in with Google using the same address.
 
 ## Admin Dashboards
 
