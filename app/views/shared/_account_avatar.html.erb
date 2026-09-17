@@ -1,0 +1,8 @@
+<%# The Google profile photo, falling back to an initial when Google gave us
+    none or the image fails to load. referrerpolicy keeps googleusercontent
+    serving the image. %>
+<% if user.avatar_url.present? %>
+  <img class="tf-account-avatar tf-account-avatar-photo" src="<%= user.avatar_url %>" alt="" aria-hidden="true" referrerpolicy="no-referrer" loading="lazy">
+<% else %>
+  <span class="tf-account-avatar" aria-hidden="true"><%= user.display_name.first.upcase %></span>
+<% end %>
