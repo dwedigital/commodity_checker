@@ -4,6 +4,10 @@ class ExtensionAuthController < ApplicationController
   CALLBACK_PATH = "/callback/callback.html".freeze
   CHROME_EXTENSION_ID_FORMAT = /\A[a-p]{32}\z/
 
+  # Ahead of authenticate_user!: a signed-out user is about to be sent through
+  # Google, and Users::SessionsController only sees a ?source= param when the
+  # link carried one. Anyone arriving here came from the extension.
+  before_action :remember_extension_signup_source, only: [ :authorize ]
   before_action :authenticate_user!, except: [ :callback ]
   before_action :validate_extension_id, only: [ :authorize, :create_code ]
   before_action :validate_redirect_uri, only: [ :authorize, :create_code ]
@@ -45,6 +49,12 @@ class ExtensionAuthController < ApplicationController
   end
 
   private
+
+  def remember_extension_signup_source
+    return if user_signed_in?
+
+    session[:signup_source] = "extension"
+  end
 
   def validate_extension_id
     @extension_id = params[:extension_id]

@@ -30,7 +30,6 @@ const elements = {
 };
 
 // Set dynamic URLs based on environment
-elements.signUpLink.href = `${SITE_BASE_URL}/users/sign_up`;
 elements.footerLink.href = SITE_BASE_URL;
 
 // State
@@ -91,11 +90,7 @@ async function init() {
     }
 
     // Show sign-in section if not authenticated (to encourage sign up)
-    if (!authStatus?.authenticated) {
-      elements.signInSection.classList.remove('hidden');
-    } else {
-      elements.signInSection.classList.add('hidden');
-    }
+    updateSignInVisibility();
 
     // Load local lookup history
     await loadHistory();
@@ -148,13 +143,19 @@ function updateUsageUI(data) {
     if (usage?.remaining === 0) {
       elements.lookupSection.classList.add('hidden');
       elements.noLookupsSection.classList.remove('hidden');
-
-      // Show sign in option if not authenticated
-      if (!authStatus?.authenticated) {
-        elements.signInSection.classList.remove('hidden');
-      }
+      updateSignInVisibility();
     }
   }
+}
+
+// Both panels now carry the same "Continue with Google" button, so showing them
+// together reads as a stutter. The limit panel says everything the sign-in panel
+// would, so it wins whenever it is up.
+function updateSignInVisibility() {
+  const limitShowing = !elements.noLookupsSection.classList.contains('hidden');
+  const wanted = !authStatus?.authenticated && !limitShowing;
+
+  elements.signInSection.classList.toggle('hidden', !wanted);
 }
 
 // Check if user has lookups remaining
@@ -178,7 +179,7 @@ function showProductInfo(product) {
   elements.productInfo.innerHTML = `
     <div class="title">${escapeHtml(title)}</div>
     <div class="url">${escapeHtml(hostname)}</div>
-    ${meta.length ? `<div class="meta">${meta.map(m => escapeHtml(m)).join(' | ')}</div>` : ''}
+    ${meta.length ? `<div class="meta">${meta.map(m => escapeHtml(m)).join(' · ')}</div>` : ''}
   `;
 
   elements.productSection.classList.remove('hidden');
@@ -221,7 +222,7 @@ function displayHistory() {
     .map(item => `
       <div class="history-item" data-code="${escapeHtml(item.code)}">
         <div class="title">${escapeHtml(item.title || 'Product lookup')}</div>
-        <div class="code">${escapeHtml(item.code)}</div>
+        <div class="code">${formatCode(item.code)}</div>
       </div>
     `)
     .join('');
@@ -232,9 +233,9 @@ function displayHistory() {
       const code = item.dataset.code;
       if (code) {
         navigator.clipboard.writeText(code).catch(console.error);
-        item.querySelector('.code').textContent = 'Copied!';
+        item.querySelector('.code').textContent = 'Copied';
         setTimeout(() => {
-          item.querySelector('.code').textContent = code;
+          item.querySelector('.code').innerHTML = formatCode(code);
         }, 1500);
       }
     });
@@ -373,9 +374,7 @@ async function performLookup() {
         // Payment required - out of lookups
         elements.lookupSection.classList.add('hidden');
         elements.noLookupsSection.classList.remove('hidden');
-        if (!authStatus?.authenticated) {
-          elements.signInSection.classList.remove('hidden');
-        }
+        updateSignInVisibility();
       } else {
         showError(result.message || 'Failed to look up commodity code');
       }
@@ -402,7 +401,7 @@ async function performLookup() {
 
     // Reset button state
     elements.lookupBtn.disabled = false;
-    elements.lookupBtn.querySelector('.btn-text').textContent = 'Look Up Commodity Code';
+    elements.lookupBtn.querySelector('.btn-text').textContent = 'Find my code';
     elements.lookupBtn.querySelector('.btn-spinner').classList.add('hidden');
   }
 }
@@ -417,29 +416,54 @@ function formatFetchMethod(method) {
   return methodLabels[method] || method;
 }
 
+// Split an HS code into heading / subheading / national digits ("6109 10 0010"),
+// matching commodity_code_display on the website. Output is digits only, so it's safe as HTML.
+function formatCode(code) {
+  const digits = String(code || '').replace(/\D/g, '');
+  if (digits.length < 6) return escapeHtml(code);
+  return `${digits.slice(0, 4)} <span>${digits.slice(4, 6)}</span>${digits.length > 6 ? ' ' + digits.slice(6) : ''}`;
+}
+
 // Show result
 function showResult(result) {
   const confidence = result.confidence || 0;
-  const confidenceClass = confidence >= 0.8 ? 'high' : confidence >= 0.5 ? 'medium' : 'low';
-  const confidenceText = confidence >= 0.8 ? 'High confidence' : confidence >= 0.5 ? 'Medium confidence' : 'Low confidence';
-  const commodityCode = result.commodity_code || 'N/A';
+  const percent = Math.max(0, Math.min(100, Math.round(confidence * 100)));
+  const commodityCode = result.commodity_code;
 
   // Build fetch method info if available
   let fetchInfo = '';
   const scrapedProduct = result.scraped_product;
   if (scrapedProduct?.fetched_via) {
-    fetchInfo = `<div class="fetch-info">Fetched via: ${escapeHtml(formatFetchMethod(scrapedProduct.fetched_via))}</div>`;
+    fetchInfo = `<div class="fetch-info">Fetched via ${escapeHtml(formatFetchMethod(scrapedProduct.fetched_via))}</div>`;
+  }
+
+  if (!commodityCode) {
+    elements.result.innerHTML = `
+      <div class="no-code">
+        <strong>No code found</strong>
+        <p>${escapeHtml(result.reasoning || 'Try describing the product in a little more detail.')}</p>
+      </div>
+    `;
+    elements.resultSection.classList.remove('hidden');
+    return;
   }
 
   elements.result.innerHTML = `
-    <div class="code">${escapeHtml(commodityCode)}</div>
-    <div class="confidence ${confidenceClass}">${confidenceText} (${Math.round(confidence * 100)}%)</div>
-    <div class="reasoning">${escapeHtml(result.reasoning || 'No additional details available')}</div>
-    ${result.category ? `<div class="category">Category: ${escapeHtml(result.category)}</div>` : ''}
+    <div class="result-top">
+      <span class="tf-eyebrow">Suggested code</span>
+      <span class="result-status ${confidence < 0.5 ? 'is-low' : ''}">${confidence < 0.5 ? 'Check carefully' : '✓ Suggested'}</span>
+    </div>
+    <div class="code" aria-hidden="true">${formatCode(commodityCode)}</div>
+    <div class="code-meta">
+      <span>Code <strong>${escapeHtml(commodityCode)}</strong></span>
+      <span class="confidence"><span class="confidence-bar"><span style="width: ${percent}%"></span></span>${percent}% confidence</span>
+    </div>
+    ${result.reasoning ? `<p class="reasoning">${escapeHtml(result.reasoning)}</p>` : ''}
+    ${result.category ? `<div class="category">${escapeHtml(result.category)}</div>` : ''}
     ${fetchInfo}
     <div class="actions">
-      <button class="btn btn-secondary" id="copyCodeBtn">Copy Code</button>
-      <a href="${SITE_BASE_URL}/dashboard/product_lookups" target="_blank" class="btn btn-secondary">View History</a>
+      <button class="btn btn-dark" id="copyCodeBtn">Copy code</button>
+      <a href="${SITE_BASE_URL}/dashboard/product_lookups" target="_blank" class="btn btn-outline">View history</a>
     </div>
   `;
 
@@ -459,7 +483,7 @@ async function copyCode(code) {
     const btn = document.getElementById('copyCodeBtn');
     if (btn) {
       const originalText = btn.textContent;
-      btn.textContent = 'Copied!';
+      btn.textContent = 'Copied';
       setTimeout(() => { btn.textContent = originalText; }, 1500);
     }
   } catch (e) {
@@ -473,12 +497,19 @@ function showError(message) {
   elements.errorSection.classList.remove('hidden');
 }
 
-// Sign in
+// Sign in, which is also sign up: Google is the only way into Tariffik, and
+// /extension/auth sends a signed-out visitor through it before asking them to
+// connect. Both panel buttons come here so a new account lands back with the
+// extension already connected, rather than signed in to the website only.
 async function signIn() {
-  if (authStatus?.authUrl) {
-    // Open auth URL in new tab - side panel stays open
-    chrome.tabs.create({ url: authStatus.authUrl });
+  if (!authStatus?.authUrl) {
+    // authUrl is built in the service worker; without it there is nowhere to go.
+    showError('Could not start sign-in. Please reopen the panel and try again.');
+    return;
   }
+
+  // Open in a new tab so the side panel stays put and can receive AUTH_COMPLETE.
+  chrome.tabs.create({ url: authStatus.authUrl });
 }
 
 // Sign out
@@ -499,6 +530,10 @@ function escapeHtml(text) {
 // Event listeners
 elements.lookupBtn.addEventListener('click', performLookup);
 elements.signInBtn.addEventListener('click', signIn);
+elements.signUpLink.addEventListener('click', (e) => {
+  e.preventDefault();
+  signIn();
+});
 elements.signOutLink.addEventListener('click', (e) => {
   e.preventDefault();
   signOut();

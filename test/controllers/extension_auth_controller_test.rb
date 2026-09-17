@@ -24,6 +24,33 @@ class ExtensionAuthControllerTest < ActionDispatch::IntegrationTest
     assert_select "input[type=hidden][name=redirect_uri][value=?]", CALLBACK
   end
 
+  # Google is the identity now, so the consent screen names the Google account
+  # rather than showing an email initial and nothing else.
+  test "consent screen names the Google account being connected" do
+    get extension_auth_path(extension_id: "ext_abc", redirect_uri: CALLBACK)
+
+    assert_response :success
+    assert_select ".tf-consent-account strong", text: @user.display_name
+    assert_select ".tf-consent-account span", text: @user.email
+  end
+
+  test "consent screen shows the Google profile photo when there is one" do
+    @user.update!(avatar_url: "https://lh3.googleusercontent.com/a/avatar")
+
+    get extension_auth_path(extension_id: "ext_abc", redirect_uri: CALLBACK)
+
+    assert_select "img.tf-account-avatar[src=?]", "https://lh3.googleusercontent.com/a/avatar"
+  end
+
+  test "consent screen falls back to an initial without a Google photo" do
+    @user.update!(avatar_url: nil)
+
+    get extension_auth_path(extension_id: "ext_abc", redirect_uri: CALLBACK)
+
+    assert_select "img.tf-account-avatar", count: 0
+    assert_select "span.tf-account-avatar", text: @user.display_name.first.upcase
+  end
+
   test "consent screen is refused when the code would be sent to another site" do
     [
       "https://evil.example/steal",
