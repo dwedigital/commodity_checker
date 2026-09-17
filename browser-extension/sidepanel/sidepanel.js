@@ -148,7 +148,7 @@ function updateUsageUI(data) {
   }
 }
 
-// Both panels now carry the same "Continue with Google" button, so showing them
+// Both panels now carry the same "Sign in to Tariffik" button, so showing them
 // together reads as a stutter. The limit panel says everything the sign-in panel
 // would, so it wins whenever it is up.
 function updateSignInVisibility() {
@@ -497,10 +497,11 @@ function showError(message) {
   elements.errorSection.classList.remove('hidden');
 }
 
-// Sign in, which is also sign up: Google is the only way into Tariffik, and
-// /extension/auth sends a signed-out visitor through it before asking them to
-// connect. Both panel buttons come here so a new account lands back with the
-// extension already connected, rather than signed in to the website only.
+// Sign in, which is also sign up. The button opens /extension/auth rather than
+// going to an identity provider itself, so whichever ways in Tariffik offers —
+// Google, or an email address and password — are whatever that page shows.
+// Both panel buttons come here so a new account lands back with the extension
+// already connected, rather than signed in to the website only.
 async function signIn() {
   if (!authStatus?.authUrl) {
     // authUrl is built in the service worker; without it there is nowhere to go.

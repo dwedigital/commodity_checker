@@ -34,10 +34,6 @@ body { font-family: var(--font-body); font-size: 13px; line-height: 1.6; color: 
 .btn-dark:hover:not(:disabled) { background: #46403a; }
 .btn-outline { background: transparent; border-color: #b9b6ad; color: var(--tf-ink); }
 .btn-outline:hover:not(:disabled) { background: #fff; }
-/* Continue with Google, matching the website's .tf-google-button. */
-.btn-google { background: #fff; border-color: #b9b6ad; color: var(--tf-ink); font-size: 13px; }
-.btn-google:hover:not(:disabled) { background: var(--tf-paper); }
-.google-mark { width: 16px; height: 16px; flex: none; }
 .text-link { font-size: 11px; font-weight: 600; color: var(--tf-ink); text-decoration: underline; text-underline-offset: 4px; cursor: pointer; background: none; border: 0; }
 .text-link:hover { color: var(--tf-red); }
 
