@@ -44,20 +44,24 @@ module Mcp
       return error("invalid_argument", "url is required") if url.blank?
       return error("invalid_argument", "url must be a valid http or https URL") unless valid_url?(url)
 
+      return allowance_error if out_of_lookups?
+
       result = commodity_service.suggest_from_url(url)
       return error("lookup_failed", result[:error], url: url, scraped_product: result[:scraped_product]) if result[:error]
 
-      suggestion(result, url: url, description: nil, save: save?(args))
+      suggestion(result, url: url, description: nil)
     end
 
     def lookup_from_description(args)
       description = args[:description].to_s.strip
       return error("invalid_argument", "description is required") if description.blank?
 
+      return allowance_error if out_of_lookups?
+
       result = commodity_service.suggest_from_description(description)
       return error("lookup_failed", result[:error], description: description) if result[:error]
 
-      suggestion(result, url: nil, description: description, save: save?(args))
+      suggestion(result, url: nil, description: description)
     end
 
     def search_codes(args)
@@ -118,8 +122,12 @@ module Mcp
     end
 
     # Shared shape for both lookup tools, so the model sees one result format.
-    def suggestion(result, url:, description:, save:)
-      saved = save ? save_lookup(result, url: url, description: description) : nil
+    #
+    # The lookup is always recorded. ProductLookup is what lookups_this_month
+    # counts, so letting a caller opt out of saving would let it opt out of the
+    # monthly allowance too.
+    def suggestion(result, url:, description:)
+      saved = save_lookup(result, url: url, description: description)
 
       {
         commodity_code: result[:commodity_code],
@@ -178,8 +186,21 @@ module Mcp
       }.compact
     end
 
-    def save?(args)
-      args.key?(:save) ? ActiveModel::Type::Boolean.new.cast(args[:save]) : true
+    # A lookup counts the same wherever it comes from — the website, the
+    # extension, or an agent over MCP — so one monthly allowance covers them all.
+    # Searching the tariff and reading saved lookups are not lookups and are not
+    # metered.
+    def out_of_lookups?
+      !user.can_perform_lookup?
+    end
+
+    def allowance_error
+      error("monthly_limit_reached",
+            "This account has used its #{User::FREE_MONTHLY_LOOKUP_LIMIT} lookups for this month. " \
+            "The allowance is shared across the website, the browser extension and MCP, and resets " \
+            "at the start of next month.",
+            lookups_this_month: user.lookups_this_month,
+            lookups_remaining: 0)
     end
 
     def clamp(value, default:, max:)

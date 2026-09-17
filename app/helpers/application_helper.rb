@@ -1,4 +1,10 @@
 module ApplicationHelper
+  # The MCP endpoint, as a client should be pointed at it. Built from the request
+  # so it is correct on localhost and on tariffik.com without configuration.
+  def mcp_url
+    "#{request.base_url}/mcp"
+  end
+
   def workspace_page?
     request.path.start_with?("/dashboard") || (devise_controller? && user_signed_in?)
   end

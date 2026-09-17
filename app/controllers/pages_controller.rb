@@ -1,5 +1,7 @@
 class PagesController < ApplicationController
-  GUEST_LOOKUP_LIMIT = 3
+  # One lookup without an account, to show what the thing does. Deliberately not
+  # a plan: the tiers start at a signed-in account.
+  GUEST_LOOKUP_LIMIT = 1
 
   before_action :set_guest_lookup_data, only: [ :home, :lookup ]
 

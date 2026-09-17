@@ -38,7 +38,9 @@ module Mcp
           This is the tool to use for a product link found in an order confirmation
           or shipping email. Takes several seconds because it fetches the page.
           Returns the code, a confidence score, the reasoning, the duty rate, and
-          what was scraped from the page so you can sanity-check the match.
+          what was scraped from the page so you can sanity-check the match. The
+          result is saved to the account, which is also how the monthly
+          allowance is counted.
         TEXT
         inputSchema: {
           type: "object",
@@ -46,11 +48,6 @@ module Mcp
             url: {
               type: "string",
               description: "Direct link to a single product page. Not a basket, order-status, or category page."
-            },
-            save: {
-              type: "boolean",
-              default: true,
-              description: "Save the result to the Tariffik account so it appears in the dashboard and CSV export."
             }
           },
           required: [ "url" ],
@@ -74,11 +71,6 @@ module Mcp
             description: {
               type: "string",
               description: "e.g. \"Men's short-sleeve t-shirt, 100% cotton, knitted, brand Uniqlo\"."
-            },
-            save: {
-              type: "boolean",
-              default: true,
-              description: "Save the result to the Tariffik account so it appears in the dashboard and CSV export."
             }
           },
           required: [ "description" ],
