@@ -37,7 +37,18 @@ class UserGoogleAuthTest < ActiveSupport::TestCase
     assert_equal "someone", user.display_name
   end
 
-  test "a user no longer responds to password" do
-    assert_not User.new.respond_to?(:password)
+  test "a Google user is created without a password and is confirmed on the spot" do
+    user = User.from_google_omniauth(google_auth_hash(email: "fresh@example.com", uid: "uid-fresh"))
+
+    assert_not user.password_set?, "Google sign-up creates no password"
+    assert user.confirmed_at.present?, "Google has already verified the address"
+    assert user.google_only?
+  end
+
+  test "a Google-only account is not asked for a password on save" do
+    user = User.from_google_omniauth(google_auth_hash(email: "nopass@example.com", uid: "uid-nopass"))
+
+    assert user.persisted?, user.errors.full_messages.to_sentence
+    assert user.valid?
   end
 end

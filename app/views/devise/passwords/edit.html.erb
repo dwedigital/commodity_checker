@@ -1,0 +1,33 @@
+<div class="tf-signin">
+  <div class="tf-signin-card">
+    <p class="tf-eyebrow">TARIFFIK ACCOUNT</p>
+    <h1>Choose a new password</h1>
+
+    <%= render "devise/shared/error_messages", resource: resource %>
+
+    <%= form_for(resource, as: resource_name, url: password_path(resource_name), html: { method: :put, class: "tf-auth-form" }) do |f| %>
+      <%= f.hidden_field :reset_password_token %>
+
+      <div class="tf-field" data-controller="password-strength">
+        <%= f.label :password, "New password" %>
+        <%= f.password_field :password, autofocus: true, autocomplete: "new-password", required: true,
+                             data: { password_strength_target: "input", action: "input->password-strength#validate" } %>
+        <div class="tf-password-guidance">
+          <p>Your password needs:</p>
+          <ul>
+            <% [ [ "length", "At least 8 characters" ], [ "uppercase", "One uppercase letter" ], [ "lowercase", "One lowercase letter" ], [ "digit", "One digit" ] ].each do |target, label| %>
+              <li data-password-strength-target="<%= target %>"><span data-password-strength-target="<%= target %>Icon">○</span> <%= label %></li>
+            <% end %>
+          </ul>
+        </div>
+      </div>
+
+      <div class="tf-field">
+        <%= f.label :password_confirmation, "Confirm new password" %>
+        <%= f.password_field :password_confirmation, autocomplete: "new-password", required: true %>
+      </div>
+
+      <%= f.submit "Change my password", class: "tf-button tf-button-primary tf-button-block" %>
+    <% end %>
+  </div>
+</div>

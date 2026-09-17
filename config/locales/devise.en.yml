@@ -18,15 +18,15 @@ en:
       unconfirmed: "You have to confirm your email address before continuing."
     mailer:
       confirmation_instructions:
-        subject: "Confirmation instructions"
+        subject: "Confirm your email address for Tariffik"
       reset_password_instructions:
-        subject: "Reset password instructions"
+        subject: "Reset your Tariffik password"
       unlock_instructions:
-        subject: "Unlock instructions"
+        subject: "Unlock your Tariffik account"
       email_changed:
-        subject: "Email Changed"
+        subject: "The email address on your Tariffik account has changed"
       password_change:
-        subject: "Password Changed"
+        subject: "Your Tariffik password has changed"
     omniauth_callbacks:
       failure: "Could not authenticate you from %{kind} because \"%{reason}\"."
       success: "Successfully authenticated from %{kind} account."

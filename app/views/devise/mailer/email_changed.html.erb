@@ -1,0 +1,10 @@
+<% changed_to = @resource.try(:unconfirmed_email) || @resource.email %>
+<p style="<%= email_eyebrow_style %>">ACCOUNT SECURITY</p>
+<h1 style="<%= email_heading_style %>">Your email address has changed</h1>
+
+<p style="<%= email_text_style %>">The email address on your Tariffik account is now <strong><%= changed_to %></strong>.</p>
+
+<hr style="<%= email_rule_style %>">
+
+<p style="<%= email_muted_style %>">If you did not make this change, reset your password at
+<a href="<%= new_password_url(@resource) %>" style="<%= email_link_style %>"><%= new_password_url(@resource) %></a> and let us know.</p>

@@ -1,0 +1,22 @@
+<div class="tf-signin">
+  <div class="tf-signin-card">
+    <p class="tf-eyebrow">TARIFFIK ACCOUNT</p>
+    <h1>Reset your password</h1>
+    <p class="tf-signin-lead">We will email you a link to choose a new one.</p>
+
+    <%= render "devise/shared/error_messages", resource: resource %>
+
+    <%= form_for(resource, as: resource_name, url: password_path(resource_name), html: { method: :post, class: "tf-auth-form" }) do |f| %>
+      <div class="tf-field">
+        <%= f.label :email, "Email address" %>
+        <%= f.email_field :email, autofocus: true, autocomplete: "email", required: true %>
+      </div>
+
+      <%= f.submit "Send reset link", class: "tf-button tf-button-primary tf-button-block" %>
+    <% end %>
+
+    <p class="tf-signin-note">
+      Signed up with Google? <%= link_to "Sign in with Google instead", new_session_path(resource_name), class: "tf-text-link" %>.
+    </p>
+  </div>
+</div>

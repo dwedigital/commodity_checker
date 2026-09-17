@@ -2,15 +2,17 @@
 
 # Sign in and sign out.
 #
-# Not a Devise::SessionsController: that class exists to accept an email and
-# password, which this app no longer has. `new` renders the Google button and
-# `destroy` ends the session; the actual authentication happens in
-# Users::OmniauthCallbacksController.
-class Users::SessionsController < ApplicationController
-  def new
-    redirect_to dashboard_path and return if user_signed_in?
+# A Devise::SessionsController again now the model carries
+# :database_authenticatable, so `create` is Devise's. What is added here is the
+# context the page needs and the stored-location handling the Google round trip
+# depends on.
+class Users::SessionsController < Devise::SessionsController
+  # Ahead of Devise's require_no_authentication, which would otherwise send an
+  # already signed-in visitor to the root path.
+  prepend_before_action :redirect_signed_in_user, only: [ :new, :create ]
 
-    # Remembered so the signup can be attributed once Google sends us back.
+  def new
+    # Remembered so a signup can be attributed once Google sends us back.
     session[:signup_source] = params[:source] if params[:source].present?
 
     # Devise's stored_location_for deletes as it reads, but the Google round
@@ -23,10 +25,19 @@ class Users::SessionsController < ApplicationController
     store_location_for(:user, @after_sign_in) if @after_sign_in
 
     @connecting_extension = @after_sign_in.to_s.start_with?(extension_auth_path)
+
+    super
   end
 
-  def destroy
-    sign_out(:user)
-    redirect_to root_path, notice: "Signed out."
+  protected
+
+  def after_sign_out_path_for(_resource_or_scope)
+    root_path
+  end
+
+  private
+
+  def redirect_signed_in_user
+    redirect_to dashboard_path if user_signed_in?
   end
 end

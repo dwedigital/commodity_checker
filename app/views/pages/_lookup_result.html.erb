@@ -5,7 +5,7 @@
         <p class="tf-eyebrow"><%= @limit_reached ? "FREE LOOKUPS USED" : "CHECK THE LINK" %></p>
         <p><%= @error %></p>
         <% if @limit_reached %>
-          <%= link_to "Create free account ↗", new_user_session_path(source: "lookup_result"), class: "tf-button tf-button-primary" %>
+          <%= link_to "Create free account ↗", new_user_registration_path(source: "lookup_result"), class: "tf-button tf-button-primary" %>
         <% end %>
       </div>
 
@@ -63,7 +63,7 @@
         <% unless user_signed_in? %>
           <div class="tf-result-cta">
             <p><strong>Save your lookups</strong> Sign up to save products and track orders.</p>
-            <%= link_to "Sign up free ↗", new_user_session_path(source: "lookup_result_limit"), class: "tf-button tf-button-primary" %>
+            <%= link_to "Sign up free ↗", new_user_registration_path(source: "lookup_result_limit"), class: "tf-button tf-button-primary" %>
           </div>
         <% end %>
       </article>
