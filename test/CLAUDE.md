@@ -271,14 +271,22 @@ Located in `test/fixtures/*.yml`. Key fixtures:
 ```yaml
 one:
   email: "user_one@example.com"
-  encrypted_password: "$2a$12$..."
+  provider: "google_oauth2"
+  uid: "google-uid-one"
   inbound_email_token: "token_one"
 
 two:
   email: "user_two@example.com"
-  encrypted_password: "$2a$12$..."
+  provider: "google_oauth2"
+  uid: "google-uid-two"
   inbound_email_token: "token_two"
 ```
+
+Sign in with Google is the only authentication method, so users carry a
+`provider` and `uid` rather than a password digest. `OmniauthTestHelper`
+(`test/support/omniauth_test_helper.rb`) drives the flow through OmniAuth's test
+mode: `sign_in_with_google(google_auth_hash(...))` walks the full request and
+callback round trip without touching Google.
 
 **orders.yml:**
 ```yaml

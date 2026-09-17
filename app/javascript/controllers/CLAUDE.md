@@ -30,7 +30,6 @@ When manipulating classes for visual states, use brand colors:
 |------------|---------|-------------------|
 | `tabs_controller.js` | Tab switching | `border-primary`, `text-primary` |
 | `clipboard_controller.js` | Copy to clipboard | None (uses opacity) |
-| `password_strength_controller.js` | Password validation | `text-brand-mint`, `text-gray-400` |
 | `camera_capture_controller.js` | Photo capture for lookups | None |
 | `auto_submit_controller.js` | Form auto-submission | None |
 
@@ -67,38 +66,6 @@ activeBtn.classList.add("border-primary", "text-primary")
   </button>
   <div id="panel-1" data-tabs-target="panel">
     Content
-  </div>
-</div>
-```
-
-## password_strength_controller.js
-
-Real-time password validation feedback.
-
-**Targets:**
-- `password` - Password input field
-- `confirmation` - Password confirmation field
-- `requirement` - Individual requirement indicators
-- `match` - Password match indicator
-
-**Color classes used:**
-```javascript
-// Valid requirement
-element.classList.remove("text-gray-400")
-element.classList.add("text-brand-mint")
-
-// Invalid requirement
-element.classList.remove("text-brand-mint")
-element.classList.add("text-gray-400")
-```
-
-**Usage in views:**
-```erb
-<div data-controller="password-strength">
-  <%= f.password_field :password, data: { password_strength_target: "password", action: "input->password-strength#validate" } %>
-
-  <div data-password-strength-target="requirement" data-requirement="length" class="text-gray-400">
-    8+ characters
   </div>
 </div>
 ```

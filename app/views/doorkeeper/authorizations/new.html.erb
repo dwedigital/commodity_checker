@@ -1,0 +1,48 @@
+<% redirect_host = (URI.parse(@pre_auth.redirect_uri).host rescue nil) %>
+
+<div class="tf-signin">
+  <div class="tf-signin-card tf-consent">
+    <p class="tf-eyebrow">CONNECT AN APP</p>
+    <h1>Connect <%= @pre_auth.client.name %> to Tariffik?</h1>
+    <p class="tf-signin-lead">This app is asking to use Tariffik on your behalf.</p>
+
+    <dl class="tf-account-facts">
+      <div>
+        <dt>Your account</dt>
+        <dd><%= current_user.email %></dd>
+      </div>
+      <% if redirect_host.present? %>
+        <div>
+          <dt>Sends you back to</dt>
+          <dd><%= redirect_host %></dd>
+        </div>
+      <% end %>
+    </dl>
+
+    <% if @pre_auth.scopes.count > 0 %>
+      <p class="tf-consent-label">It will be able to</p>
+      <ul class="tf-check-list">
+        <% @pre_auth.scopes.each do |scope| %>
+          <li><%= t scope, scope: [ :doorkeeper, :scopes ] %></li>
+        <% end %>
+      </ul>
+    <% end %>
+
+    <div class="tf-consent-actions">
+      <%= form_tag oauth_authorization_path, method: :post, data: { turbo: false } do %>
+        <%= render "doorkeeper/authorizations/pre_auth_fields" %>
+        <%= submit_tag "Connect", class: "tf-button tf-button-primary" %>
+      <% end %>
+      <%= form_tag oauth_authorization_path, method: :delete, data: { turbo: false } do %>
+        <%= render "doorkeeper/authorizations/pre_auth_fields" %>
+        <%= submit_tag "Cancel", class: "tf-button tf-button-outline" %>
+      <% end %>
+    </div>
+
+    <p class="tf-signin-legal">
+      Only connect apps you recognise. A connected app can look up codes and read
+      your saved lookups until you disconnect it, which you can do any time from
+      <%= link_to "your connected apps", oauth_authorized_applications_path, class: "tf-text-link" %>.
+    </p>
+  </div>
+</div>

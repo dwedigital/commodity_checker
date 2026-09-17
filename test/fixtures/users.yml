@@ -1,22 +1,31 @@
 # Read about fixtures at https://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+#
+# Sign in with Google is the only authentication method, so users carry a
+# provider and uid rather than a password digest.
 
 one:
   email: "user_one@example.com"
-  encrypted_password: "$2a$12$abcdefghijklmnopqrstuv"
+  provider: "google_oauth2"
+  uid: "google-uid-one"
+  name: "User One"
   inbound_email_token: "token_one"
   subscription_tier: 1  # starter - has API access
   confirmed_at: <%= Time.current %>
 
 two:
   email: "user_two@example.com"
-  encrypted_password: "$2a$12$abcdefghijklmnopqrstuv"
+  provider: "google_oauth2"
+  uid: "google-uid-two"
+  name: "User Two"
   inbound_email_token: "token_two"
   subscription_tier: 1  # starter - has API access
   confirmed_at: <%= Time.current %>
 
 free_user:
   email: "free_user@example.com"
-  encrypted_password: "$2a$12$abcdefghijklmnopqrstuv"
+  provider: "google_oauth2"
+  uid: "google-uid-free"
+  name: "Free User"
   inbound_email_token: "token_free"
   subscription_tier: 0  # free - no API access
   confirmed_at: <%= Time.current %>
