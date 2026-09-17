@@ -269,9 +269,18 @@ Devise.setup do |config|
   config.sign_out_via = :delete
 
   # ==> OmniAuth
-  # Add a new OmniAuth provider. Check the wiki for more information on setting
-  # up on your models and hooks.
-  # config.omniauth :github, 'APP_ID', 'APP_SECRET', scope: 'user,public_repo'
+  # Sign in with Google is the only authentication method.
+  #
+  # prompt: "select_account" so someone signed into several Google accounts is
+  # asked which one to use rather than being silently put into the wrong one.
+  # skip_jwt: the id_token is not used; the profile comes from the userinfo
+  # endpoint, and verifying a JWT we never read only adds a failure mode.
+  config.omniauth :google_oauth2,
+                  ENV["GOOGLE_CLIENT_ID"],
+                  ENV["GOOGLE_CLIENT_SECRET"],
+                  scope: "email,profile",
+                  prompt: "select_account",
+                  skip_jwt: true
 
   # ==> Warden configuration
   # If you want to use other strategies, that are not supported by Devise, or

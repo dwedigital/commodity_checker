@@ -1,0 +1,15 @@
+<%# Every parameter the authorization request arrived with has to survive the
+    consent POST. `resource` matters most: it is what binds the issued token to
+    this MCP server (RFC 8707), and dropping it here would silently produce an
+    unbound token. %>
+<%= hidden_field_tag :client_id, @pre_auth.client.uid, id: nil %>
+<%= hidden_field_tag :redirect_uri, @pre_auth.redirect_uri, id: nil %>
+<%= hidden_field_tag :state, @pre_auth.state, id: nil %>
+<%= hidden_field_tag :response_type, @pre_auth.response_type, id: nil %>
+<%= hidden_field_tag :response_mode, @pre_auth.response_mode, id: nil %>
+<%= hidden_field_tag :scope, @pre_auth.scope, id: nil %>
+<%= hidden_field_tag :code_challenge, @pre_auth.code_challenge, id: nil %>
+<%= hidden_field_tag :code_challenge_method, @pre_auth.code_challenge_method, id: nil %>
+<% @pre_auth.custom_access_token_attributes.to_h.each do |name, value| %>
+  <%= hidden_field_tag name, value, id: nil %>
+<% end %>

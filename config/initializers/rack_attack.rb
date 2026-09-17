@@ -2,6 +2,14 @@
 # Uses Rack::Attack middleware to protect against abuse
 
 class Rack::Attack
+  # The MCP endpoint authenticates with OAuth access tokens, not API keys, so it
+  # is throttled by the token's owner instead of by API key.
+  MCP_PATH = "/mcp".freeze
+
+  def self.api_key_authenticated_path?(path)
+    path.start_with?("/api/v1")
+  end
+
   # Use Rails cache as the backend
   Rack::Attack.cache.store = Rails.cache
 
@@ -14,7 +22,7 @@ class Rack::Attack
   # Different limits apply based on tier (handled in discriminator)
   throttle("api/minute", limit: proc { |req| req.env["rack.attack.api_limit_minute"] || 5 },
                          period: 1.minute) do |req|
-    if req.path.start_with?("/api/v1")
+    if api_key_authenticated_path?(req.path)
       req.env["rack.attack.api_key_identifier"]
     end
   end
@@ -22,9 +30,30 @@ class Rack::Attack
   # Daily limit tracking (softer limit, enforced in controller)
   # This just tracks, controller enforces the actual limit
   track("api/daily") do |req|
-    if req.path.start_with?("/api/v1")
+    if api_key_authenticated_path?(req.path)
       req.env["rack.attack.api_key_identifier"]
     end
+  end
+
+  ### MCP (OAuth) Rate Limiting ###
+
+  # Per-minute limit for the user behind the access token, at their tier.
+  throttle("mcp/minute", limit: proc { |req| req.env["rack.attack.mcp_limit_minute"] || 5 },
+                         period: 1.minute) do |req|
+    req.env["rack.attack.mcp_identifier"] if req.path == MCP_PATH
+  end
+
+  ### OAuth Endpoint Protection ###
+
+  # Client registration is deliberately unauthenticated (RFC 7591), so it is
+  # capped by IP to stop the applications table being filled.
+  throttle("oauth/register", limit: 10, period: 1.hour) do |req|
+    req.ip if req.path == "/oauth/register" && req.post?
+  end
+
+  # Token exchange and refresh.
+  throttle("oauth/token", limit: 30, period: 1.minute) do |req|
+    req.ip if req.path.in?([ "/oauth/token", "/oauth/revoke", "/oauth/introspect" ]) && req.post?
   end
 
   ### Extension API Rate Limiting ###
@@ -72,7 +101,7 @@ class Rack::Attack
 
   # Throttle general requests by IP (for non-API endpoints)
   throttle("req/ip", limit: 300, period: 5.minutes) do |req|
-    req.ip unless req.path.start_with?("/api/", "/assets/", "/up")
+    req.ip unless req.path.start_with?("/api/", "/assets/", "/up", "/oauth/") || req.path == MCP_PATH
   end
 
   # Throttle login attempts
@@ -103,7 +132,7 @@ class Rack::Attack
 
   # API rate limit exceeded response
   self.throttled_responder = lambda do |request|
-    if request.path.start_with?("/api/")
+    if request.path.start_with?("/api/", "/oauth/") || request.path == MCP_PATH
       [
         429,
         {
@@ -152,9 +181,11 @@ class ApiKeyRateLimitMiddleware
   def call(env)
     request = Rack::Request.new(env)
 
-    if request.path.start_with?("/api/v1/extension")
+    if request.path == Rack::Attack::MCP_PATH
+      extract_mcp_token_limits(request, env)
+    elsif request.path.start_with?("/api/v1/extension")
       extract_extension_token_limits(request, env)
-    elsif request.path.start_with?("/api/v1")
+    elsif Rack::Attack.api_key_authenticated_path?(request.path)
       extract_api_key_limits(request, env)
     end
 
@@ -181,6 +212,28 @@ class ApiKeyRateLimitMiddleware
     end
   rescue => e
     Rails.logger.error("Error in API key rate limit middleware: #{e.message}")
+  end
+
+  # MCP requests are throttled per user, at the rate their subscription tier
+  # gets on the REST API. An unrecognised token falls back to the lowest limit.
+  def extract_mcp_token_limits(request, env)
+    auth_header = request.get_header("HTTP_AUTHORIZATION")
+    return unless auth_header&.start_with?("Bearer ")
+
+    raw_token = auth_header.split(" ", 2).last
+    token = Doorkeeper::AccessToken.by_token(raw_token)
+
+    if token&.accessible? && token.resource_owner_id.present?
+      user = User.find_by(id: token.resource_owner_id)
+      tier = (user&.subscription_tier || "free").to_sym
+      env["rack.attack.mcp_identifier"] = "mcp_user:#{token.resource_owner_id}"
+      env["rack.attack.mcp_limit_minute"] = ApiKey::TIER_LIMITS.dig(tier, :per_minute) || 5
+    else
+      env["rack.attack.mcp_identifier"] = "mcp_ip:#{request.ip}"
+      env["rack.attack.mcp_limit_minute"] = 5
+    end
+  rescue => e
+    Rails.logger.error("Error in MCP rate limit middleware: #{e.message}")
   end
 
   def extract_extension_token_limits(request, env)

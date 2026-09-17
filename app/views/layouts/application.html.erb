@@ -31,8 +31,8 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
 
-    <link rel="icon" href="/icon.png?v=2" type="image/png">
-    <link rel="icon" href="/icon.svg?v=2" type="image/svg+xml">
+    <link rel="icon" href="/icon.png?v=3" type="image/png">
+    <link rel="icon" href="/icon.svg?v=3" type="image/svg+xml">
     <link rel="apple-touch-icon" href="/apple-touch-icon.png">
     <link rel="manifest" href="/manifest.json">
 
@@ -72,8 +72,7 @@
                   <span class="tf-account-identity" title="<%= current_user.email %>"><span class="tf-account-avatar" aria-hidden="true"><%= current_user.email.first.upcase %></span><span><%= current_user.email %></span></span>
                   <%= button_to "Sign out", destroy_user_session_path, method: :delete, class: "rounded-full border border-gray-300 px-4 py-2 text-sm font-medium text-brand-dark hover:bg-gray-50 transition-colors cursor-pointer" %>
                 <% else %>
-                  <%= link_to "Sign in", new_user_session_path, class: "px-4 py-2 text-sm font-medium text-gray-600 hover:text-brand-dark transition-colors" %>
-                  <%= link_to "Sign up", new_user_registration_path, class: "rounded-full bg-primary px-5 py-2 text-sm font-semibold text-white hover:bg-primary-hover transition-colors" %>
+                  <%= link_to "Sign in", new_user_session_path(source: "navbar"), class: "rounded-full bg-primary px-5 py-2 text-sm font-semibold text-white hover:bg-primary-hover transition-colors" %>
                 <% end %>
               </div>
             </div>
@@ -110,10 +109,7 @@
               </div>
               <%= button_to "Sign out", destroy_user_session_path, method: :delete, class: "w-full rounded-full border border-gray-300 px-4 py-2 text-sm font-medium text-brand-dark hover:bg-gray-50 transition-colors" %>
             <% else %>
-              <div class="space-y-2">
-                <%= link_to "Sign in", new_user_session_path, class: "block text-center px-4 py-2 text-base font-medium text-gray-600 hover:text-brand-dark" %>
-                <%= link_to "Sign up", new_user_registration_path, class: "block text-center rounded-full bg-primary px-4 py-2 text-base font-semibold text-white hover:bg-primary-hover transition-colors" %>
-              </div>
+              <%= link_to "Sign in", new_user_session_path(source: "navbar_mobile"), class: "block text-center rounded-full bg-primary px-4 py-2 text-base font-semibold text-white hover:bg-primary-hover transition-colors" %>
             <% end %>
           </div>
         </details>

@@ -14,6 +14,29 @@ Rails.application.routes.draw do
     mount PgHero::Engine, at: "admin/pghero" if Rails.env.production?
   end
 
+  # Model Context Protocol endpoint for AI agents (Claude Code, Claude Desktop,
+  # Cursor). An OAuth 2.1 resource server: see app/controllers/oauth.
+  post "/mcp", to: "mcp/server#handle"
+  match "/mcp", to: "mcp/server#unsupported", via: [ :get, :delete ]
+
+  # OAuth 2.1 authorization server. Doorkeeper provides /oauth/authorize,
+  # /oauth/token, /oauth/revoke and /oauth/introspect. The applications CRUD is
+  # skipped because clients register themselves through /oauth/register.
+  use_doorkeeper do
+    skip_controllers :applications
+  end
+
+  # RFC 7591 dynamic client registration.
+  post "/oauth/register", to: "oauth/registrations#create"
+
+  # RFC 8414 authorization server metadata and RFC 9728 protected resource
+  # metadata. Both are served at the bare path and with the resource path
+  # appended, because clients probe either form depending on the spec revision.
+  get "/.well-known/oauth-authorization-server", to: "oauth/metadata#authorization_server"
+  get "/.well-known/oauth-authorization-server/*resource_path", to: "oauth/metadata#authorization_server"
+  get "/.well-known/oauth-protected-resource", to: "oauth/metadata#protected_resource"
+  get "/.well-known/oauth-protected-resource/*resource_path", to: "oauth/metadata#protected_resource"
+
   # API v1 endpoints
   namespace :api do
     namespace :v1 do
@@ -53,14 +76,28 @@ Rails.application.routes.draw do
   post "extension/auth", to: "extension_auth#create_code", as: :extension_auth_create
   get "extension/auth/callback", to: "extension_auth#callback", as: :extension_auth_callback
 
-  devise_for :users, controllers: {
-    registrations: "users/registrations"
-  }
+  # Google is the only identity provider, so Devise generates just the OmniAuth
+  # callbacks. Session routes normally come from :database_authenticatable,
+  # which this app no longer uses, so sign in and sign out are declared here.
+  devise_for :users,
+             skip: [ :sessions, :registrations, :passwords, :confirmations ],
+             controllers: { omniauth_callbacks: "users/omniauth_callbacks" }
+
+  devise_scope :user do
+    get "users/sign_in", to: "users/sessions#new", as: :new_user_session
+    delete "users/sign_out", to: "users/sessions#destroy", as: :destroy_user_session
+  end
 
   # Dashboard routes (authenticated user area)
   scope "/dashboard" do
     # Dashboard index
     get "", to: "dashboard#index", as: :dashboard
+
+    # Account settings. Replaces the Devise registration edit page: with Google
+    # as the only identity there is no email or password to change here, but
+    # closing the account still has to be possible.
+    get "account", to: "users/accounts#show", as: :account
+    delete "account", to: "users/accounts#destroy"
 
     # Developer / API Dashboard
     get "developer", to: "developer#index", as: :developer

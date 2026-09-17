@@ -9,10 +9,16 @@ class User < ApplicationRecord
     enterprise: Float::INFINITY
   }.freeze
 
-  # Include default devise modules. Others available are:
-  # :lockable, :timeoutable, :trackable and :omniauthable
-  devise :database_authenticatable, :registerable,
-         :recoverable, :rememberable, :validatable, :confirmable
+  # Sign in with Google is the only way in. There is no password, so
+  # :database_authenticatable, :registerable, :recoverable, :confirmable and
+  # :validatable are all gone: Google verifies the address and owns the
+  # credential. Session routes are declared by hand in config/routes.rb because
+  # Devise only generates them for :database_authenticatable.
+  devise :rememberable, :omniauthable, omniauth_providers: [ :google_oauth2 ]
+
+  GOOGLE_PROVIDER = "google_oauth2".freeze
+
+  validates :email, presence: true, uniqueness: { case_sensitive: false }
 
   has_many :orders, dependent: :destroy
   has_many :inbound_emails, dependent: :destroy
@@ -29,10 +35,56 @@ class User < ApplicationRecord
     enterprise: 3
   }
 
-  validate :password_strength, if: -> { password.present? }
-
   before_create :generate_inbound_email_token
   after_create :track_account_created
+
+  # Find or create the user behind a Google sign-in.
+  #
+  # Matching an existing account by email is what carries a user's orders,
+  # lookups and API keys across the move off passwords. It is only safe because
+  # Google tells us the address is verified — linking on an unverified address
+  # would let anyone who can assert an email take over the account, so an
+  # unverified one is refused outright.
+  def self.from_google_omniauth(auth)
+    return nil if auth.blank?
+
+    email = auth.info&.email.to_s.downcase.strip
+    uid = auth.uid.to_s
+    return nil if email.blank? || uid.blank?
+    return nil unless google_email_verified?(auth)
+
+    user = find_by(provider: GOOGLE_PROVIDER, uid: uid) || find_by("LOWER(email) = ?", email)
+    return nil if user&.persisted? && user.provider == GOOGLE_PROVIDER && user.uid != uid
+
+    if user
+      user.update(google_profile_attributes(auth).merge(email: email))
+      user
+    else
+      create(google_profile_attributes(auth).merge(email: email))
+    end
+  end
+
+  def self.google_email_verified?(auth)
+    verified = auth.info.respond_to?(:email_verified) ? auth.info.email_verified : nil
+    verified = auth.extra&.raw_info&.email_verified if verified.nil?
+
+    ActiveModel::Type::Boolean.new.cast(verified) == true
+  end
+  private_class_method :google_email_verified?
+
+  def self.google_profile_attributes(auth)
+    {
+      provider: GOOGLE_PROVIDER,
+      uid: auth.uid.to_s,
+      name: auth.info&.name.presence,
+      avatar_url: auth.info&.image.presence
+    }.compact
+  end
+  private_class_method :google_profile_attributes
+
+  def display_name
+    name.presence || email.split("@").first
+  end
 
   def inbound_email_address
     "track-#{inbound_email_token}@#{Rails.application.config.inbound_email_domain}"
@@ -111,21 +163,5 @@ class User < ApplicationRecord
     AnalyticsTracker.new(user: self).track("user_account_created", user_id: id)
   rescue => e
     Rails.logger.error("Failed to track account creation: #{e.message}")
-  end
-
-  def password_strength
-    return if password.blank?
-
-    unless password.match?(/[A-Z]/)
-      errors.add(:password, "must include at least one uppercase letter")
-    end
-
-    unless password.match?(/[a-z]/)
-      errors.add(:password, "must include at least one lowercase letter")
-    end
-
-    unless password.match?(/\d/)
-      errors.add(:password, "must include at least one digit")
-    end
   end
 end

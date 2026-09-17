@@ -1,0 +1,9 @@
+<div class="tf-signin">
+  <div class="tf-signin-card">
+    <p class="tf-eyebrow">CONNECTION FAILED</p>
+    <h1>That app could not be connected</h1>
+    <p class="tf-signin-lead"><%= @pre_auth.error_response.body[:error_description] %></p>
+    <p class="tf-signin-note">Start the connection again from the app. If it keeps failing, the app is sending Tariffik something it cannot accept.</p>
+    <p class="tf-signin-legal"><%= link_to "Back to your dashboard →", dashboard_path, class: "tf-text-link" %></p>
+  </div>
+</div>
