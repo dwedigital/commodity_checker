@@ -198,7 +198,7 @@
       <%= link_to "Look up another product", new_product_lookup_path, class: "inline-flex items-center rounded-full border border-gray-200 bg-white px-5 py-2.5 text-sm font-semibold text-brand-dark hover:bg-gray-50 transition-colors" %>
 
       <% unless user_signed_in? %>
-        <%= link_to new_user_registration_path, class: "inline-flex items-center rounded-full bg-primary px-5 py-2.5 text-sm font-semibold text-white hover:bg-primary-hover transition-colors" do %>
+        <%= link_to new_user_session_path(source: "quick_result"), class: "inline-flex items-center rounded-full bg-primary px-5 py-2.5 text-sm font-semibold text-white hover:bg-primary-hover transition-colors" do %>
           Sign up to save lookups
         <% end %>
       <% end %>

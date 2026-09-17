@@ -153,7 +153,6 @@ For high-contrast call-to-action areas (e.g., upsells, feature promos):
 CSP blocks inline JavaScript. Use Stimulus controllers instead:
 - `tabs_controller.js` - Tab switching with `border-primary` active state
 - `clipboard_controller.js` - Copy to clipboard functionality
-- `password_strength_controller.js` - Password validation (uses `text-brand-mint` for valid)
 - `simple_chart_controller.js` - CSP-compliant Canvas-based line charts (used in analytics dashboard)
 
 ### Key Files for Styling
@@ -177,6 +176,68 @@ CSP blocks inline JavaScript. Use Stimulus controllers instead:
 - Full feature support (jsonb, GIN indexes, etc.)
 - Docker Compose for local PostgreSQL (port 5444)
 - SQLite fallback available with `USE_SQLITE=true` env var
+
+### Authentication
+
+Sign in with Google is the only way in. There is no password anywhere in the
+app: `:database_authenticatable`, `:registerable`, `:recoverable`,
+`:confirmable` and `:validatable` are all removed from the `User` model, which
+carries `:rememberable` and `:omniauthable` only.
+
+```
+/users/sign_in  (users/sessions#new, Google button only)
+      │  POST /users/auth/google_oauth2
+      ▼
+Google consent  ──►  GET /users/auth/google_oauth2/callback
+                            │
+                            ▼
+                  User.from_google_omniauth(auth)
+                    ├─ refuses an unverified Google email
+                    ├─ finds by provider + uid           (returning user)
+                    ├─ else finds by email, links uid    (pre-Google account)
+                    └─ else creates the user             (signup)
+```
+
+Signing in and signing up are the same action, so every "create an account" CTA
+points at `new_user_session_path(source: "...")`; the source is carried through
+the session and recorded on the `user_registered` event.
+
+Devise only generates session routes for `:database_authenticatable`, so sign in
+and sign out are declared by hand in `config/routes.rb`.
+
+### MCP authorization (OAuth 2.1)
+
+`/mcp` is an OAuth 2.1 resource server and Tariffik is its own authorization
+server. API keys are **not** accepted at `/mcp`; they remain the credential for
+`/api/v1`.
+
+```
+POST /mcp (no token) ──► 401 + WWW-Authenticate: Bearer resource_metadata="…"
+   ├─ GET /.well-known/oauth-protected-resource[/mcp]   RFC 9728
+   ├─ GET /.well-known/oauth-authorization-server[/mcp] RFC 8414
+   ├─ POST /oauth/register                              RFC 7591, public clients
+   ├─ GET  /oauth/authorize   PKCE S256 + `resource`, consent never skipped
+   └─ POST /oauth/token       1h access token, rotating refresh token
+```
+
+Tokens are audience-bound (RFC 8707): `resource` rides from the authorize request
+onto the grant and the token via Doorkeeper's `custom_access_token_attributes`,
+and `/mcp` refuses a token issued for anything else. MCP access requires a
+Starter subscription, enforced in the controller rather than by the credential.
+
+**Gotcha:** the consent forms must carry `data: { turbo: false }`. Turbo cannot
+follow the cross-origin redirect back to a client's callback, so with Turbo
+handling the submit the browser never leaves the consent page — and integration
+tests do not catch it, because they do not run Turbo.
+
+Full detail in `claude/implementations/mcp-oauth-authorization.md`.
+
+**Gotcha:** Devise sets `OmniAuth.config.path_prefix` while evaluating
+`devise_for`. Rails loads routes lazily under `rails test`, and the OmniAuth
+middleware runs ahead of the router, so on a process's first request the prefix
+is still nil and the request falls through to Devise's `passthru` as a 404.
+`test/test_helper.rb` calls `Rails.application.reload_routes_unless_loaded` to
+avoid this. Production eager-loads routes at boot, so it is not affected.
 
 ### Email Processing Flow
 ```
@@ -264,7 +325,12 @@ Product Description → TariffLookupService (UK API) → LlmCommoditySuggester (
 | `app/services/api_commodity_service.rb` | Wraps scraper + suggester for API use |
 | `config/initializers/rack_attack.rb` | Per-tier API rate limiting configuration |
 | `app/controllers/admin/analytics_controller.rb` | Admin analytics dashboard with visitor/lookup/signup stats |
-| `app/controllers/users/registrations_controller.rb` | Custom Devise controller for sign-up tracking |
+| `app/controllers/users/omniauth_callbacks_controller.rb` | Sign in with Google callback: finds or creates the user, refuses unverified emails |
+| `app/controllers/users/sessions_controller.rb` | Sign-in page (Google button) and sign out |
+| `app/controllers/users/accounts_controller.rb` | Account settings and account deletion |
+| `config/initializers/doorkeeper.rb` | OAuth 2.1 authorization server configuration |
+| `app/controllers/oauth/metadata_controller.rb` | RFC 8414 / RFC 9728 discovery documents |
+| `app/controllers/oauth/registrations_controller.rb` | RFC 7591 dynamic client registration |
 
 ## Blog System
 
@@ -508,7 +574,10 @@ The system uses AI to classify incoming emails and extract product information:
 ## Database Schema Summary
 
 ```
-users (Devise auth + inbound_email_token + subscription_tier)
+users (Google OAuth: provider/uid + inbound_email_token + subscription_tier)
+  ├── oauth_applications (MCP clients, self-registered)
+  │     ├── oauth_access_grants (PKCE challenge, resource)
+  │     └── oauth_access_tokens (resource-bound, rotating refresh)
   ├── orders (retailer, reference, status)
   │     ├── order_items (description, suggested/confirmed codes, image_url, product_url)
   │     ├── tracking_events (carrier, URL, status, location)
@@ -806,7 +875,7 @@ bin/rails analytics:clear
 
 Created by `db:seed`:
 - Email: `dave@dwedigital.com`
-- Password: `T0p$ecret!`
+- No password — sign in with Google using that address and `db:seed`'s record is matched on email.
 
 ## Admin Dashboards
 
@@ -872,6 +941,10 @@ Override with `WEB_CONCURRENCY` env var if needed.
 # Rails
 RAILS_MASTER_KEY                   # For encrypted credentials
 APP_HOST                           # tariffik.com
+
+# Authentication (required - Sign in with Google is the only way in)
+GOOGLE_CLIENT_ID                   # OAuth 2.0 Web application client
+GOOGLE_CLIENT_SECRET               # Redirect URI: <host>/users/auth/google_oauth2/callback
 
 # Puma (Production)
 WEB_CONCURRENCY                    # Optional: Override auto-detected worker count

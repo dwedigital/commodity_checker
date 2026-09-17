@@ -17,6 +17,33 @@ A Rails application for tracking online orders and suggesting EU/UK commodity ta
 - **Blog**: Markdown-based blog for SEO content about commodity codes
 - **Premium API**: REST API for programmatic commodity code lookups (Starter+ plans)
 - **Developer Dashboard**: API key management and usage monitoring at `/dashboard/developer`
+- **MCP Server**: Model Context Protocol endpoint at `/mcp` so AI agents can look up codes in a conversation, secured with OAuth 2.1
+
+## MCP Server
+
+AI agents can reach Tariffik over the Model Context Protocol at `POST /mcp`,
+using the same API keys as the REST API. Connect it to Claude Code with:
+
+```bash
+claude mcp add --transport http tariffik https://tariffik.com/mcp
+```
+
+No API key is passed. The client discovers Tariffik's authorization server,
+registers itself, and opens a browser so you can approve it; you sign in with
+Google and the client receives an access token scoped to your account. Connected
+apps can be disconnected at any time from account settings.
+
+Five tools are available: `lookup_from_url`, `lookup_from_description`,
+`search_codes`, `get_code`, and `list_recent_lookups`. Both lookup tools save
+their result to the account by default, so codes found in a chat session still
+show up in the dashboard and the CSV export. Pass `"save": false` to skip that.
+
+The typical use is working through order emails: the agent reads the mail through
+its own email integration, pulls out each product link, and calls
+`lookup_from_url` on it.
+
+MCP access requires a Starter subscription or higher. API keys are still used by
+the REST API at `/api/v1`; generate one at `/dashboard/developer`.
 
 ## Tech Stack
 

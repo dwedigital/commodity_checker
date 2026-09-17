@@ -1,0 +1,28 @@
+<%= render "shared/page_header", eyebrow: "YOUR ACCOUNT", title: "Connected apps", description: "Apps you have allowed to use Tariffik on your behalf." %>
+
+<div class="tf-panel">
+  <div class="tf-panel-heading">
+    <div>
+      <p class="tf-eyebrow">ACCESS</p>
+      <h2>Apps with access</h2>
+    </div>
+    <%= link_to "Back to settings →", account_path, class: "tf-text-link" %>
+  </div>
+
+  <div class="tf-panel-body">
+    <% if @applications.any? %>
+      <dl class="tf-account-facts">
+        <% @applications.each do |application| %>
+          <div>
+            <dt><%= application.name %></dt>
+            <dd><%= render "doorkeeper/authorized_applications/delete_form", application: application %></dd>
+          </div>
+        <% end %>
+      </dl>
+      <p class="tf-account-note">Disconnecting revokes the app's access immediately. It can ask for access again, and you would have to approve it again.</p>
+    <% else %>
+      <p>No apps are connected to your account.</p>
+      <p class="tf-account-note">Connecting Tariffik to an AI assistant over MCP will list it here.</p>
+    <% end %>
+  </div>
+</div>

@@ -15,7 +15,10 @@ Rails.application.configure do
     policy.connect_src :self
     policy.frame_ancestors :none
     policy.base_uri    :self
-    policy.form_action :self
+    # accounts.google.com: the sign-in button posts to this origin and is then
+    # redirected to Google. Firefox enforces form-action across redirects, so
+    # without this Sign in with Google is blocked there.
+    policy.form_action :self, "https://accounts.google.com"
   end
 
   # Generate session nonces for permitted importmap, inline scripts, and inline styles.

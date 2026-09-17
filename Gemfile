@@ -25,6 +25,16 @@ gem "tailwindcss-rails"
 # Authentication
 gem "devise"
 
+# Sign in with Google (the only way in). omniauth-rails_csrf_protection forces
+# the request phase to be a POST, which OmniAuth 2 requires.
+gem "omniauth-google-oauth2"
+gem "omniauth-rails_csrf_protection"
+
+# OAuth 2.1 authorization server for the MCP endpoint. Doorkeeper issues and
+# validates the tokens; RFC 7591 registration, RFC 8414/9728 metadata and
+# RFC 8707 audience binding are added on top in app/controllers/oauth.
+gem "doorkeeper"
+
 # HTTP client for API calls
 gem "faraday"
 gem "faraday-follow_redirects"

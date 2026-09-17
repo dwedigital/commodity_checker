@@ -150,6 +150,40 @@
 .tf-footer nav { display: flex; gap: 32px; font-size: 11px; }
 .tf-footer-bottom { display: flex; justify-content: space-between; gap: 20px; padding-top: 20px; border-top: 1px solid var(--tf-line); color: var(--tf-muted); font: 8px/1.6 ui-monospace, monospace; }
 .tf-auth-page main { background-image: radial-gradient(#d6d4c8 .7px, transparent .7px); background-size: 20px 20px; }
+
+/* Sign in with Google — the only way into the app. One button is the whole
+   page, so everything around it stays quiet. */
+.tf-signin { display: flex; justify-content: center; padding: 64px 16px 96px; }
+.tf-signin-card { width: 100%; max-width: 420px; border: 1px solid #d8d4c6; border-radius: 9px; background: #fffefa; padding: 40px; }
+.tf-signin-card .tf-eyebrow { color: var(--tf-muted); margin: 0 0 14px; }
+.tf-signin-card h1 { margin: 0 0 12px; font-size: 30px; font-weight: 500; letter-spacing: -1px; line-height: 1.15; color: var(--tf-ink); }
+.tf-signin-lead { margin: 0 0 28px; max-width: 34ch; color: var(--tf-muted); font-size: 14px; line-height: 1.6; }
+.tf-google-button { width: 100%; gap: 12px; border-color: #b9b6ad; background: #fff; color: var(--tf-ink); font-size: 13px; }
+.tf-google-button:hover { background: var(--tf-paper); }
+.tf-signin form { margin: 0; }
+.tf-google-mark { width: 17px; height: 17px; flex: none; }
+.tf-signin-note { margin: 18px 0 0; color: var(--tf-muted); font-size: 13px; line-height: 1.6; }
+.tf-signin-legal { margin: 28px 0 0; padding-top: 20px; border-top: 1px solid var(--tf-line); color: var(--tf-muted); font-size: 12px; line-height: 1.6; }
+
+/* OAuth consent. Wider than the sign-in card because it has to show who is
+   asking, where they will send you, and what they get. */
+.tf-consent { max-width: 460px; }
+.tf-consent .tf-account-facts { margin: 22px 0 6px; }
+.tf-consent-label { margin: 22px 0 10px; font-size: 13px; color: var(--tf-ink); }
+.tf-consent .tf-check-list { margin: 0; }
+.tf-consent-actions { display: flex; gap: 10px; margin-top: 26px; }
+.tf-consent-actions form { margin: 0; flex: 1; }
+.tf-consent-actions .tf-button { width: 100%; }
+
+@media (max-width: 480px) {
+  .tf-consent-actions { flex-direction: column-reverse; }
+}
+
+@media (max-width: 480px) {
+  .tf-signin { padding: 32px 16px 64px; }
+  .tf-signin-card { padding: 28px 22px; }
+  .tf-signin-card h1 { font-size: 26px; }
+}
 .tf-auth-page main .bg-white { border-color: #d8d4c6; }
 .tf-auth-page main h2 { font-size: 32px; letter-spacing: -1.2px; }
 .tf-auth-page input[type=submit] { border-radius: 6px; }

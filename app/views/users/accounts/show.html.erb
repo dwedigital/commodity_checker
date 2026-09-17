@@ -1,0 +1,65 @@
+<%= render "shared/page_header", eyebrow: "YOUR ACCOUNT", title: "Account settings", description: "See which Google account you sign in with, and close your account if you need to." %>
+
+<div class="tf-settings-layout">
+  <aside class="tf-settings-aside">
+    <%= render "shared/account_avatar", user: @user %>
+    <h2>Your Tariffik account</h2>
+    <p class="tf-settings-email"><%= @user.email %></p>
+    <span class="tf-badge tf-badge-neutral"><%= @user.subscription_tier.titleize %> plan</span>
+    <p class="mt-6">Your saved lookups and orders stay with this account.</p>
+    <%= link_to "Back to your dashboard →", dashboard_path, class: "tf-text-link" %>
+  </aside>
+
+  <div>
+    <div class="tf-panel">
+      <div class="tf-panel-heading">
+        <div>
+          <p class="tf-eyebrow">SIGN IN</p>
+          <h2>How you sign in</h2>
+        </div>
+      </div>
+
+      <div class="tf-panel-body">
+        <p>You sign in with Google. Tariffik never sees or stores a password, and your email address is whatever Google holds for this account.</p>
+
+        <dl class="tf-account-facts">
+          <div>
+            <dt>Google account</dt>
+            <dd><%= @user.email %></dd>
+          </div>
+          <% if @user.name.present? %>
+            <div>
+              <dt>Name</dt>
+              <dd><%= @user.name %></dd>
+            </div>
+          <% end %>
+          <div>
+            <dt>Your forwarding address</dt>
+            <dd><%= @user.inbound_email_address %></dd>
+          </div>
+        </dl>
+
+        <p class="tf-account-note">To change the email address on this account, change it with Google, or close this account and sign in with the Google account you want to use.</p>
+      </div>
+    </div>
+
+    <div class="tf-panel">
+      <div class="tf-panel-heading">
+        <div>
+          <p class="tf-eyebrow">ACCESS</p>
+          <h2>Connected apps</h2>
+        </div>
+        <%= link_to "Manage →", oauth_authorized_applications_path, class: "tf-text-link" %>
+      </div>
+      <div class="tf-panel-body">
+        <p>AI assistants you have connected to Tariffik over MCP appear here. Disconnect one and it loses access straight away.</p>
+      </div>
+    </div>
+
+    <section class="tf-danger-zone" aria-labelledby="delete-account-heading">
+      <h2 id="delete-account-heading">Delete account</h2>
+      <p>This permanently removes your account and all its data. This action cannot be undone.</p>
+      <%= button_to "Delete my account", account_path, method: :delete, data: { turbo_confirm: "Are you sure you want to delete your account? This cannot be undone." }, class: "tf-button tf-button-outline" %>
+    </section>
+  </div>
+</div>

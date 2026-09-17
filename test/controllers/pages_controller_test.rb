@@ -13,7 +13,7 @@ class PagesControllerTest < ActionDispatch::IntegrationTest
     end
     assert_select "[data-lookup-limit-remaining-value='3']"
     assert_select "turbo-frame#lookup_result"
-    assert_select "a[href=?]", new_user_registration_path, minimum: 1
+    assert_select "a[href^=?]", new_user_session_path, minimum: 1
   end
 
   test "exhausted guest allowance is passed to the limit controller" do
@@ -22,7 +22,7 @@ class PagesControllerTest < ActionDispatch::IntegrationTest
     end
     assert_response :success
     assert_select "[data-lookup-limit-limit-reached-value=true]"
-    assert_select "[data-lookup-limit-target=limitReached] a[href=?]", new_user_registration_path
+    assert_select "[data-lookup-limit-target=limitReached] a[href^=?]", new_user_session_path
   end
 
   test "signed in homepage retains dashboard and lookup navigation" do

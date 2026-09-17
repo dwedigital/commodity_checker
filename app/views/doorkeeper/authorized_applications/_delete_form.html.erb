@@ -1,0 +1,5 @@
+<%= button_to "Disconnect",
+              oauth_authorized_application_path(application),
+              method: :delete,
+              data: { turbo_confirm: "Disconnect #{application.name}? It will lose access to your Tariffik account." },
+              class: "tf-button tf-button-outline" %>

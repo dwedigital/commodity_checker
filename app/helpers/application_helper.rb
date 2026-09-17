@@ -5,7 +5,7 @@ module ApplicationHelper
 
   # Sign-in screens and the extension consent flow share the dotted auth ground.
   def auth_page?
-    devise_controller? || controller_name == "extension_auth"
+    devise_controller? || controller_name.in?(%w[sessions extension_auth authorizations])
   end
 
   # Splits an HS code into heading / subheading / national digits ("6109 10 0010"),
@@ -52,7 +52,7 @@ module ApplicationHelper
       [ "Lookups", product_lookups_path, controller_name == "product_lookups" ],
       [ "Orders", orders_path, controller_name == "orders" ],
       [ "API", developer_path, controller_name == "developer" ],
-      [ "Settings", edit_user_registration_path, devise_controller? && user_signed_in? ]
+      [ "Settings", account_path, controller_name == "accounts" ]
     ]
   end
 end

@@ -14,11 +14,12 @@ This document tracks potential future developments for Tariffik, organized by pr
 - [ ] Add billing portal for customers to manage subscriptions
 
 ### MCP Server for Agentic Integration
-- [ ] Build Model Context Protocol (MCP) server
-- [ ] Expose commodity code lookup as MCP tool
-- [ ] Support batch lookups via MCP
-- [ ] Create documentation for AI agent developers
-- [ ] Add to Claude Desktop, Cursor, and other MCP-compatible tools
+- [x] Build Model Context Protocol (MCP) server — `POST /mcp`, API-key auth (see `claude/implementations/mcp-server.md`)
+- [x] Expose commodity code lookup as MCP tool — `lookup_from_url`, `lookup_from_description`, `search_codes`, `get_code`, `list_recent_lookups`
+- [ ] Support batch lookups via MCP — a `batch_lookup` tool over the existing batch endpoint
+- [ ] Create documentation for AI agent developers — README covers connecting; no public docs page yet
+- [x] OAuth 2.1 authorization server for MCP — dynamic registration, PKCE, audience-bound tokens (see `claude/implementations/mcp-oauth-authorization.md`)
+- [ ] Add to Claude Desktop, Cursor, and other MCP-compatible tools — flow verified locally; claude.ai connector needs the production deploy
 
 ### API Documentation Page
 - [ ] Interactive API explorer with try-it-now functionality
