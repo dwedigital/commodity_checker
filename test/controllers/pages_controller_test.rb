@@ -11,13 +11,13 @@ class PagesControllerTest < ActionDispatch::IntegrationTest
       assert_select "label[for=url]"
       assert_select "input[type=url][required]"
     end
-    assert_select "[data-lookup-limit-remaining-value='3']"
+    assert_select "[data-lookup-limit-remaining-value='1']"
     assert_select "turbo-frame#lookup_result"
     assert_select "a[href^=?]", new_user_session_path, minimum: 1
   end
 
   test "exhausted guest allowance is passed to the limit controller" do
-    GuestLookup.stub :count_for_token, 3 do
+    GuestLookup.stub :count_for_token, 1 do
       get root_path
     end
     assert_response :success

@@ -117,7 +117,7 @@
 .tf-browser-bar { display: flex; justify-content: space-between; font: 8px ui-monospace, monospace; color: var(--tf-muted); padding: 4px 0 16px; }
 .tf-browser-preview img { display: block; width: 100%; height: auto; border: 1px solid var(--tf-line); border-radius: 5px 5px 0 0; }
 .tf-pricing-section { background: #efeee7; border-block: 1px solid var(--tf-line); }
-.tf-pricing-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 18px; padding-top: 14px; }
+.tf-pricing-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 18px; padding-top: 14px; max-width: 760px; }
 .tf-plan { border: 1px solid #d2d0c5; border-radius: 9px; padding: 28px 25px; position: relative; display: flex; flex-direction: column; }
 .tf-plan h3 { margin-top: 19px; font-size: 22px; }
 .tf-plan-amount { margin-top: 26px; font: 500 50px/1.2 var(--font-heading), sans-serif; letter-spacing: -2px; }
@@ -150,6 +150,29 @@
 .tf-footer nav { display: flex; gap: 32px; font-size: 11px; }
 .tf-footer-bottom { display: flex; justify-content: space-between; gap: 20px; padding-top: 20px; border-top: 1px solid var(--tf-line); color: var(--tf-muted); font: 8px/1.6 ui-monospace, monospace; }
 .tf-auth-page main { background-image: radial-gradient(#d6d4c8 .7px, transparent .7px); background-size: 20px 20px; }
+
+/* The MCP section: a two-column feature like the extension one, with a mock of
+   an agent working through order links. */
+.tf-mcp { display: grid; grid-template-columns: 1fr 1fr; gap: 56px; align-items: center; }
+.tf-mcp h2 { font-size: 40px; font-weight: 500; letter-spacing: -1.6px; line-height: 1.08; margin: 10px 0 18px; }
+.tf-mcp > div > p { max-width: 42ch; color: var(--tf-muted); font-size: 14px; line-height: 1.65; margin: 0 0 20px; }
+.tf-mcp .tf-check-list { margin-bottom: 26px; }
+.tf-mcp-preview { border: 1px solid var(--tf-line); border-radius: 9px; background: #fffefa; padding: 22px; display: grid; gap: 14px; }
+.tf-mcp-line { display: grid; grid-template-columns: 54px 1fr; gap: 12px; align-items: start; }
+.tf-mcp-line span { font: 500 9px/1.6 ui-monospace, SFMono-Regular, Menlo, monospace; letter-spacing: 1px; text-transform: uppercase; color: var(--tf-muted); padding-top: 3px; }
+.tf-mcp-line p { margin: 0; font-size: 13px; line-height: 1.55; color: var(--tf-ink); }
+.tf-mcp-tool p { color: var(--tf-muted); font-size: 11px; overflow-wrap: anywhere; }
+.tf-mcp-tool code { font: 500 11px ui-monospace, SFMono-Regular, Menlo, monospace; color: var(--tf-ink); }
+.tf-mcp-result { border-top: 1px solid var(--tf-line); padding-top: 14px; display: grid; gap: 8px; }
+.tf-mcp-result > p { margin: 0 0 2px; font-size: 12px; color: var(--tf-muted); }
+.tf-mcp-code { font: 500 16px ui-monospace, SFMono-Regular, Menlo, monospace; letter-spacing: -0.4px; color: var(--tf-ink); }
+.tf-mcp-code em { color: var(--tf-red); font-style: normal; }
+.tf-mcp-code span { display: block; font: 400 11px/1.5 var(--font-body), sans-serif; letter-spacing: 0; color: var(--tf-muted); margin-top: 2px; }
+
+@media (max-width: 860px) {
+  .tf-mcp { grid-template-columns: 1fr; gap: 32px; }
+  .tf-mcp h2 { font-size: 32px; }
+}
 
 /* Sign in with Google — the only way into the app. One button is the whole
    page, so everything around it stays quiet. */

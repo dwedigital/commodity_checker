@@ -136,7 +136,10 @@ module Api
           url: params[:url],
           description: params[:description],
           product: params[:product]&.to_unsafe_h,
-          save_to_account: params.fetch(:save_to_account, true)
+          # Always saved: ProductLookup is what the monthly allowance counts,
+          # so honouring save_to_account: false here would hand out unlimited
+          # free lookups to anyone who asked not to be recorded.
+          save_to_account: true
         )
 
         if result[:error]

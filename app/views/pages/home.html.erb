@@ -82,18 +82,38 @@
     <div class="tf-browser-preview"><div class="tf-browser-bar"><span aria-hidden="true">● ● ●</span><span>Your favourite shop / Tariffik</span><span aria-hidden="true">↗</span></div><img src="/images/chrome-extension-sidepanel.png" alt="The Tariffik Chrome extension side panel suggesting commodity code 6109 10 0010 for an organic cotton T-shirt" loading="lazy" width="368" height="598"></div>
   </section>
 
+  <section class="tf-mcp tf-wrap tf-section" id="mcp" aria-labelledby="mcp-title">
+    <div>
+      <p class="tf-eyebrow">04 — WORKING WITH AI</p>
+      <h2 id="mcp-title">Ask Claude.<br>It asks Tariffik.</h2>
+      <p>Connect Tariffik to Claude, or any assistant that speaks the Model Context Protocol. Then work the way you already do: point it at your order emails, and let it pull the product links and come back with the codes.</p>
+      <ul class="tf-check-list">
+        <li>Codes checked against the UK Trade Tariff, not guessed</li>
+        <li>Lookups save to your account, ready for CSV export</li>
+        <li>Included with a free account</li>
+      </ul>
+      <%= link_to user_signed_in? ? dashboard_path : new_user_registration_path(source: "home_mcp"), class: "tf-button tf-button-dark" do %><%= user_signed_in? ? "Connect it from your dashboard" : "Create a free account" %> <span aria-hidden="true">↗</span><% end %>
+      <span class="tf-extension-note">Works with Claude Code, Claude Desktop and Cursor</span>
+    </div>
+    <div class="tf-mcp-preview" aria-hidden="true">
+      <div class="tf-mcp-line tf-mcp-you"><span>You</span><p>Go through my order emails from last month and find the commodity codes.</p></div>
+      <div class="tf-mcp-line tf-mcp-tool"><span>Tariffik</span><p><code>lookup_from_url</code> · allbirds.co.uk/products/wool-runner</p></div>
+      <div class="tf-mcp-line tf-mcp-tool"><span>Tariffik</span><p><code>lookup_from_url</code> · uniqlo.com/uk/en/products/cotton-tee</p></div>
+      <div class="tf-mcp-result"><p>Two codes found and saved.</p><div class="tf-mcp-code"><strong>6404</strong> <em>19</em> 9000 <span>Footwear, textile uppers</span></div><div class="tf-mcp-code"><strong>6109</strong> <em>10</em> 0010 <span>T-shirts, cotton</span></div></div>
+    </div>
+  </section>
+
   <section class="tf-pricing-section" id="pricing" aria-labelledby="pricing-title"><div class="tf-wrap tf-section">
-    <div class="tf-section-heading"><p class="tf-eyebrow">04 — SIMPLE FROM THE START</p><h2 id="pricing-title">Small parcel.<br>Big shipment. You’re covered.</h2><p>Try it out. Make it a habit.<br>Or put it to work for your business.</p></div>
+    <div class="tf-section-heading"><p class="tf-eyebrow">05 — SIMPLE FROM THE START</p><h2 id="pricing-title">Small parcel.<br>Big shipment. You’re covered.</h2><p>Start free with an account.<br>Or put it to work for your business.</p></div>
     <div class="tf-pricing-grid">
-      <article class="tf-plan"><p class="tf-eyebrow">JUST LOOKING</p><h3>Give it a go.</h3><div class="tf-plan-amount">3 <span>free lookups</span></div><p>No account. No commitment.<br>Three product-link lookups, on us.</p><ul class="tf-check-list"><li>AI commodity code suggestions</li><li>Confidence rating and explanation</li><li>No sign-up required</li></ul><a href="#lookup" class="tf-button tf-button-outline">Try a lookup <span aria-hidden="true">↗</span></a><small>One-time allowance · Results aren’t saved</small></article>
-      <article class="tf-plan tf-plan-featured"><div class="tf-plan-ribbon">A GOOD PLACE TO START</div><p class="tf-eyebrow">FREE ACCOUNT</p><h3>Make yourself at home.</h3><div class="tf-plan-amount">5 <span>lookups / month</span></div><p>Your everyday importing companion.<br>Free, every month.</p><ul class="tf-check-list"><li>Product links and photo lookup</li><li>Saved lookup history</li><li>Email forwarding and CSV export</li></ul><%= link_to new_user_registration_path(source: "home_pricing"), class: "tf-button tf-button-primary" do %>Create free account <span aria-hidden="true">↗</span><% end %><small>No card needed</small></article>
-      <article class="tf-plan"><p class="tf-eyebrow">PROFESSIONAL</p><h3>Down to business.</h3><div class="tf-plan-amount tf-plan-custom">Let’s talk.</div><p>For bigger volumes and<br>your own connected workflows.</p><ul class="tf-check-list"><li>Unlimited manual lookups</li><li>API access and batch processing</li><li>Webhooks for your workflows</li></ul><a href="mailto:hello@tariffik.com?subject=Professional%20Plan%20Enquiry" class="tf-button tf-button-outline">Get in touch <span aria-hidden="true">↗</span></a><small>A plan to fit your business</small></article>
+      <article class="tf-plan tf-plan-featured"><div class="tf-plan-ribbon">A GOOD PLACE TO START</div><p class="tf-eyebrow">FREE ACCOUNT</p><h3>Make yourself at home.</h3><div class="tf-plan-amount">5 <span>lookups / month</span></div><p>Your everyday importing companion.<br>Free, every month.</p><ul class="tf-check-list"><li>Product links and photo lookup</li><li>Email lookups: forward an order, get the codes back</li><li>Connect Claude or another AI assistant over MCP</li><li>Saved lookup history and CSV export</li></ul><%= link_to new_user_registration_path(source: "home_pricing"), class: "tf-button tf-button-primary" do %>Create free account <span aria-hidden="true">↗</span><% end %><small>No card needed</small></article>
+      <article class="tf-plan"><p class="tf-eyebrow">BUSINESS</p><h3>Down to business.</h3><div class="tf-plan-amount tf-plan-custom">Let’s talk.</div><p>For bigger volumes and<br>your own connected workflows.</p><ul class="tf-check-list"><li>Everything in the free account</li><li>More lookups every month</li><li>API access and batch processing</li><li>Webhooks for your workflows</li></ul><a href="mailto:hello@tariffik.com?subject=Business%20Plan%20Enquiry" class="tf-button tf-button-outline">Get in touch <span aria-hidden="true">↗</span></a><small>A plan to fit your business</small></article>
     </div>
   </div></section>
 
   <section class="tf-faq tf-wrap tf-section" aria-labelledby="faq-title"><div><p class="tf-eyebrow">A FEW GOOD QUESTIONS</p><h2 id="faq-title">Before you<br> send it.</h2></div><div class="tf-faq-list">
     <details><summary>What is a commodity code?<span aria-hidden="true">+</span></summary><p>A commodity code classifies goods for customs. Tariffik helps you find a suggested code for a product, using its details and UK tariff data.</p></details>
-    <details><summary>Do I need an account?<span aria-hidden="true">+</span></summary><p>You can try three product-link lookups without signing up. A free account includes five lookups each month, photo lookup, and saved history.</p></details>
+    <details><summary>Do I need an account?<span aria-hidden="true">+</span></summary><p>You can try one product-link lookup without signing up, to see how it works. A free account includes five lookups each month, photo and email lookups, saved history, and an MCP connection for Claude or another AI assistant.</p></details>
     <details><summary>Can I use a suggestion on my declaration?<span aria-hidden="true">+</span></summary><p>Review the code and its explanation against your product before using it. Suggestions are a starting point; you remain responsible for your customs classification.</p></details>
     <details><summary>What if I don’t have a product link?<span aria-hidden="true">+</span></summary><p>Create a free account to upload a product photo, or forward an order confirmation to your unique Tariffik email address.</p></details>
   </div></section>

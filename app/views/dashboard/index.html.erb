@@ -26,6 +26,35 @@
   </section>
 </div>
 
+<section class="tf-panel tf-mcp-setup" id="mcp">
+  <div class="tf-panel-heading">
+    <div><p class="tf-eyebrow">WORKING WITH AI</p><h2>Connect an AI assistant</h2></div>
+    <a href="https://modelcontextprotocol.io" target="_blank" rel="noopener noreferrer" class="tf-text-link">What is MCP? →</a>
+  </div>
+  <div class="tf-panel-body">
+    <p>Give Claude, or anything else that speaks the Model Context Protocol, the ability to look up commodity codes on your account. Point it at your order emails and it can pull out the product links and bring back the codes.</p>
+
+    <p class="tf-consent-label">Add it to Claude Code</p>
+    <div class="tf-copy-row" data-controller="clipboard">
+      <code data-clipboard-target="source">claude mcp add --transport http tariffik <%= mcp_url %></code>
+      <button type="button" class="tf-button tf-button-outline" data-action="clipboard#copy">Copy</button>
+    </div>
+
+    <p class="tf-consent-label">Or add it by hand</p>
+    <dl class="tf-account-facts">
+      <div><dt>Server URL</dt><dd><%= mcp_url %></dd></div>
+      <div><dt>Transport</dt><dd>HTTP (streamable)</dd></div>
+      <div><dt>Authentication</dt><dd>OAuth — you approve it in the browser</dd></div>
+    </dl>
+
+    <p class="tf-account-note">No key to paste. The first time it connects, Tariffik opens a page asking you to approve it, and you sign in as usual. Disconnect it any time from <%= link_to "your connected apps", oauth_authorized_applications_path, class: "tf-text-link" %>.</p>
+
+    <% if current_user.free? %>
+      <p class="tf-account-note">Lookups made this way come out of your <%= User::FREE_MONTHLY_LOOKUP_LIMIT %> a month, the same as any other. You have <%= current_user.lookups_remaining %> left.</p>
+    <% end %>
+  </div>
+</section>
+
 <div class="tf-desk-recents">
   <section class="tf-panel">
     <div class="tf-panel-heading"><div><p class="tf-eyebrow">YOUR PARCELS</p><h2>Recent orders</h2></div><%= link_to "View all →", orders_path, class: "tf-text-link" %></div>
