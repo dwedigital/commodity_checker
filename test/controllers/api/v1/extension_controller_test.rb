@@ -213,4 +213,25 @@ class Api::V1::ExtensionControllerTest < ActionDispatch::IntegrationTest
 
     assert_response :unauthorized
   end
+
+  test "an extension lookup cannot opt out of being recorded" do
+    # ProductLookup is what the monthly allowance counts, so honouring
+    # save_to_account: false would hand out unlimited free lookups.
+    user = users(:free_user)
+    token = user.extension_tokens.create!(extension_id: "a" * 32)
+    stub_commodity_suggestion(code: "6109100010", confidence: 0.85, reasoning: "Cotton t-shirt")
+    stub_request(:get, /trade-tariff.service.gov.uk.*search/)
+      .to_return(status: 200, body: { type: "fuzzy_match", results: [] }.to_json)
+    stub_request(:get, /trade-tariff.service.gov.uk.*commodities/)
+      .to_return(status: 200, body: { data: { attributes: { description: "T-shirts" } } }.to_json)
+
+    assert_difference -> { user.product_lookups.count }, 1 do
+      post api_v1_extension_lookup_url,
+           params: { description: "Cotton t-shirt", save_to_account: false },
+           headers: { "Authorization" => "Bearer #{token.raw_token}", "Accept" => "application/json" },
+           as: :json
+    end
+
+    assert_response :success
+  end
 end

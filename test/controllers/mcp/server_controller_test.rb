@@ -277,6 +277,46 @@ class Mcp::ServerControllerTest < ActionDispatch::IntegrationTest
     end
   end
 
+  test "a lookup cannot opt out of being recorded" do
+    # ProductLookup is what lookups_this_month counts, so a save opt-out would
+    # be an allowance opt-out. The argument is gone, and a caller passing it
+    # anyway is still recorded.
+    stub_tariff_api_search([ { code: "6109100010", description: "T-shirts, cotton", score: 95 } ])
+    stub_tariff_api_commodity("6109100010", {
+      code: "6109100010", description: "T-shirts, of cotton", duty_rate: "12%", notes: nil
+    })
+    stub_commodity_suggestion(code: "6109100010", confidence: 0.9, reasoning: "Knitted cotton t-shirt")
+
+    assert_difference -> { @user.product_lookups.count }, 1 do
+      mcp_post tool_call("lookup_from_description", { "description" => "Cotton t-shirt", "save" => false }), token: @token
+    end
+
+    assert_equal true, tool_payload(json_response[:result])[:saved_to_account]
+  end
+
+  test "the lookup tools do not advertise a save argument" do
+    mcp_post rpc("tools/list"), token: @token
+
+    tools = json_response[:result][:tools].index_by { |t| t[:name] }
+    %w[lookup_from_url lookup_from_description].each do |name|
+      assert_not_includes tools[name][:inputSchema][:properties].keys, :save,
+                          "#{name} must not offer a way around the allowance"
+    end
+  end
+
+  test "a free account cannot get past its cap by asking not to save" do
+    free_user = users(:free_user)
+    User::FREE_MONTHLY_LOOKUP_LIMIT.times do |i|
+      free_user.product_lookups.create!(url: "https://example.com/#{i}", lookup_type: :url)
+    end
+    token = create_access_token(user: free_user)
+
+    mcp_post tool_call("lookup_from_description", { "description" => "Cotton t-shirt", "save" => false }), token: token
+
+    assert_equal true, json_response[:result][:isError]
+    assert_equal "monthly_limit_reached", tool_payload(json_response[:result])[:error]
+  end
+
   test "list_recent_lookups does not leak another users lookups" do
     users(:two).product_lookups.create!(url: "https://example.com/secret", lookup_type: :url, title: "Not mine")
 

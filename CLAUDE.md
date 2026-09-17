@@ -246,6 +246,11 @@ allowance: `lookup_from_url` and `lookup_from_description` check
 website, the browser extension or an agent. `search_codes`, `get_code` and
 `list_recent_lookups` are reads and are not metered.
 
+**`ProductLookup` is the meter.** `lookups_this_month` counts those rows, so any
+path that skips writing one also skips the allowance. Neither the MCP tools nor
+`/api/v1/extension/lookup` let a caller opt out of being recorded, and they
+should not be given the option back.
+
 **Gotcha:** the consent forms must carry `data: { turbo: false }`. Turbo cannot
 follow the cross-origin redirect back to a client's callback, so with Turbo
 handling the submit the browser never leaves the consent page — and integration

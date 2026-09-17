@@ -49,7 +49,7 @@ module Mcp
       result = commodity_service.suggest_from_url(url)
       return error("lookup_failed", result[:error], url: url, scraped_product: result[:scraped_product]) if result[:error]
 
-      suggestion(result, url: url, description: nil, save: save?(args))
+      suggestion(result, url: url, description: nil)
     end
 
     def lookup_from_description(args)
@@ -61,7 +61,7 @@ module Mcp
       result = commodity_service.suggest_from_description(description)
       return error("lookup_failed", result[:error], description: description) if result[:error]
 
-      suggestion(result, url: nil, description: description, save: save?(args))
+      suggestion(result, url: nil, description: description)
     end
 
     def search_codes(args)
@@ -122,8 +122,12 @@ module Mcp
     end
 
     # Shared shape for both lookup tools, so the model sees one result format.
-    def suggestion(result, url:, description:, save:)
-      saved = save ? save_lookup(result, url: url, description: description) : nil
+    #
+    # The lookup is always recorded. ProductLookup is what lookups_this_month
+    # counts, so letting a caller opt out of saving would let it opt out of the
+    # monthly allowance too.
+    def suggestion(result, url:, description:)
+      saved = save_lookup(result, url: url, description: description)
 
       {
         commodity_code: result[:commodity_code],
@@ -197,10 +201,6 @@ module Mcp
             "at the start of next month.",
             lookups_this_month: user.lookups_this_month,
             lookups_remaining: 0)
-    end
-
-    def save?(args)
-      args.key?(:save) ? ActiveModel::Type::Boolean.new.cast(args[:save]) : true
     end
 
     def clamp(value, default:, max:)
