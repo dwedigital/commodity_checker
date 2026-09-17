@@ -92,6 +92,44 @@ class McpOauthFlowTest < ActionDispatch::IntegrationTest
     end
   end
 
+  # Browsers apply form-action across the redirect chain, so the site-wide
+  # `form-action 'self'` silently blocks the final hop to the client's callback:
+  # Connect appears to do nothing at all. Deployed once and only noticed when a
+  # real claude.ai connection hung on the consent screen.
+  test "the consent screen allows a form-action redirect to the client's callback" do
+    application = create_oauth_application(redirect_uri: "https://claude.ai/api/mcp/auth_callback")
+    sign_in @user
+    _verifier, challenge = pkce_pair
+
+    get "/oauth/authorize", params: authorize_params(application.uid, challenge)
+                              .merge(redirect_uri: "https://claude.ai/api/mcp/auth_callback")
+
+    assert_response :success
+    csp = response.headers["Content-Security-Policy"]
+    form_action = csp[/form-action ([^;]+)/, 1]
+    assert_includes form_action, "https://claude.ai",
+                    "the browser will refuse to follow the redirect to the client without this"
+    assert_includes form_action, "'self'"
+  end
+
+  test "the consent screen allows a loopback callback for a local MCP client" do
+    application = create_oauth_application(redirect_uri: REDIRECT_URI)
+    sign_in @user
+    _verifier, challenge = pkce_pair
+
+    get "/oauth/authorize", params: authorize_params(application.uid, challenge)
+
+    form_action = response.headers["Content-Security-Policy"][/form-action ([^;]+)/, 1]
+    assert_includes form_action, "http://localhost:8765"
+  end
+
+  test "pages other than the consent screen keep the strict form-action" do
+    get new_user_session_path
+
+    form_action = response.headers["Content-Security-Policy"][/form-action ([^;]+)/, 1]
+    assert_not_includes form_action, "claude.ai"
+  end
+
   test "the authorization code cannot be exchanged without the PKCE verifier" do
     code = authorization_code_for(pkce_pair.last)
 

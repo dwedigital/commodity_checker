@@ -23,6 +23,9 @@ Rails.application.routes.draw do
   # /oauth/token, /oauth/revoke and /oauth/introspect. The applications CRUD is
   # skipped because clients register themselves through /oauth/register.
   use_doorkeeper do
+    # Our own authorizations controller only to widen the CSP form-action for
+    # the consent screen; see Oauth::AuthorizationsController.
+    controllers authorizations: "oauth/authorizations"
     skip_controllers :applications
   end
 
