@@ -9,16 +9,21 @@ class User < ApplicationRecord
     enterprise: Float::INFINITY
   }.freeze
 
-  # Sign in with Google is the only way in. There is no password, so
-  # :database_authenticatable, :registerable, :recoverable, :confirmable and
-  # :validatable are all gone: Google verifies the address and owns the
-  # credential. Session routes are declared by hand in config/routes.rb because
-  # Devise only generates them for :database_authenticatable.
-  devise :rememberable, :omniauthable, omniauth_providers: [ :google_oauth2 ]
+  # Two ways in: an email and password, or Sign in with Google. An account can
+  # end up with both, but never gets one silently — see the rules below.
+  devise :database_authenticatable, :registerable, :recoverable, :rememberable,
+         :validatable, :confirmable, :omniauthable, omniauth_providers: [ :google_oauth2 ]
 
   GOOGLE_PROVIDER = "google_oauth2".freeze
 
-  validates :email, presence: true, uniqueness: { case_sensitive: false }
+  # An email address that already signs in with Google cannot be claimed by a
+  # password signup: otherwise knowing someone's address would be enough to
+  # attach a credential to their account. They add a password from account
+  # settings instead, while signed in. Declared after `devise` so it runs after
+  # :validatable's uniqueness check and can replace that generic message.
+  validate :email_not_claimed_by_google, on: :create
+
+  validate :password_strength, if: -> { password.present? }
 
   has_many :orders, dependent: :destroy
   has_many :inbound_emails, dependent: :destroy
@@ -37,6 +42,51 @@ class User < ApplicationRecord
 
   before_create :generate_inbound_email_token
   after_create :track_account_created
+
+  def password_set?
+    encrypted_password.present?
+  end
+
+  def google_linked?
+    provider == GOOGLE_PROVIDER && uid.present?
+  end
+
+  # An account that can only get in through Google. Password reset refuses
+  # these: sending a link would let anyone holding the inbox set a password and
+  # step around whatever protections Google has on the account.
+  def google_only?
+    google_linked? && !password_set?
+  end
+
+  # :validatable insists on a password for every new record. A user created from
+  # a Google sign-in has none and never will unless they ask for one.
+  def password_required?
+    return false if google_linked? && encrypted_password.blank? && password.nil? && password_confirmation.nil?
+
+    super
+  end
+
+  # Google has already verified the address, so a Google signup is confirmed on
+  # the spot. A password signup still has to click the link in its email.
+  def confirmation_required?
+    return false if google_linked?
+
+    super
+  end
+
+  # Reset is for accounts that actually have a password. A Google-only account
+  # gets told to use Google rather than a link that would create one.
+  def self.send_reset_password_instructions(attributes = {})
+    email = attributes[:email].to_s.downcase.strip
+    user = find_by("LOWER(email) = ?", email) if email.present?
+
+    if user&.google_only?
+      user.errors.add(:email, :google_only)
+      return user
+    end
+
+    super
+  end
 
   # Find or create the user behind a Google sign-in.
   #
@@ -57,10 +107,20 @@ class User < ApplicationRecord
     return nil if user&.persisted? && user.provider == GOOGLE_PROVIDER && user.uid != uid
 
     if user
-      user.update(google_profile_attributes(auth).merge(email: email))
+      # Linking Google to an existing password account also settles the address:
+      # Google has verified it, whether or not they ever clicked our email.
+      #
+      # skip_reconfirmation! because :reconfirmable would park a changed address
+      # in unconfirmed_email and email a link, leaving the account on its old
+      # address — when Google has already verified the new one.
+      user.skip_reconfirmation!
+      user.update(google_profile_attributes(auth)
+                    .merge(email: email)
+                    .merge(google_confirmation_attributes(user)))
       user
     else
-      create(google_profile_attributes(auth).merge(email: email))
+      create(google_profile_attributes(auth)
+               .merge(email: email, confirmed_at: Time.current))
     end
   end
 
@@ -80,6 +140,13 @@ class User < ApplicationRecord
       avatar_url: auth.info&.image.presence
     }.compact
   end
+
+  # Confirmable would otherwise hold a brand new Google user at the door waiting
+  # for an email, when Google has already told us the address is verified.
+  def self.google_confirmation_attributes(user)
+    user.confirmed_at.present? ? {} : { confirmed_at: Time.current }
+  end
+  private_class_method :google_confirmation_attributes
   private_class_method :google_profile_attributes
 
   def display_name
@@ -157,6 +224,24 @@ class User < ApplicationRecord
 
   def generate_inbound_email_token
     self.inbound_email_token = SecureRandom.hex(8)
+  end
+
+  def password_strength
+    return if password.blank?
+
+    errors.add(:password, "must include at least one uppercase letter") unless password.match?(/[A-Z]/)
+    errors.add(:password, "must include at least one lowercase letter") unless password.match?(/[a-z]/)
+    errors.add(:password, "must include at least one digit") unless password.match?(/\d/)
+  end
+
+  def email_not_claimed_by_google
+    return if email.blank?
+
+    existing = User.where.not(id: id).find_by("LOWER(email) = ?", email.downcase.strip)
+    return unless existing&.google_linked?
+
+    errors.delete(:email)
+    errors.add(:email, :claimed_by_google)
   end
 
   def track_account_created

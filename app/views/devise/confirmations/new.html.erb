@@ -1,0 +1,20 @@
+<div class="tf-signin">
+  <div class="tf-signin-card">
+    <p class="tf-eyebrow">TARIFFIK ACCOUNT</p>
+    <h1>Resend the confirmation email</h1>
+    <p class="tf-signin-lead">If your confirmation link expired or never arrived, we will send another.</p>
+
+    <%= render "devise/shared/error_messages", resource: resource %>
+
+    <%= form_for(resource, as: resource_name, url: confirmation_path(resource_name), html: { method: :post, class: "tf-auth-form" }) do |f| %>
+      <div class="tf-field">
+        <%= f.label :email, "Email address" %>
+        <%= f.email_field :email, autofocus: true, autocomplete: "email", required: true %>
+      </div>
+
+      <%= f.submit "Resend confirmation", class: "tf-button tf-button-primary tf-button-block" %>
+    <% end %>
+
+    <p class="tf-signin-note"><%= link_to "Back to sign in", new_session_path(resource_name), class: "tf-text-link" %></p>
+  </div>
+</div>

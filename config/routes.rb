@@ -79,17 +79,14 @@ Rails.application.routes.draw do
   post "extension/auth", to: "extension_auth#create_code", as: :extension_auth_create
   get "extension/auth/callback", to: "extension_auth#callback", as: :extension_auth_callback
 
-  # Google is the only identity provider, so Devise generates just the OmniAuth
-  # callbacks. Session routes normally come from :database_authenticatable,
-  # which this app no longer uses, so sign in and sign out are declared here.
-  devise_for :users,
-             skip: [ :sessions, :registrations, :passwords, :confirmations ],
-             controllers: { omniauth_callbacks: "users/omniauth_callbacks" }
-
-  devise_scope :user do
-    get "users/sign_in", to: "users/sessions#new", as: :new_user_session
-    delete "users/sign_out", to: "users/sessions#destroy", as: :destroy_user_session
-  end
+  # Email and password, plus Sign in with Google. Devise generates the session,
+  # registration, password and confirmation routes again now that the model
+  # carries :database_authenticatable.
+  devise_for :users, controllers: {
+    sessions: "users/sessions",
+    registrations: "users/registrations",
+    omniauth_callbacks: "users/omniauth_callbacks"
+  }
 
   # Dashboard routes (authenticated user area)
   scope "/dashboard" do
@@ -100,6 +97,7 @@ Rails.application.routes.draw do
     # as the only identity there is no email or password to change here, but
     # closing the account still has to be possible.
     get "account", to: "users/accounts#show", as: :account
+    patch "account/password", to: "users/accounts#update_password", as: :account_password
     delete "account", to: "users/accounts#destroy"
 
     # Developer / API Dashboard

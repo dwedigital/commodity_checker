@@ -30,7 +30,9 @@ Devise.setup do |config|
   # config.mailer = 'Devise::Mailer'
 
   # Configure the parent class responsible to send e-mails.
-  # config.parent_mailer = 'ActionMailer::Base'
+  # Devise's mailer inherits ours, so its templates get the Tariffik layout,
+  # the branded sender, and the inline-style helpers.
+  config.parent_mailer = "ApplicationMailer"
 
   # ==> ORM configuration
   # Load and configure the ORM. Supports :active_record (default) and
@@ -143,7 +145,11 @@ Devise.setup do |config|
   # without confirming their account.
   # Default is 0.days, meaning the user cannot access the website without
   # confirming their account.
-  config.allow_unconfirmed_access_for = 2.days
+  # No grace period: an address is verified before the account can be used.
+  # Devise's default lets someone in for a window before confirming, which would
+  # make the confirmation step advisory rather than required. A Google signup is
+  # confirmed on creation, so this only affects password signups.
+  config.allow_unconfirmed_access_for = 0.days
 
   # A period that the user is allowed to confirm their account before their
   # token becomes invalid. For example, if set to 3.days, the user can confirm

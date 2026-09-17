@@ -1,4 +1,4 @@
-<%= render "shared/page_header", eyebrow: "YOUR ACCOUNT", title: "Account settings", description: "See which Google account you sign in with, and close your account if you need to." %>
+<%= render "shared/page_header", eyebrow: "YOUR ACCOUNT", title: "Account settings", description: "See how you sign in, set a password, and close your account if you need to." %>
 
 <div class="tf-settings-layout">
   <aside class="tf-settings-aside">
@@ -20,11 +20,17 @@
       </div>
 
       <div class="tf-panel-body">
-        <p>You sign in with Google. Tariffik never sees or stores a password, and your email address is whatever Google holds for this account.</p>
+        <% if @user.google_linked? && @user.password_set? %>
+          <p>You can sign in with Google, or with your email address and password.</p>
+        <% elsif @user.google_linked? %>
+          <p>You sign in with Google. Tariffik never sees or stores a password, and your email address is whatever Google holds for this account.</p>
+        <% else %>
+          <p>You sign in with your email address and password. Signing in with Google using this same address will connect it too.</p>
+        <% end %>
 
         <dl class="tf-account-facts">
           <div>
-            <dt>Google account</dt>
+            <dt><%= @user.google_linked? ? "Google account" : "Email address" %></dt>
             <dd><%= @user.email %></dd>
           </div>
           <% if @user.name.present? %>
@@ -39,7 +45,55 @@
           </div>
         </dl>
 
-        <p class="tf-account-note">To change the email address on this account, change it with Google, or close this account and sign in with the Google account you want to use.</p>
+        <% if @user.google_linked? %>
+          <p class="tf-account-note">To change the email address on this account, change it with Google, or close this account and sign in with the Google account you want to use.</p>
+        <% end %>
+      </div>
+    </div>
+
+    <div class="tf-panel">
+      <div class="tf-panel-heading">
+        <div>
+          <p class="tf-eyebrow">PASSWORD</p>
+          <h2><%= @user.password_set? ? "Change your password" : "Set a password" %></h2>
+        </div>
+      </div>
+      <div class="tf-panel-body">
+        <% unless @user.password_set? %>
+          <p>You sign in with Google. Setting a password gives you a second way in; Google keeps working either way.</p>
+        <% end %>
+
+        <%= render "devise/shared/error_messages", resource: @user %>
+
+        <%= form_with model: @user, url: account_password_path, method: :patch, class: "tf-auth-form" do |f| %>
+          <% if @user.password_set? %>
+            <div class="tf-field">
+              <%= f.label :current_password, "Current password" %>
+              <%= f.password_field :current_password, autocomplete: "current-password", required: true %>
+            </div>
+          <% end %>
+
+          <div class="tf-field" data-controller="password-strength">
+            <%= f.label :password, @user.password_set? ? "New password" : "Password" %>
+            <%= f.password_field :password, autocomplete: "new-password", required: true,
+                                 data: { password_strength_target: "input", action: "input->password-strength#validate" } %>
+            <div class="tf-password-guidance">
+              <p>Your password needs:</p>
+              <ul>
+                <% [ [ "length", "At least 8 characters" ], [ "uppercase", "One uppercase letter" ], [ "lowercase", "One lowercase letter" ], [ "digit", "One digit" ] ].each do |target, label| %>
+                  <li data-password-strength-target="<%= target %>"><span data-password-strength-target="<%= target %>Icon">○</span> <%= label %></li>
+                <% end %>
+              </ul>
+            </div>
+          </div>
+
+          <div class="tf-field">
+            <%= f.label :password_confirmation, "Confirm password" %>
+            <%= f.password_field :password_confirmation, autocomplete: "new-password", required: true %>
+          </div>
+
+          <%= f.submit @user.password_set? ? "Change password" : "Set password", class: "tf-button tf-button-primary" %>
+        <% end %>
       </div>
     </div>
 

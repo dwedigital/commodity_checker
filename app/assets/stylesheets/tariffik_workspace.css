@@ -122,6 +122,9 @@
 .tf-settings-aside .tf-settings-email { overflow-wrap: anywhere; margin-block: 12px; }
 .tf-settings-aside .tf-text-link { display: inline-block; margin-top: 25px; }
 .tf-settings-form { padding: 28px; }
+.tf-password-guidance { background: #f6f5ef; padding: 15px; border: 1px solid var(--tf-line); border-radius: 6px; margin-top: 4px; }
+.tf-password-guidance p { margin: 0 0 10px; font-size: 12px; }
+.tf-password-guidance ul { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; font-size: 11px; line-height: 1.5; color: var(--tf-muted); list-style: none; padding: 0; margin: 0; }
 .tf-account-facts { margin: 20px 0 0; border-top: 1px solid var(--tf-line); }
 .tf-account-note { margin-top: 20px; color: var(--tf-muted); font-size: 12px; line-height: 1.6; }
 .tf-account-facts > div { display: flex; flex-wrap: wrap; gap: 4px 20px; justify-content: space-between; border-bottom: 1px solid var(--tf-line); padding: 13px 0; }
