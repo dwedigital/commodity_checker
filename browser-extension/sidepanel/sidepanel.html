@@ -4,13 +4,14 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Tariffik</title>
+  <link rel="stylesheet" href="../styles/brand.css">
   <link rel="stylesheet" href="sidepanel.css">
 </head>
 <body>
   <div class="sidepanel">
     <!-- Header -->
     <header class="header">
-      <h1 class="logo">Tariffik</h1>
+      <span class="tf-wordmark"><span class="tf-logo-mark" aria-hidden="true">↗</span>tariffik<span class="tf-wordmark-period">.</span></span>
       <div id="userStatus" class="user-status"></div>
     </header>
 
@@ -19,75 +20,92 @@
       <!-- Loading state -->
       <div id="loading" class="loading">
         <div class="spinner"></div>
-        <p>Loading...</p>
+        <p>Reading the page…</p>
       </div>
 
       <!-- Product info section -->
-      <div id="productSection" class="section hidden">
+      <section id="productSection" class="section hidden">
         <div class="section-header">
-          <h2 class="section-title">Product Detected</h2>
-          <a href="#" id="clearProductLink" class="clear-link">Enter manually</a>
+          <h2 class="tf-eyebrow">On this page</h2>
+          <a href="#" id="clearProductLink" class="text-link">Enter manually</a>
         </div>
         <div id="productInfo" class="product-info"></div>
-      </div>
+      </section>
 
       <!-- Manual input section -->
-      <div id="manualSection" class="section hidden">
-        <h2 class="section-title">Enter Product Details</h2>
-        <textarea id="descriptionInput" class="input" placeholder="Describe the product (e.g., 'Cotton t-shirt, blue, men's size medium')"></textarea>
-      </div>
+      <section id="manualSection" class="section hidden">
+        <label for="descriptionInput" class="tf-eyebrow section-label">Describe the product</label>
+        <textarea id="descriptionInput" class="input" placeholder="e.g. Cotton T-shirt, blue, men’s medium"></textarea>
+      </section>
 
       <!-- Lookup button -->
-      <div id="lookupSection" class="section hidden">
+      <section id="lookupSection" class="section hidden">
         <button id="lookupBtn" class="btn btn-primary">
-          <span class="btn-text">Look Up Commodity Code</span>
+          <span class="btn-text">Find my code</span>
+          <span class="btn-arrow" aria-hidden="true">↗</span>
           <span class="btn-spinner hidden"></span>
         </button>
         <p id="usageInfo" class="usage-info"></p>
-      </div>
+      </section>
 
       <!-- Result section -->
-      <div id="resultSection" class="section hidden">
-        <h2 class="section-title">Suggested Code</h2>
-        <div id="result" class="result"></div>
-      </div>
+      <section id="resultSection" class="section hidden">
+        <div id="result" class="result" aria-live="polite"></div>
+      </section>
 
       <!-- Error section -->
-      <div id="errorSection" class="section hidden">
-        <div id="errorMessage" class="error"></div>
-      </div>
+      <section id="errorSection" class="section hidden">
+        <div id="errorMessage" class="error" role="alert"></div>
+      </section>
 
       <!-- No lookups remaining -->
-      <div id="noLookupsSection" class="section hidden">
-        <div class="no-lookups">
-          <p>You've used all your free lookups.</p>
-          <a href="#" id="signUpLink" target="_blank" class="btn btn-secondary">Sign Up for More</a>
+      <section id="noLookupsSection" class="section hidden">
+        <div class="panel panel-limit">
+          <p class="tf-eyebrow">Free lookups used</p>
+          <h2>Your next code is a sign-in away.</h2>
+          <p>Continuing with Google creates your account and gives you 5 lookups every month. There is no password to set.</p>
+          <button id="signUpLink" class="btn btn-google">
+            <svg class="google-mark" viewBox="0 0 18 18" aria-hidden="true" focusable="false">
+              <path fill="#4285F4" d="M17.64 9.2c0-.64-.06-1.25-.16-1.84H9v3.48h4.84a4.14 4.14 0 0 1-1.8 2.72v2.26h2.92c1.7-1.57 2.68-3.88 2.68-6.62Z"/>
+              <path fill="#34A853" d="M9 18c2.43 0 4.47-.8 5.96-2.18l-2.92-2.26c-.8.54-1.84.86-3.04.86-2.34 0-4.32-1.58-5.03-3.7H.96v2.33A9 9 0 0 0 9 18Z"/>
+              <path fill="#FBBC05" d="M3.97 10.72a5.4 5.4 0 0 1 0-3.44V4.95H.96a9 9 0 0 0 0 8.1l3.01-2.33Z"/>
+              <path fill="#EA4335" d="M9 3.58c1.32 0 2.5.45 3.44 1.35l2.58-2.58C13.46.9 11.43 0 9 0A9 9 0 0 0 .96 4.95l3.01 2.33C4.68 5.16 6.66 3.58 9 3.58Z"/>
+            </svg>
+            <span>Continue with Google</span>
+          </button>
         </div>
-      </div>
+      </section>
 
       <!-- Sign in section -->
-      <div id="signInSection" class="section hidden">
-        <div class="sign-in">
-          <p>Sign in to save lookups and get more monthly searches.</p>
-          <button id="signInBtn" class="btn btn-secondary">Sign In to Tariffik</button>
+      <section id="signInSection" class="section hidden">
+        <div class="panel">
+          <p>Connect your Tariffik account to save every lookup and see what your plan has left.</p>
+          <button id="signInBtn" class="btn btn-google">
+            <svg class="google-mark" viewBox="0 0 18 18" aria-hidden="true" focusable="false">
+              <path fill="#4285F4" d="M17.64 9.2c0-.64-.06-1.25-.16-1.84H9v3.48h4.84a4.14 4.14 0 0 1-1.8 2.72v2.26h2.92c1.7-1.57 2.68-3.88 2.68-6.62Z"/>
+              <path fill="#34A853" d="M9 18c2.43 0 4.47-.8 5.96-2.18l-2.92-2.26c-.8.54-1.84.86-3.04.86-2.34 0-4.32-1.58-5.03-3.7H.96v2.33A9 9 0 0 0 9 18Z"/>
+              <path fill="#FBBC05" d="M3.97 10.72a5.4 5.4 0 0 1 0-3.44V4.95H.96a9 9 0 0 0 0 8.1l3.01-2.33Z"/>
+              <path fill="#EA4335" d="M9 3.58c1.32 0 2.5.45 3.44 1.35l2.58-2.58C13.46.9 11.43 0 9 0A9 9 0 0 0 .96 4.95l3.01 2.33C4.68 5.16 6.66 3.58 9 3.58Z"/>
+            </svg>
+            <span>Continue with Google</span>
+          </button>
         </div>
-      </div>
+      </section>
 
       <!-- Lookup history section -->
-      <div id="historySection" class="section hidden">
+      <section id="historySection" class="section hidden">
         <div class="section-header">
-          <h2 class="section-title">Recent Lookups</h2>
-          <a href="#" id="clearHistoryLink" class="clear-link">Clear</a>
+          <h2 class="tf-eyebrow">Recent lookups</h2>
+          <a href="#" id="clearHistoryLink" class="text-link">Clear</a>
         </div>
         <div id="historyList" class="history-list"></div>
-      </div>
+      </section>
     </main>
 
     <!-- Footer -->
     <footer class="footer">
-      <a href="#" id="footerLink" target="_blank">tariffik.com</a>
-      <span class="divider">|</span>
-      <a href="#" id="signOutLink" class="hidden">Sign Out</a>
+      <a href="#" id="footerLink" target="_blank">tariffik.com ↗</a>
+      <a href="#" id="signOutLink" class="hidden">Sign out</a>
     </footer>
   </div>
 

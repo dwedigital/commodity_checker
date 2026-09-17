@@ -4,7 +4,7 @@
   <header class="tf-consent-header">
     <div class="tf-consent-mark" aria-hidden="true"><span class="tf-logo-mark">↗</span> ··· <span>⧉</span></div>
     <h1>Connect the Tariffik extension</h1>
-    <p>The browser extension is asking to use your Tariffik account.</p>
+    <p>The browser extension is asking to connect to this Tariffik account.</p>
   </header>
 
   <section class="tf-panel">
@@ -17,9 +17,10 @@
       </ul>
 
       <div class="tf-consent-account">
-        <span class="tf-account-avatar" aria-hidden="true"><%= current_user.email.first.upcase %></span>
+        <%= render "shared/account_avatar", user: current_user %>
         <div>
-          <strong><%= current_user.email %></strong>
+          <strong><%= current_user.display_name %></strong>
+          <span><%= current_user.email %></span>
           <span>
             <%= current_user.subscription_tier.to_s.humanize %> plan ·
             <% if current_user.extension_lookups_remaining %>

@@ -3,137 +3,45 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Tariffik - Authorization Complete</title>
+  <title>Extension connected — Tariffik</title>
+  <link rel="stylesheet" href="../styles/brand.css">
   <style>
-    :root {
-      --primary: #E3170A;
-      --primary-hover: #c91409;
-      --brand-mint: #A9E5BB;
-      --highlight: #FCF6B1;
-      --brand-orange: #F7B32B;
-      --brand-dark: #2D1E2F;
-      --gray-200: #e5e7eb;
-      --gray-500: #6b7280;
-    }
-    * {
-      box-sizing: border-box;
-      margin: 0;
-      padding: 0;
-    }
-    body {
-      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-      background: var(--brand-dark);
-      min-height: 100vh;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      padding: 20px;
-    }
-    .container {
-      background: white;
-      border-radius: 16px;
-      padding: 40px;
-      max-width: 400px;
-      width: 100%;
-      text-align: center;
-      border: 1px solid var(--gray-200);
-    }
-    .icon {
-      width: 64px;
-      height: 64px;
-      background: var(--brand-mint);
-      border-radius: 50%;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      margin: 0 auto 24px;
-    }
-    .icon svg {
-      width: 32px;
-      height: 32px;
-      color: var(--brand-dark);
-    }
-    .icon.error {
-      background: rgba(227, 23, 10, 0.1);
-    }
-    .icon.error svg {
-      color: var(--primary);
-    }
-    .icon.loading {
-      background: var(--highlight);
-    }
-    .spinner {
-      width: 32px;
-      height: 32px;
-      border: 3px solid var(--gray-200);
-      border-top-color: var(--primary);
-      border-radius: 50%;
-      animation: spin 0.8s linear infinite;
-    }
-    @keyframes spin {
-      to { transform: rotate(360deg); }
-    }
-    h1 {
-      font-size: 24px;
-      color: var(--brand-dark);
-      margin-bottom: 12px;
-    }
-    p {
-      color: var(--gray-500);
-      margin-bottom: 24px;
-      line-height: 1.6;
-    }
-    .btn {
-      display: inline-block;
-      padding: 12px 24px;
-      background: var(--primary);
-      color: white;
-      text-decoration: none;
-      border-radius: 9999px;
-      font-weight: 600;
-      transition: background 0.15s;
-    }
-    .btn:hover {
-      background: var(--primary-hover);
-    }
-    #status {
-      display: none;
-    }
+    body { min-height: 100vh; display: flex; align-items: center; justify-content: center; padding: 24px; background-color: var(--tf-paper); background-image: radial-gradient(#d6d4c8 .7px, transparent .7px); background-size: 20px 20px; }
+    .container { width: 100%; max-width: 420px; text-align: center; }
+    .mark { display: inline-flex; align-items: center; gap: 10px; font: 11px var(--font-mono); color: var(--tf-muted); }
+    .mark .tf-logo-mark { width: 30px; height: 30px; margin: 0; font-size: 28px; }
+    .mark .ext { display: inline-grid; place-items: center; width: 30px; height: 30px; border: 1px dashed #aeb5a2; border-radius: 5px; background: #f8faf3; font-size: 14px; color: var(--tf-ink); }
+    .spinner { width: 14px; height: 14px; border: 2px solid var(--tf-line); border-top-color: var(--tf-red); border-radius: 50%; animation: spin .8s linear infinite; }
+    h1 { margin-top: 22px; font: 500 30px/1.15 var(--font-heading); letter-spacing: -1.2px; }
+    p { margin: 12px 0 24px; font-size: 13px; line-height: 1.8; color: var(--tf-muted); }
+    .btn { width: auto; padding-inline: 22px; }
+    .is-error .mark .tf-logo-mark { background: var(--tf-ink); }
+    #errorMessage { color: #9a2a1c; }
   </style>
 </head>
 <body>
   <div class="container">
     <!-- Loading state -->
     <div id="loading">
-      <div class="icon loading">
-        <div class="spinner"></div>
-      </div>
-      <h1>Completing Sign In...</h1>
-      <p>Please wait while we complete your authorization.</p>
+      <div class="mark" aria-hidden="true"><span class="tf-logo-mark">↗</span><span class="spinner"></span><span class="ext">⧉</span></div>
+      <h1>Connecting…</h1>
+      <p>Finishing sign-in. This only takes a moment.</p>
     </div>
 
     <!-- Success state -->
     <div id="success" style="display: none;">
-      <div class="icon">
-        <svg fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-          <path stroke-linecap="round" stroke-linejoin="round" d="M9 12.75L11.25 15 15 9.75M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-        </svg>
-      </div>
-      <h1>You're Signed In!</h1>
-      <p>The Tariffik extension is now connected to your account. You can close this tab.</p>
-      <a href="#" id="successLink" class="btn">Go to Tariffik</a>
+      <div class="mark" aria-hidden="true"><span class="tf-logo-mark">↗</span> ✓ <span class="ext">⧉</span></div>
+      <h1>Extension connected</h1>
+      <p>You’re signed in. This tab will close by itself, or you can close it now.</p>
+      <a href="#" id="successLink" class="btn btn-dark">Go to Tariffik ↗</a>
     </div>
 
     <!-- Error state -->
-    <div id="error" style="display: none;">
-      <div class="icon error">
-        <svg fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-          <path stroke-linecap="round" stroke-linejoin="round" d="M12 9v3.75m-9.303 3.376c-.866 1.5.217 3.374 1.948 3.374h14.71c1.73 0 2.813-1.874 1.948-3.374L13.949 3.378c-.866-1.5-3.032-1.5-3.898 0L2.697 16.126zM12 15.75h.007v.008H12v-.008z" />
-        </svg>
-      </div>
-      <h1>Sign In Failed</h1>
-      <p id="errorMessage">Something went wrong during sign in. Please try again.</p>
-      <a href="#" id="errorLink" class="btn">Go to Tariffik</a>
+    <div id="error" class="is-error" style="display: none;">
+      <div class="mark" aria-hidden="true"><span class="tf-logo-mark">↗</span> ✕ <span class="ext">⧉</span></div>
+      <h1>Couldn’t connect</h1>
+      <p id="errorMessage">Something went wrong during sign-in. Please try again from the extension.</p>
+      <a href="#" id="errorLink" class="btn btn-outline">Go to Tariffik ↗</a>
     </div>
   </div>
 

@@ -484,3 +484,168 @@ Before publishing:
 - `config/routes.rb`
 - `config/initializers/rack_attack.rb`
 - `Gemfile`
+
+## September 2026 design refresh (v1.2.0)
+
+The side panel and OAuth callback page now match the website's `tf-*` refresh (warm paper, ink, red accents, mono eyebrows, 6px buttons, sentence case, split `6109 10 0010` codes).
+
+| File | Change |
+|---|---|
+| `browser-extension/styles/brand.css` (new) | Shared tokens, `@font-face`, wordmark, eyebrow and button styles for extension pages |
+| `browser-extension/fonts/` (new) | Latin woff2 subsets of Space Grotesk and Plus Jakarta Sans (OFL), bundled so extension pages never request Google Fonts |
+| `browser-extension/sidepanel/*` | Paper header with `tariffik.` wordmark; "Find my code" button; result card mirrors the homepage label (split code, raw code, confidence bar, reasoning, Copy code / View history); history rows show split codes; sentence-case copy. All element ids unchanged |
+| `browser-extension/callback/callback.html` | Connecting / connected / couldn't connect states on the dotted auth ground, matching the website's "Extension connected" page |
+| `browser-extension/manifest.json` | Version 1.2.0 |
+
+**Homepage screenshot** (`public/images/chrome-extension-sidepanel.png`, 736×1196, shown at 368px): captured from the real `sidepanel.html` served over HTTP with a throwaway script that stubs `chrome.runtime/tabs/storage` with sample data (organic cotton T-shirt → 6109 10 0010) and clicks "Find my code", rendered by headless Chrome at 2× (`--force-device-scale-factor=2`, panel fixed at 368px inside a 500px window because headless won't go narrower, then cropped with ImageMagick). The stub is not committed; recreate it the same way when the panel changes.
+
+**Icons:** `icons/*.png` are still the old red circle, and the website favicon is still the older "T" mark — neither uses the refresh's ↗ mark yet.
+
+## September 2026 auth redo (Google-only sign-in)
+
+`claude/implementations/google-oauth-only-login.md` removed passwords from the
+app. The extension had not caught up: its "Create free account" button pointed
+at `/users/sign_up`, which is now a 404, and the connect flow never survived the
+trip through Google.
+
+### The connect flow was broken
+
+`/extension/auth` is the only route that issues a connection code, and it sits
+behind `authenticate_user!`. A signed-out user was sent to `/users/sign_in`,
+signed in with Google, and landed on the dashboard — the extension never got a
+code and there was no way back to the page that issues one.
+
+The cause was one line in `Users::SessionsController#new`. Devise's
+`stored_location_for` **deletes as it reads** on navigational formats
+(`devise-4.9.4/lib/devise/controllers/store_location.rb:18`), so rendering the
+sign-in page consumed the location that the callback needed minutes later.
+`@after_sign_in` was assigned and then never used.
+
+Reproduced before fixing: driving `/extension/auth` → `/users/sign_in` → Google
+redirected to `/`, while the same flow that skipped rendering the sign-in page
+redirected correctly back to `/extension/auth`. Both paths are now covered in
+`test/controllers/users/sessions_controller_test.rb`.
+
+```
+Extension "Continue with Google"
+  │  chrome.tabs.create(authUrl)
+  ▼
+GET /extension/auth?extension_id=…&redirect_uri=chrome-extension://…
+  │  signed out → session[:signup_source] = "extension"
+  │            → Devise stores user_return_to, redirects
+  ▼
+GET /users/sign_in            reads the stored location AND PUTS IT BACK
+  │  POST /users/auth/google_oauth2
+  ▼
+Google  ──►  /users/auth/google_oauth2/callback
+  │  after_sign_in_path_for finds the stored location
+  ▼
+GET /extension/auth  (consent screen, names the Google account)
+  │  POST /extension/auth → ExtensionAuthCode
+  ▼
+chrome-extension://…/callback/callback.html?code=…
+  │  EXCHANGE_TOKEN → service worker stores the token
+  ▼
+AUTH_COMPLETE → side panel re-inits, tab closes itself
+```
+
+### Modified files
+
+| File | Change |
+|---|---|
+| `app/controllers/users/sessions_controller.rb` | Re-stores the location it read, so the Google round trip keeps it; sets `@connecting_extension` |
+| `app/views/users/sessions/new.html.erb` | Says "Sign in to connect the extension" when that is where the visitor was heading |
+| `app/controllers/extension_auth_controller.rb` | `remember_extension_signup_source` stamps `session[:signup_source] = "extension"` ahead of `authenticate_user!`, because Devise's redirect cannot carry a `?source=` param |
+| `app/views/extension_auth/authorize.html.erb` | Consent screen names the Google account: profile photo, `display_name`, email |
+| `app/views/shared/_account_avatar.html.erb` (new) | Google profile photo with an initial fallback; shared with `/dashboard/account`, which renders it on `develop` but shipped without it — see below |
+| `app/views/users/accounts/show.html.erb` | Uses the shared partial |
+| `app/assets/stylesheets/tariffik_workspace.css` | `.tf-account-avatar` no longer shrinks in a flex row; `.tf-account-avatar-photo` crops to the circle |
+| `config/locales/devise.en.yml` | `unauthenticated` no longer offers a sign-up that does not exist |
+| `browser-extension/sidepanel/sidepanel.html` | Both panels carry the website's "Continue with Google" button and mark |
+| `browser-extension/sidepanel/sidepanel.js` | Dropped the `/users/sign_up` URL; both CTAs run `signIn()`; `updateSignInVisibility()` |
+| `browser-extension/styles/brand.css` | `.btn-google`, `.google-mark` mirroring the site's `.tf-google-button` |
+
+### Both CTAs go through the connect flow
+
+The limit panel used to link to `/users/sign_up` and the sign-in panel opened
+the connect URL. Sending the limit panel to the website alone would leave a new
+account signed in on the site with the extension still anonymous, so both now
+open `/extension/auth`: one trip creates the account **and** connects it.
+
+That made the two panels identical, and they were being shown together when the
+free allowance ran out — two "Continue with Google" buttons stacked. Caught on a
+rendered screenshot, not by reading the code. `updateSignInVisibility()` now
+gives the limit panel precedence whenever it is up.
+
+### Icons
+
+`icons/*.png` were plain red circles matching neither the old "T" favicon nor
+the refresh. All three are now the `↗` mark, and the website favicon
+(`public/icon.svg`, `public/icon.png`, `public/apple-touch-icon.png`) moved to
+the same mark so the toolbar, tab and wordmark agree. The favicon cache-buster
+in `app/views/layouts/application.html.erb` and `app/views/pwa/manifest.json.erb`
+went to `?v=3`.
+
+`icon16` uses a tuned geometry — larger arrow, heavier shaft, tighter corner
+radius — because the standard one turns to mush at 16px. See
+`browser-extension/icons/README.md` for the regeneration commands.
+
+### The account page had no coverage, and it cost us
+
+`app/views/users/accounts/show.html.erb` renders `shared/account_avatar`. The
+partial was written as part of this work, stayed untracked through a branch
+switch, and the Google-OAuth commit shipped the `render` without the template —
+so `/dashboard/account` raised `Missing partial shared/_account_avatar` on
+`develop` until this branch restored it.
+
+CI stayed green the whole time because **nothing in the suite rendered
+`account_path`**. `test/controllers/users/accounts_controller_test.rb` now does,
+including both avatar branches and account deletion. Confirmed non-vacuous by
+moving the partial aside and watching the tests error with exactly the
+production message.
+
+It never reached production: the deploy of that period (PR #70) predated the
+OAuth merge, and `origin/main` did not contain the account page at all.
+
+### Verification
+
+```bash
+bin/rails test                                  # 395 runs, 0 failures
+bundle exec rubocop                             # clean
+bundle exec brakeman                            # 0 warnings
+```
+
+The side panel was rendered and screenshotted in all three states (anonymous,
+allowance exhausted, signed-in result) by serving `browser-extension/` over HTTP
+with a throwaway `stub.js` that fakes `chrome.runtime/tabs/storage`, then
+capturing with headless Chrome at 2×. The stub is not committed; recreate it the
+same way. The `callback/callback.html` success state and both `/users/sign_in`
+variants were captured the same way against the dev server.
+
+**Not verified:** the live Google round trip from a loaded extension, which
+needs the extension installed and a real Google client. The Rails half of that
+round trip is covered by the tests above.
+
+### Still outstanding
+
+`browser-extension.zip` at the repo root is untouched and still the January
+**1.1.0** upload artifact, while the source is 1.2.0. It was not regenerated
+here because its layout is questionable on two counts: it nests everything under
+a `browser-extension/` folder rather than putting `manifest.json` at the zip
+root, and it carries `__MACOSX/` resource forks, both signs it came from Finder's
+Compress rather than a build step. Rebuild it deliberately before the next Web
+Store upload rather than trusting what is committed.
+
+### Gotchas met
+
+- **`stored_location_for` deletes as it reads.** Anything that renders the
+  sign-in page must put the location back, or every "sign in to continue" flow
+  in the app silently loses its destination, not just the extension's.
+- **Ahoy ignores bot user agents** (`Ahoy.track_bots = false`), and the
+  integration test rig sends one, so `ahoy.track` is a no-op there. The
+  `user_registered` event cannot be asserted in a controller test; the test
+  asserts `session[:signup_source]` instead. The event itself works in the real
+  app (the dev database holds 481 of them).
+- **The dev server redirects to port 3000** while `bin/dev` listens on 3101, so
+  `curl -L` through `/extension/auth` dies on a dead port. Drive the redirect by
+  hand with a cookie jar when capturing the sign-in page.

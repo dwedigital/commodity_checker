@@ -99,6 +99,25 @@ class Users::SessionsControllerTest < ActionDispatch::IntegrationTest
     ENV["CHROME_EXTENSION_ID"] = original if original
   end
 
+  # Signup attribution used to ride on a ?source= param, which Devise's redirect
+  # to the sign-in page cannot carry. The extension stamps the session instead,
+  # and Users::OmniauthCallbacksController reads it when it creates the user.
+  #
+  # The resulting user_registered event is not asserted here: ahoy.track is a
+  # no-op under the integration test rig (Ahoy.track_bots = false, and the rig
+  # sends a bot UA), so the assertion would only ever prove the rig. The session
+  # stamp is the part this app controls.
+  test "arriving from the extension stamps the signup source" do
+    original = ENV.delete("CHROME_EXTENSION_ID")
+
+    get extension_auth_path(extension_id: "ext_abc", redirect_uri: EXTENSION_CALLBACK)
+
+    assert_redirected_to new_user_session_path
+    assert_equal "extension", session[:signup_source]
+  ensure
+    ENV["CHROME_EXTENSION_ID"] = original if original
+  end
+
   test "an already signed-in user keeps whatever source they arrived with" do
     original = ENV.delete("CHROME_EXTENSION_ID")
     sign_in users(:one)
