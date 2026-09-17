@@ -16,6 +16,30 @@ class Users::SessionsControllerTest < ActionDispatch::IntegrationTest
     assert_select "input[type=email]", count: 0
   end
 
+  # The account page and the navbar both show who you are signed in as, so they
+  # render the same partial rather than each deciding what an avatar looks like.
+  test "the navbar shows the Google profile photo when there is one" do
+    user = users(:one)
+    user.update!(avatar_url: "https://lh3.googleusercontent.com/a/photo")
+    sign_in user
+
+    get dashboard_path
+
+    assert_response :success
+    assert_select "img.tf-account-avatar[src=?]", "https://lh3.googleusercontent.com/a/photo"
+  end
+
+  test "the navbar falls back to an initial when Google gave no photo" do
+    user = users(:one)
+    user.update!(avatar_url: nil, name: "Dave Edwards")
+    sign_in user
+
+    get dashboard_path
+
+    assert_select "img.tf-account-avatar", count: 0
+    assert_select "span.tf-account-avatar", text: "D"
+  end
+
   test "an already signed-in user is sent to their dashboard" do
     sign_in users(:one)
 
