@@ -1,0 +1,9 @@
+en:
+  activerecord:
+    errors:
+      models:
+        user:
+          attributes:
+            email:
+              claimed_by_google: "already signs in with Google. Use the Google button instead, or add a password from your account settings once you are signed in."
+              google_only: "signs in with Google, so there is no password to reset. Use the Google button instead."

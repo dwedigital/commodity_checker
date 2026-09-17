@@ -69,7 +69,7 @@
             <div class="hidden md:block">
               <div class="ml-4 flex items-center md:ml-6 gap-3">
                 <% if user_signed_in? %>
-                  <span class="tf-account-identity" title="<%= current_user.email %>"><span class="tf-account-avatar" aria-hidden="true"><%= current_user.email.first.upcase %></span><span><%= current_user.email %></span></span>
+                  <span class="tf-account-identity" title="<%= current_user.email %>"><%= render "shared/account_avatar", user: current_user %><span><%= current_user.email %></span></span>
                   <%= button_to "Sign out", destroy_user_session_path, method: :delete, class: "rounded-full border border-gray-300 px-4 py-2 text-sm font-medium text-brand-dark hover:bg-gray-50 transition-colors cursor-pointer" %>
                 <% else %>
                   <%= link_to "Sign in", new_user_session_path(source: "navbar"), class: "rounded-full bg-primary px-5 py-2 text-sm font-semibold text-white hover:bg-primary-hover transition-colors" %>

@@ -1,0 +1,6 @@
+<p style="<%= email_eyebrow_style %>">ACCOUNT LOCKED</p>
+<h1 style="<%= email_heading_style %>">Unlock your account</h1>
+
+<p style="<%= email_text_style %>">Your Tariffik account (<strong><%= @resource.email %></strong>) was locked after too many failed sign-in attempts.</p>
+
+<p style="margin:22px 0 24px;"><%= email_button "Unlock my account", unlock_url(@resource, unlock_token: @token) %></p>

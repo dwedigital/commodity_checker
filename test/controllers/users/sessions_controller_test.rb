@@ -7,13 +7,41 @@ class Users::SessionsControllerTest < ActionDispatch::IntegrationTest
   CHROME_ID = "gkjpgbgongkgdjfapjclandjhglnpmpn".freeze
   EXTENSION_CALLBACK = "chrome-extension://#{CHROME_ID}/callback/callback.html".freeze
 
-  test "the sign in page offers Google and nothing else" do
+  test "the sign in page offers both Google and an email and password" do
     get new_user_session_path
 
     assert_response :success
     assert_select "form[action=?]", "/users/auth/google_oauth2"
-    assert_select "input[type=password]", count: 0
-    assert_select "input[type=email]", count: 0
+    assert_select "form[action=?]", "/users/sign_in" do
+      assert_select "input[type=email]"
+      assert_select "input[type=password]"
+    end
+    assert_select "a[href=?]", new_user_password_path
+    assert_select "a[href^=?]", new_user_registration_path
+  end
+
+  # The account page and the navbar both show who you are signed in as, so they
+  # render the same partial rather than each deciding what an avatar looks like.
+  test "the navbar shows the Google profile photo when there is one" do
+    user = users(:one)
+    user.update!(avatar_url: "https://lh3.googleusercontent.com/a/photo")
+    sign_in user
+
+    get dashboard_path
+
+    assert_response :success
+    assert_select "img.tf-account-avatar[src=?]", "https://lh3.googleusercontent.com/a/photo"
+  end
+
+  test "the navbar falls back to an initial when Google gave no photo" do
+    user = users(:one)
+    user.update!(avatar_url: nil, name: "Dave Edwards")
+    sign_in user
+
+    get dashboard_path
+
+    assert_select "img.tf-account-avatar", count: 0
+    assert_select "span.tf-account-avatar", text: "D"
   end
 
   test "an already signed-in user is sent to their dashboard" do
@@ -34,16 +62,10 @@ class Users::SessionsControllerTest < ActionDispatch::IntegrationTest
     assert_redirected_to new_user_session_path
   end
 
-  test "the old password sign-in endpoint no longer exists" do
-    post "/users/sign_in", params: { user: { email: users(:one).email, password: "whatever" } }
-
-    assert_response :not_found
-  end
-
-  test "the old registration and password-reset pages no longer exist" do
+  test "the password, registration and confirmation pages are available" do
     [ "/users/sign_up", "/users/password/new", "/users/confirmation/new" ].each do |path|
       get path
-      assert_response :not_found, "#{path} should be gone"
+      assert_response :success, "#{path} should be reachable"
     end
   end
 
