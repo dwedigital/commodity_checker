@@ -125,6 +125,9 @@
 .tf-password-guidance { background: #f6f5ef; padding: 15px; border: 1px solid var(--tf-line); border-radius: 6px; margin-top: 4px; }
 .tf-password-guidance p { margin: 0 0 10px; font-size: 12px; }
 .tf-password-guidance ul { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; font-size: 11px; line-height: 1.5; color: var(--tf-muted); list-style: none; padding: 0; margin: 0; }
+/* Sits between the action cards and the recents grid, so it carries the same
+   separation the action cards do rather than butting into what follows. */
+.tf-mcp-setup { margin-bottom: 34px; }
 .tf-copy-row { display: flex; align-items: stretch; gap: 10px; margin: 8px 0 4px; }
 .tf-copy-row code { flex: 1; min-width: 0; border: 1px solid var(--tf-line); border-radius: 6px; background: #f6f5ef; padding: 12px 14px; font: 500 12px/1.5 ui-monospace, SFMono-Regular, Menlo, monospace; color: var(--tf-ink); overflow-x: auto; white-space: nowrap; }
 .tf-copy-row .tf-button { flex: none; padding: 12px 18px; }
