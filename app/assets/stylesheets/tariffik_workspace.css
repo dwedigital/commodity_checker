@@ -116,6 +116,7 @@
 .tf-empty-state p { color: var(--tf-muted); font-size: 12px; line-height: 1.8; margin-block: 12px 20px; }
 .tf-settings-layout { display: grid; grid-template-columns: 280px minmax(0, 1fr); gap: 60px; align-items: start; max-width: 1000px; }
 .tf-settings-aside { padding-top: 10px; }
+.tf-settings-main { display: grid; gap: 34px; align-content: start; }
 .tf-settings-aside h2 { font-size: 22px; margin-block: 20px 10px; }
 .tf-settings-aside p:not(.tf-eyebrow) { font-size: 12px; color: var(--tf-muted); line-height: 1.8; }
 .tf-settings-aside .tf-account-avatar { width: 50px; height: 50px; font-size: 22px; }
