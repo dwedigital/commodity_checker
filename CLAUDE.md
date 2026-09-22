@@ -287,13 +287,49 @@ Email → Resend → Action Mailbox → TrackingMailbox → ProcessInboundEmailJ
 ```
 
 ### Commodity Code Flow
+
+`LlmCommoditySuggester#suggest(description)` runs a **retrieve-then-walk**
+pipeline (default) instead of asking Claude for a code in one shot. Set
+`TARIFFIK_PIPELINE=legacy` to fall back to the old single-shot
+`LegacyCommoditySuggester`. Full detail in
+`claude/implementations/hierarchical-classification.md`.
+
 ```
-Product Description → TariffLookupService (UK API) → LlmCommoditySuggester (Claude)
-                                                            ↓
-                                                  Validate code exists
-                                                            ↓
-                                                  Save to OrderItem
+Product Description
+        │
+        ▼
+Classification::ProductAnalyzer  (1 Claude call, structured output)
+   → product_summary, 2-4 short search phrases, attributes, candidate chapters
+        │
+        ▼
+Classification::CandidateRetriever
+   → tariff search on each short phrase (fallback OFF) + candidate-chapter
+     headings → ordered, de-duplicated shortlist of real 4-digit headings
+        │
+        ▼
+Classification::TreeWalker  (Classification::TariffTree = UK API v2 client)
+   → choose a heading (Classification::Chooser; low confidence / no candidates
+     falls back to choosing a chapter then a heading)
+   → descend the real commodity tree, choosing at each node, to a declarable
+     10-digit leaf  (depth-capped)
+        │
+        ▼
+Validate the 10-digit code (TariffLookupService#get_commodity) + enrich
+        │
+        ▼
+Save to OrderItem / ProductLookup
 ```
+
+The **chooser** is swappable behind `Classification::Chooser` (contract:
+`#choose(question:, options:, context:)`). `Classification::Choosers.default`
+returns `JevChooser` (TypeSafe AI's Jev decision model, with `ClaudeChooser` as
+its fallback for numeric-threshold levels) whenever `TYPESAFE_API_KEY` is set;
+without the key, or with `TARIFFIK_CHOOSER=claude`, it returns `ClaudeChooser`.
+On the 88-ruling eval both choosers score 45% at 10 digits; Jev halves the
+latency (9 s vs 17 s median) and uses about 60% fewer Claude tokens. Jev is
+hosted in the US only and receives product text and tariff option text, never
+account data. Measure any classifier change with `bin/rails "eval:rulings"`
+(sequential on purpose) before and after.
 
 ### Premium API Flow
 ```
@@ -335,8 +371,15 @@ Product Description → TariffLookupService (UK API) → LlmCommoditySuggester (
 | `app/services/email_parser_service.rb` | Extracts tracking URLs, products, images from emails |
 | `app/services/product_info_finder_service.rb` | Tavily web search + AI to find product details |
 | `app/services/order_matcher_service.rb` | Matches emails to existing orders (avoid duplicates) |
-| `app/services/tariff_lookup_service.rb` | UK Trade Tariff API client |
-| `app/services/llm_commodity_suggester.rb` | Claude AI integration for code suggestions |
+| `app/services/tariff_lookup_service.rb` | UK Trade Tariff API client (search with `fallback:`, `get_commodity`) |
+| `app/services/llm_commodity_suggester.rb` | Public entry point; runs the retrieve-then-walk pipeline (or delegates to `LegacyCommoditySuggester` when `TARIFFIK_PIPELINE=legacy`) |
+| `app/services/legacy_commodity_suggester.rb` | Old single-shot Claude suggester, kept for eval comparison |
+| `app/services/classification/tariff_tree.rb` | Read-only UK Trade Tariff API v2 client: chapters, headings, nested commodity tree, chapter notes (24h cached) |
+| `app/services/classification/product_analyzer.rb` | One Claude call → structured product facts + search phrases + candidate chapters |
+| `app/services/classification/candidate_retriever.rb` | Short-phrase tariff search + chapter headings → shortlist of candidate headings |
+| `app/services/classification/tree_walker.rb` | Walks the real tariff tree to a declarable 10-digit leaf via a chooser |
+| `app/services/classification/chooser.rb` / `claude_chooser.rb` / `choosers.rb` | Chooser contract, Claude implementation, and selector (Jev when `TYPESAFE_API_KEY` is set; `TARIFFIK_CHOOSER=claude` forces Claude) |
+| `app/services/jev_client.rb` / `app/services/classification/jev_chooser.rb` | TypeSafe AI Jev client and the default tree chooser (numeric levels fall back to Claude) |
 | `app/services/tracking_scraper_service.rb` | Scrapes carrier tracking pages |
 | `app/services/product_scraper_service.rb` | Scrapes product pages for descriptions (with Scrape.do fallback) |
 | `app/services/blog_post_service.rb` | Loads and renders markdown blog posts with YAML front matter |
@@ -470,8 +513,27 @@ curl -I https://tariffik.com | grep -E "(Content-Security|X-Frame|X-Content-Type
 - Test with `/dashboard/test_emails/new` interface
 
 ### Modifying commodity code suggestions
-- Edit `LlmCommoditySuggester::SYSTEM_PROMPT` for different AI behavior
-- The service combines tariff API results with Claude's interpretation
+
+The classifier is the retrieve-then-walk pipeline under
+`app/services/classification/` (see the Commodity Code Flow above and
+`claude/implementations/hierarchical-classification.md`).
+
+- **How the product is read** (summary, search phrases, GRI rules, chapter
+  hints): edit `Classification::ProductAnalyzer::SYSTEM_PROMPT` / `SCHEMA`. This
+  is the place to encode classification rules (e.g. pet toys are not chapter 95;
+  electric kettles are 8516 79).
+- **How each heading/node choice is made**: edit
+  `Classification::ClaudeChooser::SYSTEM_PROMPT`, or implement a new
+  `Classification::Chooser` and wire it into `Classification::Choosers.default`.
+- **How candidates are gathered**: edit `Classification::CandidateRetriever`
+  (short-phrase search, fallback disabled) or the shortlist/fallback logic in
+  `Classification::TreeWalker`.
+- **Evaluate a change**: `bin/rails "eval:rulings"` (new pipeline) vs
+  `TARIFFIK_PIPELINE=legacy bin/rails "eval:rulings"` against
+  `test/eval/rulings_eval_set.json`. Runs sequentially (the tariff API
+  rate-limits parallel callers).
+- `LegacyCommoditySuggester::SYSTEM_PROMPT` still drives the old single-shot
+  path used when `TARIFFIK_PIPELINE=legacy`.
 
 ## Testing
 

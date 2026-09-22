@@ -91,23 +91,11 @@ class Api::V1::CommodityCodesControllerTest < ActionDispatch::IntegrationTest
   # Suggest Endpoint Tests
 
   test "suggest returns commodity suggestion for description" do
-    stub_tariff_api_search([
-      { code: "6109100010", description: "T-shirts, cotton", score: 95 }
-    ])
-    stub_commodity_suggestion(
-      code: "6109100010",
-      confidence: 0.85,
-      reasoning: "Cotton t-shirt"
-    )
-    stub_tariff_api_commodity("6109100010", {
-      code: "6109100010",
-      description: "T-shirts, of cotton",
-      duty_rate: "12%"
-    })
-
-    api_post api_v1_commodity_codes_suggest_path,
-             raw_key: @raw_key,
-             params: { description: "Cotton t-shirt, blue, size M" }
+    stub_suggester do
+      api_post api_v1_commodity_codes_suggest_path,
+               raw_key: @raw_key,
+               params: { description: "Cotton t-shirt, blue, size M" }
+    end
 
     assert_response :success
     assert_equal "6109100010", json_response[:commodity_code]

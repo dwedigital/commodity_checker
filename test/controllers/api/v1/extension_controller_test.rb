@@ -108,23 +108,12 @@ class Api::V1::ExtensionControllerTest < ActionDispatch::IntegrationTest
   # === Lookup Endpoint (Anonymous) ===
 
   test "anonymous lookup succeeds with extension_id" do
-    # Stub the Claude API response (used by LlmCommoditySuggester -> ApiCommodityService)
-    stub_commodity_suggestion(
-      code: "6109100010",
-      confidence: 0.85,
-      reasoning: "Cotton t-shirt"
-    )
-
-    # Stub the tariff API search and validation
-    stub_request(:get, /trade-tariff.service.gov.uk.*search/)
-      .to_return(status: 200, body: { type: "fuzzy_match", results: [] }.to_json)
-    stub_request(:get, /trade-tariff.service.gov.uk.*commodities/)
-      .to_return(status: 200, body: { data: { attributes: { description: "T-shirts" } } }.to_json)
-
-    post api_v1_extension_lookup_url,
-         params: { extension_id: @extension_id, description: "Cotton t-shirt" },
-         headers: { "Accept" => "application/json" },
-         as: :json
+    stub_suggester do
+      post api_v1_extension_lookup_url,
+           params: { extension_id: @extension_id, description: "Cotton t-shirt" },
+           headers: { "Accept" => "application/json" },
+           as: :json
+    end
 
     assert_response :success
     json = JSON.parse(response.body)
@@ -170,26 +159,15 @@ class Api::V1::ExtensionControllerTest < ActionDispatch::IntegrationTest
     token = @user.extension_tokens.create!(name: "Test")
     raw_token = token.raw_token
 
-    # Stub the Claude API response
-    stub_commodity_suggestion(
-      code: "6109100010",
-      confidence: 0.85,
-      reasoning: "Cotton t-shirt"
-    )
-
-    # Stub the tariff API
-    stub_request(:get, /trade-tariff.service.gov.uk.*search/)
-      .to_return(status: 200, body: { type: "fuzzy_match", results: [] }.to_json)
-    stub_request(:get, /trade-tariff.service.gov.uk.*commodities/)
-      .to_return(status: 200, body: { data: { attributes: { description: "T-shirts" } } }.to_json)
-
-    post api_v1_extension_lookup_url,
-         params: { description: "Cotton t-shirt" },
-         headers: {
-           "Accept" => "application/json",
-           "Authorization" => "Bearer #{raw_token}"
-         },
-         as: :json
+    stub_suggester do
+      post api_v1_extension_lookup_url,
+           params: { description: "Cotton t-shirt" },
+           headers: {
+             "Accept" => "application/json",
+             "Authorization" => "Bearer #{raw_token}"
+           },
+           as: :json
+    end
 
     assert_response :success
     json = JSON.parse(response.body)
@@ -219,17 +197,14 @@ class Api::V1::ExtensionControllerTest < ActionDispatch::IntegrationTest
     # save_to_account: false would hand out unlimited free lookups.
     user = users(:free_user)
     token = user.extension_tokens.create!(extension_id: "a" * 32)
-    stub_commodity_suggestion(code: "6109100010", confidence: 0.85, reasoning: "Cotton t-shirt")
-    stub_request(:get, /trade-tariff.service.gov.uk.*search/)
-      .to_return(status: 200, body: { type: "fuzzy_match", results: [] }.to_json)
-    stub_request(:get, /trade-tariff.service.gov.uk.*commodities/)
-      .to_return(status: 200, body: { data: { attributes: { description: "T-shirts" } } }.to_json)
 
     assert_difference -> { user.product_lookups.count }, 1 do
-      post api_v1_extension_lookup_url,
-           params: { description: "Cotton t-shirt", save_to_account: false },
-           headers: { "Authorization" => "Bearer #{token.raw_token}", "Accept" => "application/json" },
-           as: :json
+      stub_suggester do
+        post api_v1_extension_lookup_url,
+             params: { description: "Cotton t-shirt", save_to_account: false },
+             headers: { "Authorization" => "Bearer #{token.raw_token}", "Accept" => "application/json" },
+             as: :json
+      end
     end
 
     assert_response :success

@@ -9,13 +9,17 @@ class TariffLookupService
     end
   end
 
-  # Search for commodity codes by keyword
-  # Falls back to searching individual terms if compound query returns no results
-  def search(query)
+  # Search for commodity codes by keyword.
+  #
+  # By default, if a multi-word query returns nothing, it falls back to searching
+  # each meaningful word separately and combining the results. Pass
+  # fallback: false to skip that (the retrieve-then-walk pipeline sends short,
+  # already-focused noun phrases and does not want the noisy word-by-word spray).
+  def search(query, fallback: true)
     results = search_single(query)
 
     # If no results and query has multiple words, try fallback search
-    if results.empty? && query.to_s.split.size > 1
+    if fallback && results.empty? && query.to_s.split.size > 1
       results = search_with_fallback(query)
     end
 
