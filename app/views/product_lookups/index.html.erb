@@ -1,4 +1,4 @@
-<%= render "shared/page_header", eyebrow: "YOUR PRODUCTS", title: "Lookup history", description: "Every product you’ve looked up, ready when you need it.", actions: link_to("New lookup ↗", new_product_lookup_path, class: "tf-button tf-button-primary") %>
+<%= render "shared/page_header", eyebrow: "YOUR PRODUCTS", title: "Lookup history", description: "Every product you’ve looked up, ready when you need it.", actions: link_to(safe_join([ "New lookup ", tf_arrow ]), new_product_lookup_path, class: "tf-button tf-button-primary") %>
 <% if current_user.free? %>
   <%= render "product_lookups/allowance" %>
 <% end %>
@@ -79,6 +79,6 @@
   </div>
 <% else %>
   <section class="tf-panel">
-    <div class="tf-empty-state"><span aria-hidden="true">#</span><h3>A home for your codes.</h3><p>Every product you look up is saved here, with its code and the reasoning behind it.</p><%= link_to "Find your first code ↗", new_product_lookup_path, class: "tf-button tf-button-outline" %></div>
+    <div class="tf-empty-state"><span aria-hidden="true">#</span><h3>A home for your codes.</h3><p>Every product you look up is saved here, with its code and the reasoning behind it.</p><%= link_to safe_join([ "Find your first code ", tf_arrow ]), new_product_lookup_path, class: "tf-button tf-button-outline" %></div>
   </section>
 <% end %>

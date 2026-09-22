@@ -15,6 +15,7 @@ This document provides styling guidelines for all view templates in the Tariffik
 | Status | `tf-badge tf-badge-success` / `tf-badge-neutral` | `dashboard/index` |
 | Limit reached | `tf-limit` | `product_lookups/_limit_reached`, homepage hero |
 | Commodity codes | `<p class="tf-code"><%= commodity_code_display(code) %></p>` | `pages/_lookup_result` |
+| North-east arrow | `<%= tf_arrow %>` (never the `↗` character) | `pages/home`, `shared/_footer` |
 | Forms (settings style) | `tf-settings-form`, `fieldset` + `legend`, `tf-field` | `devise/registrations/edit`, `orders/new` |
 | Detail pages | `page_header` with `breadcrumbs: [[label, path], [label, nil]]`, then `tf-detail-grid` (main + aside of `tf-panel`s, `tf-panel-body`, `tf-detail-list`) | `product_lookups/show`, `orders/show` |
 | Status badges | `order_status_badge(order)`, `lookup_status_badge(lookup)` (sentence case, `tf-badge-*`) | `orders/index`, `product_lookups/index` |

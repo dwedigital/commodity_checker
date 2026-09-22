@@ -2,7 +2,7 @@
 
 <div class="tf-consent">
   <header class="tf-consent-header">
-    <div class="tf-consent-mark" aria-hidden="true"><span class="tf-logo-mark">↗</span> ··· <span>⧉</span></div>
+    <div class="tf-consent-mark" aria-hidden="true"><span class="tf-logo-mark"></span> ··· <span>⧉</span></div>
     <h1>Connect the Tariffik extension</h1>
     <p>The browser extension is asking to connect to this Tariffik account.</p>
   </header>
@@ -37,7 +37,7 @@
         <%= form_with url: extension_auth_create_path, method: :post do |f| %>
           <%= f.hidden_field :extension_id, value: @extension_id %>
           <%= f.hidden_field :redirect_uri, value: @redirect_uri %>
-          <%= f.button type: "submit", class: "tf-button tf-button-primary" do %>Connect extension <span aria-hidden="true">↗</span><% end %>
+          <%= f.button type: "submit", class: "tf-button tf-button-primary" do %>Connect extension&nbsp;<%= tf_arrow %><% end %>
         <% end %>
       </div>
     </div>

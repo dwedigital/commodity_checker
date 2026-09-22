@@ -22,7 +22,13 @@ body { font-family: var(--font-body); font-size: 13px; line-height: 1.6; color: 
 .hidden { display: none !important; }
 
 .tf-wordmark { display: inline-flex; align-items: center; font: 700 22px/1 var(--font-heading); letter-spacing: -1.2px; color: var(--tf-ink); text-decoration: none; }
-.tf-logo-mark { display: inline-grid; place-items: center; width: 22px; height: 22px; margin-right: 8px; border-radius: 4px; background: var(--tf-red); color: #fff; font: 21px/1 Arial, sans-serif; letter-spacing: 0; }
+/* Drawn, not typed: U+2197 is in none of our fonts and has an emoji
+   presentation, so it rendered as a colour emoji wherever the OS fell back
+   to an emoji font. Same outline as public/icon.svg. */
+.tf-logo-mark { display: inline-block; flex: none; width: 22px; height: 22px; margin-right: 8px; border-radius: 4px; background-color: var(--tf-red); background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 512 512'%3E%3Cg fill='%23fff' stroke='%23fff' stroke-linejoin='round'%3E%3Cpath d='M168 344 280 232 292 244 180 356Z' stroke-width='64' stroke-linecap='round'/%3E%3Cpath d='M206 158 354 158 354 306Z' stroke-width='28'/%3E%3C/g%3E%3C/svg%3E"); background-repeat: no-repeat; background-position: center; background-size: 100%; }
+/* display:inline-block is load-bearing: Tailwind's preflight sets
+   svg { display: block }, which puts every arrow on its own line. */
+.tf-arrow { display: inline-block; width: 1em; height: 1em; flex: none; vertical-align: -0.125em; }
 .tf-wordmark-period { color: var(--tf-red); }
 .tf-eyebrow { font: 500 9px/1.6 var(--font-mono); letter-spacing: 1.4px; text-transform: uppercase; color: var(--tf-muted); }
 

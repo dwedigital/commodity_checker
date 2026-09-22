@@ -17,7 +17,7 @@
               <button type="submit" data-lookup-progress-target="button" class="tf-button tf-button-primary">
                 <span data-lookup-progress-target="buttonText">Find my code</span>
                 <svg data-lookup-progress-target="spinner" class="hidden animate-spin size-4" viewBox="0 0 24 24" fill="none" aria-hidden="true"><circle cx="12" cy="12" r="9" stroke="currentColor" stroke-width="3" opacity=".3"/><path d="M12 3a9 9 0 0 1 9 9" stroke="currentColor" stroke-width="3"/></svg>
-                <span aria-hidden="true">↗</span>
+                <%= tf_arrow %>
               </button>
             </div>
             <div class="tf-lookup-help" id="lookup-help">
@@ -33,7 +33,7 @@
           <p class="tf-eyebrow">KEEP THE GOOD THINGS COMING</p>
           <h2>Your next code is a sign-up away.</h2>
           <p>You’ve used your guest lookups. Get 5 lookups every month with a free account.</p>
-          <%= link_to "Create free account ↗", new_user_registration_path(source: "home_hero"), class: "tf-button tf-button-primary" %>
+          <%= link_to safe_join([ "Create free account ", tf_arrow ]), new_user_registration_path(source: "home_hero"), class: "tf-button tf-button-primary" %>
           <%= link_to "Sign in", new_user_session_path, class: "tf-text-link" %>
         </div>
         <%= turbo_frame_tag "lookup_result", class: "block no-loading-indicator", aria: { live: "polite" } %>
@@ -49,7 +49,7 @@
       <div class="tf-sample">
         <div class="tf-sample-top"><span class="tf-eyebrow">EXAMPLE RESULT</span><span class="tf-status">✓ Suggested code</span></div>
         <div class="tf-sample-product"><span class="tf-shirt" aria-hidden="true"><svg viewBox="0 0 48 48" fill="none"><path d="m15 8-11 8 7 9 5-3v19h16V22l5 3 7-9-11-8c-4 6-14 6-18 0Z" fill="#f8f6ef" stroke="currentColor" stroke-width="1.5"/></svg></span><div><strong>Everyday cotton T-shirt</strong><p>Clothing / Knitted / Cotton</p></div></div>
-        <div class="tf-code">6109 <span>10</span> 0010 <span class="tf-code-arrow" aria-hidden="true">↗</span></div>
+        <div class="tf-code">6109 <span>10</span> 0010&nbsp;<%= tf_arrow(classes: "tf-code-arrow") %></div>
         <div class="tf-sample-bottom"><span>A code. And the reasoning behind it.</span><span class="tf-barcode" aria-hidden="true"></span></div>
       </div>
       <p class="tf-art-footnote">Illustrative result. Always review your suggested classification.</p>
@@ -62,8 +62,8 @@
   <section class="tf-section tf-wrap" id="how-it-works" aria-labelledby="how-title">
     <div class="tf-section-heading"><p class="tf-eyebrow">01 — HOW IT WORKS</p><h2 id="how-title">From “what is this?”<br>to “there’s the code.”</h2><p>Skip the tariff rabbit hole.<br>Start with what you already have.</p></div>
     <div class="tf-steps">
-      <article><span class="tf-step-number">01 <span aria-hidden="true">↗</span></span><h3>Send us the product.</h3><p>Paste a link from your favourite shop. With a free account, you can also upload a photo or forward an order email.</p></article>
-      <article><span class="tf-step-number">02 <span aria-hidden="true">↗</span></span><h3>We join the dots.</h3><p>Tariffik analyses the product details and finds a suggested classification using the official UK Trade Tariff.</p></article>
+      <article><span class="tf-step-number">01&nbsp;<%= tf_arrow %></span><h3>Send us the product.</h3><p>Paste a link from your favourite shop. With a free account, you can also upload a photo or forward an order email.</p></article>
+      <article><span class="tf-step-number">02&nbsp;<%= tf_arrow %></span><h3>We join the dots.</h3><p>Tariffik analyses the product details and finds a suggested classification using the official UK Trade Tariff.</p></article>
       <article><span class="tf-step-number">03 <span aria-hidden="true">✓</span></span><h3>Get a code you can check.</h3><p>See the suggested commodity code, a confidence rating, and the reasoning—so you can review it before declaring.</p></article>
     </div>
   </section>
@@ -71,15 +71,15 @@
   <section class="tf-tools-section" id="features" aria-labelledby="tools-title"><div class="tf-wrap tf-section">
     <div class="tf-section-heading"><p class="tf-eyebrow">02 — A LITTLE MORE ORGANISED</p><h2 id="tools-title">Less admin.<br>More getting on with it.</h2><p>One place for your products,<br>orders, and that all-important code.</p></div>
     <div class="tf-tools-grid">
-      <article class="tf-tool-feature"><span class="tf-tool-icon" aria-hidden="true">↳</span><div><p class="tf-eyebrow">YOUR IMPORTS, TOGETHER</p><h3>A home for every order.</h3><p>Forward your order confirmations. Keep products and suggested codes together, review your history, and export confirmed codes to CSV.</p><%= link_to "Get organised for free ↗", new_user_registration_path(source: "home_orders"), class: "tf-text-link" %></div><div class="tf-order-preview" aria-hidden="true"><div><span>YOUR ORDERS</span><span>STATUS</span></div><div><strong>Cotton T-shirt</strong><span>Ready to review</span></div><div><strong>Ceramic coffee cup</strong><span>Ready to review</span></div><div><strong>Desk lamp</strong><span>Ready to review</span></div></div></article>
-      <article class="tf-tool-small"><span class="tf-tool-icon" aria-hidden="true">◎</span><span class="tf-small-label">PHOTO LOOKUP · BETA</span><h3>Point. Snap. Classify.</h3><p>Got the product, but no link? Upload a photo and let Tariffik work out what it is.</p><%= link_to "Try photo lookup ↗", user_signed_in? ? new_product_lookup_path(tab: "photo") : new_user_registration_path(source: "home_photo_card"), class: "tf-text-link" %></article>
-      <article class="tf-tool-small tf-tool-mint"><span class="tf-tool-icon" aria-hidden="true">≡</span><span class="tf-small-label">THE REASONING INCLUDED</span><h3>More than a number.</h3><p>Understand why a code was suggested, with a confidence rating to help guide your review.</p><a href="#lookup" class="tf-text-link">Find your first code ↗</a></article>
+      <article class="tf-tool-feature"><span class="tf-tool-icon" aria-hidden="true">↳</span><div><p class="tf-eyebrow">YOUR IMPORTS, TOGETHER</p><h3>A home for every order.</h3><p>Forward your order confirmations. Keep products and suggested codes together, review your history, and export confirmed codes to CSV.</p><%= link_to safe_join([ "Get organised for free ", tf_arrow ]), new_user_registration_path(source: "home_orders"), class: "tf-text-link" %></div><div class="tf-order-preview" aria-hidden="true"><div><span>YOUR ORDERS</span><span>STATUS</span></div><div><strong>Cotton T-shirt</strong><span>Ready to review</span></div><div><strong>Ceramic coffee cup</strong><span>Ready to review</span></div><div><strong>Desk lamp</strong><span>Ready to review</span></div></div></article>
+      <article class="tf-tool-small"><span class="tf-tool-icon" aria-hidden="true">◎</span><span class="tf-small-label">PHOTO LOOKUP · BETA</span><h3>Point. Snap. Classify.</h3><p>Got the product, but no link? Upload a photo and let Tariffik work out what it is.</p><%= link_to safe_join([ "Try photo lookup ", tf_arrow ]), user_signed_in? ? new_product_lookup_path(tab: "photo") : new_user_registration_path(source: "home_photo_card"), class: "tf-text-link" %></article>
+      <article class="tf-tool-small tf-tool-mint"><span class="tf-tool-icon" aria-hidden="true">≡</span><span class="tf-small-label">THE REASONING INCLUDED</span><h3>More than a number.</h3><p>Understand why a code was suggested, with a confidence rating to help guide your review.</p><a href="#lookup" class="tf-text-link">Find your first code&nbsp;<%= tf_arrow %></a></article>
     </div>
   </div></section>
 
   <section class="tf-extension tf-wrap tf-section" aria-labelledby="extension-title">
-    <div><p class="tf-eyebrow">03 — RIGHT WHERE YOU SHOP</p><h2 id="extension-title">New tab?<br>No need.</h2><p>Meet your shopping sidekick. The free Tariffik Chrome extension looks up commodity codes right on the product page.</p><ul class="tf-check-list"><li>Automatically reads product details</li><li>Opens neatly in your browser sidebar</li><li>Saves lookups to your Tariffik account</li></ul><a href="https://chromewebstore.google.com/detail/tariffik-commodity-code-l/gkjpgbgongkgdjfapjclandjhglnpmpn" target="_blank" rel="noopener noreferrer" class="tf-button tf-button-dark">Add to Chrome <span aria-hidden="true">↗</span></a><span class="tf-extension-note">Free to install</span></div>
-    <div class="tf-browser-preview"><div class="tf-browser-bar"><span aria-hidden="true">● ● ●</span><span>Your favourite shop / Tariffik</span><span aria-hidden="true">↗</span></div><img src="/images/chrome-extension-sidepanel.png" alt="The Tariffik Chrome extension side panel suggesting commodity code 6109 10 0010 for an organic cotton T-shirt" loading="lazy" width="368" height="598"></div>
+    <div><p class="tf-eyebrow">03 — RIGHT WHERE YOU SHOP</p><h2 id="extension-title">New tab?<br>No need.</h2><p>Meet your shopping sidekick. The free Tariffik Chrome extension looks up commodity codes right on the product page.</p><ul class="tf-check-list"><li>Automatically reads product details</li><li>Opens neatly in your browser sidebar</li><li>Saves lookups to your Tariffik account</li></ul><a href="https://chromewebstore.google.com/detail/tariffik-commodity-code-l/gkjpgbgongkgdjfapjclandjhglnpmpn" target="_blank" rel="noopener noreferrer" class="tf-button tf-button-dark">Add to Chrome&nbsp;<%= tf_arrow %></a><span class="tf-extension-note">Free to install</span></div>
+    <div class="tf-browser-preview"><div class="tf-browser-bar"><span aria-hidden="true">● ● ●</span><span>Your favourite shop / Tariffik</span><%= tf_arrow %></div><img src="/images/chrome-extension-sidepanel.png" alt="The Tariffik Chrome extension side panel suggesting commodity code 6109 10 0010 for an organic cotton T-shirt" loading="lazy" width="368" height="598"></div>
   </section>
 
   <section class="tf-mcp tf-wrap tf-section" id="mcp" aria-labelledby="mcp-title">
@@ -92,7 +92,7 @@
         <li>Lookups save to your account, ready for CSV export</li>
         <li>Included with a free account</li>
       </ul>
-      <%= link_to user_signed_in? ? dashboard_path : new_user_registration_path(source: "home_mcp"), class: "tf-button tf-button-dark" do %><%= user_signed_in? ? "Connect it from your dashboard" : "Create a free account" %> <span aria-hidden="true">↗</span><% end %>
+      <%= link_to user_signed_in? ? dashboard_path : new_user_registration_path(source: "home_mcp"), class: "tf-button tf-button-dark" do %><%= user_signed_in? ? "Connect it from your dashboard" : "Create a free account" %>&nbsp;<%= tf_arrow %><% end %>
       <span class="tf-extension-note">Works with Claude Code, Claude Desktop and Cursor</span>
     </div>
     <div class="tf-mcp-preview" aria-hidden="true">
@@ -106,8 +106,8 @@
   <section class="tf-pricing-section" id="pricing" aria-labelledby="pricing-title"><div class="tf-wrap tf-section">
     <div class="tf-section-heading"><p class="tf-eyebrow">05 — SIMPLE FROM THE START</p><h2 id="pricing-title">Small parcel.<br>Big shipment. You’re covered.</h2><p>Start free with an account.<br>Or put it to work for your business.</p></div>
     <div class="tf-pricing-grid">
-      <article class="tf-plan tf-plan-featured"><div class="tf-plan-ribbon">A GOOD PLACE TO START</div><p class="tf-eyebrow">FREE ACCOUNT</p><h3>Make yourself at home.</h3><div class="tf-plan-amount">5 <span>lookups / month</span></div><p>Your everyday importing companion.<br>Free, every month.</p><ul class="tf-check-list"><li>Product links and photo lookup</li><li>Email lookups: forward an order, get the codes back</li><li>Connect Claude or another AI assistant over MCP</li><li>Saved lookup history and CSV export</li></ul><%= link_to new_user_registration_path(source: "home_pricing"), class: "tf-button tf-button-primary" do %>Create free account <span aria-hidden="true">↗</span><% end %><small>No card needed</small></article>
-      <article class="tf-plan"><p class="tf-eyebrow">BUSINESS</p><h3>Down to business.</h3><div class="tf-plan-amount tf-plan-custom">Let’s talk.</div><p>For bigger volumes and<br>your own connected workflows.</p><ul class="tf-check-list"><li>Everything in the free account</li><li>More lookups every month</li><li>API access and batch processing</li><li>Webhooks for your workflows</li></ul><a href="mailto:hello@tariffik.com?subject=Business%20Plan%20Enquiry" class="tf-button tf-button-outline">Get in touch <span aria-hidden="true">↗</span></a><small>A plan to fit your business</small></article>
+      <article class="tf-plan tf-plan-featured"><div class="tf-plan-ribbon">A GOOD PLACE TO START</div><p class="tf-eyebrow">FREE ACCOUNT</p><h3>Make yourself at home.</h3><div class="tf-plan-amount">5 <span>lookups / month</span></div><p>Your everyday importing companion.<br>Free, every month.</p><ul class="tf-check-list"><li>Product links and photo lookup</li><li>Email lookups: forward an order, get the codes back</li><li>Connect Claude or another AI assistant over MCP</li><li>Saved lookup history and CSV export</li></ul><%= link_to new_user_registration_path(source: "home_pricing"), class: "tf-button tf-button-primary" do %>Create free account&nbsp;<%= tf_arrow %><% end %><small>No card needed</small></article>
+      <article class="tf-plan"><p class="tf-eyebrow">BUSINESS</p><h3>Down to business.</h3><div class="tf-plan-amount tf-plan-custom">Let’s talk.</div><p>For bigger volumes and<br>your own connected workflows.</p><ul class="tf-check-list"><li>Everything in the free account</li><li>More lookups every month</li><li>API access and batch processing</li><li>Webhooks for your workflows</li></ul><a href="mailto:hello@tariffik.com?subject=Business%20Plan%20Enquiry" class="tf-button tf-button-outline">Get in touch&nbsp;<%= tf_arrow %></a><small>A plan to fit your business</small></article>
     </div>
   </div></section>
 
@@ -117,5 +117,5 @@
     <details><summary>Can I use a suggestion on my declaration?<span aria-hidden="true">+</span></summary><p>Review the code and its explanation against your product before using it. Suggestions are a starting point; you remain responsible for your customs classification.</p></details>
     <details><summary>What if I don’t have a product link?<span aria-hidden="true">+</span></summary><p>Create a free account to upload a product photo, or forward an order confirmation to your unique Tariffik email address.</p></details>
   </div></section>
-  <section class="tf-final-cta"><div class="tf-wrap"><p class="tf-eyebrow">LESS GUESSING. MORE GOING.</p><h2>Your next import,<br>a little simpler.</h2><a href="#lookup" class="tf-button tf-button-primary">Let’s find that code <span aria-hidden="true">↗</span></a><span class="tf-cta-mark" aria-hidden="true">↗</span></div></section>
+  <section class="tf-final-cta"><div class="tf-wrap"><p class="tf-eyebrow">LESS GUESSING. MORE GOING.</p><h2>Your next import,<br>a little simpler.</h2><a href="#lookup" class="tf-button tf-button-primary">Let’s find that code&nbsp;<%= tf_arrow %></a><%= tf_arrow(classes: "tf-cta-mark") %></div></section>
 </div>

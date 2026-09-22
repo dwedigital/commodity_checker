@@ -45,7 +45,7 @@ Do this automatically at the end of implementing a feature - do not wait to be a
 
 ## Brand Design System
 
-**September 2026 refresh (current direction — use this for all new UI):** warm paper `#f8f7f2`, ink `#292725`, muted `#67645e`, hairline `#dddcd4`, red `#d93120`; Space Grotesk headings at weight 500 with tight tracking; mono uppercase eyebrows (`.tf-eyebrow`); 6px rounded-rectangle buttons (`.tf-button-primary/-dark/-outline`), never pills; sentence-case copy; shipping-label details. Commodity codes display as `6109 10 0010` with the subheading pair in red — use `commodity_code_display(code)` inside a `.tf-code` element.
+**September 2026 refresh (current direction — use this for all new UI):** warm paper `#f8f7f2`, ink `#292725`, muted `#67645e`, hairline `#dddcd4`, red `#d93120`; Space Grotesk headings at weight 500 with tight tracking; mono uppercase eyebrows (`.tf-eyebrow`); 6px rounded-rectangle buttons (`.tf-button-primary/-dark/-outline`), never pills; sentence-case copy; shipping-label details. Commodity codes display as `6109 10 0010` with the subheading pair in red — use `commodity_code_display(code)` inside a `.tf-code` element. The north-east arrow is drawn, never typed: use the `tf_arrow` helper (or `.tf-logo-mark` / `--tf-arrow-mask` for marks and pseudo-elements). Never put U+2197 `↗` in markup or CSS `content` — no font the site loads has it, and it has an emoji presentation, so iOS renders it as a blue emoji.
 
 | File | Role |
 |------|------|

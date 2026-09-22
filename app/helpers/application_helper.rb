@@ -5,6 +5,28 @@ module ApplicationHelper
     "#{request.base_url}/mcp"
   end
 
+  # The north-east arrow, drawn rather than typed.
+  #
+  # U+2197 was the glyph here, but no font this site asks for contains it
+  # (Arial, Helvetica and the Google Fonts latin subsets all lack it), so every
+  # arrow fell through to whatever the OS offered. U+2197 also has an emoji
+  # presentation, and on iOS the first fallback font carrying it is Apple Color
+  # Emoji — so the marks rendered as a blue emoji arrow on iPhone. An inline SVG
+  # depends on no font at all.
+  #
+  # It inherits colour through currentColor and scales with the text through the
+  # 1em box in .tf-arrow, so it drops in wherever the character used to sit.
+  def tf_arrow(classes: nil)
+    tag.svg(
+      tag.path(nil, d: "M7 17 17 7M9 7h8v8", fill: "none", stroke: "currentColor",
+                    "stroke-width": "2.2", "stroke-linecap": "round", "stroke-linejoin": "round"),
+      class: [ "tf-arrow", classes ].compact.join(" "),
+      viewBox: "0 0 24 24",
+      "aria-hidden": "true",
+      focusable: "false"
+    )
+  end
+
   def workspace_page?
     request.path.start_with?("/dashboard") || (devise_controller? && user_signed_in?)
   end
