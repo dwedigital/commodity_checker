@@ -1,50 +1,40 @@
+# Suggests a UK 10-digit commodity code for a product description.
+#
+# The default pipeline is retrieve-then-walk (Classification::*): one Claude call
+# turns the description into structured facts and short search phrases, those
+# phrases and the candidate chapters produce a shortlist of real headings, and a
+# chooser walks the real tariff tree from a heading down to a declarable leaf.
+# This replaces the old single-shot "ask Claude for a code" approach, which is
+# still available as LegacyCommoditySuggester (set TARIFFIK_PIPELINE=legacy).
+#
+# Public contract (unchanged, relied on by jobs, controllers and services):
+#   #suggest(description) ->
+#     nil                          for blank input or a pipeline failure
+#     Hash with symbol keys:
+#       :commodity_code       10 digits, no spaces
+#       :confidence           Float 0..1
+#       :reasoning            String (shown in the UI via CommoditySuggestionFormatter)
+#       :category             String
+#       :validated            Boolean
+#       :official_description String or nil
+#       :duty_rate            String or nil
+#   (the pipeline also adds :path and :steps, which callers ignore)
+#
+# Never raises.
 class LlmCommoditySuggester
-  SYSTEM_PROMPT = <<~PROMPT
-    You are an expert in UK/EU customs classification and the Harmonized System (HS) commodity codes.
-    Your task is to suggest the most appropriate commodity code for products being imported.
-
-    When given a product description, you should:
-    1. Identify what the product is
-    2. Determine the most likely HS code (typically 8-10 digits for UK)
-    3. Explain your reasoning briefly
-
-    Respond in JSON format only:
-    {
-      "commodity_code": "the 8-10 digit code",
-      "confidence": 0.0 to 1.0,
-      "reasoning": "brief explanation",
-      "category": "general product category"
-    }
-
-    Common code prefixes:
-    - 61/62: Clothing and apparel
-    - 64: Footwear
-    - 84: Machinery and mechanical appliances
-    - 85: Electrical machinery, electronics
-    - 94: Furniture
-    - 95: Toys and games
-
-    If you cannot determine a code with reasonable confidence, use confidence < 0.5 and suggest the most general applicable code.
-  PROMPT
-
-  def initialize
-    @client = Anthropic::Client.new(api_key: api_key)
-    @tariff_service = TariffLookupService.new
+  # Collaborators are injectable for tests; production uses the defaults.
+  def initialize(analyzer: nil, chooser: nil, tariff_tree: nil, tariff_service: nil)
+    @analyzer = analyzer
+    @chooser = chooser
+    @tariff_tree = tariff_tree
+    @tariff_service = tariff_service
   end
 
   def suggest(product_description)
     return nil if product_description.blank?
+    return LegacyCommoditySuggester.new.suggest(product_description) if legacy_pipeline?
 
-    # First try the tariff API search
-    api_suggestions = @tariff_service.search(product_description)
-
-    # Use Claude to interpret and select the best code
-    llm_response = query_claude(product_description, api_suggestions)
-
-    return nil unless llm_response
-
-    # Validate the suggested code exists
-    validate_and_enrich(llm_response)
+    run_pipeline(product_description)
   rescue => e
     Rails.logger.error("LLM commodity suggestion failed: #{e.message}")
     nil
@@ -52,65 +42,46 @@ class LlmCommoditySuggester
 
   private
 
-  def api_key
-    Rails.application.credentials.dig(:anthropic, :api_key) ||
-      ENV["ANTHROPIC_API_KEY"]
+  def legacy_pipeline?
+    ENV["TARIFFIK_PIPELINE"] == "legacy"
   end
 
-  def query_claude(product_description, api_suggestions)
-    context = build_context(product_description, api_suggestions)
+  def run_pipeline(product_description)
+    analysis = analyzer.analyze(product_description)
+    return nil unless analysis
 
-    response = @client.messages.create(
-      model: "claude-sonnet-5",
-      max_tokens: 500,
-      thinking: { type: "disabled" },
-      system: SYSTEM_PROMPT,
-      messages: [
-        { role: "user", content: context }
-      ]
-    )
+    # The walker's product context includes the raw description alongside the
+    # analyzer's structured facts.
+    analysis[:original_description] = product_description
 
-    parse_llm_response(response)
-  rescue Anthropic::Errors::Error => e
-    Rails.logger.error("Claude API error: #{e.message}")
-    nil
+    candidates = candidate_retriever.retrieve(analysis)
+    result = tree_walker.walk(analysis: analysis, candidates: candidates, chooser: chooser)
+    return nil unless result && result[:commodity_code].present?
+
+    result
   end
 
-  def build_context(product_description, api_suggestions)
-    context = "Product to classify: #{product_description}\n\n"
-
-    if api_suggestions.any?
-      context += "Possible codes from UK Trade Tariff API:\n"
-      api_suggestions.first(5).each do |s|
-        context += "- #{s[:code]}: #{s[:description]}\n"
-      end
-      context += "\nSelect the most appropriate code from above, or suggest a better one if none fit well."
-    else
-      context += "No direct matches found in the tariff database. Please suggest the most appropriate code based on your knowledge."
-    end
-
-    context
+  def analyzer
+    @analyzer ||= Classification::ProductAnalyzer.new
   end
 
-  def parse_llm_response(response)
-    LlmResponseParser.extract_json_from_response(response)
+  def chooser
+    @chooser ||= Classification::Choosers.default
   end
 
-  def validate_and_enrich(suggestion)
-    code = suggestion[:commodity_code]&.gsub(/[\s.-]/, "")
-    return suggestion unless code
+  def tariff_service
+    @tariff_service ||= TariffLookupService.new
+  end
 
-    # Try to validate the code exists in the tariff database
-    commodity = @tariff_service.get_commodity(code)
+  def tariff_tree
+    @tariff_tree ||= Classification::TariffTree.new
+  end
 
-    if commodity
-      suggestion[:validated] = true
-      suggestion[:official_description] = commodity[:description]
-      suggestion[:duty_rate] = commodity[:duty_rate]
-    else
-      suggestion[:validated] = false
-    end
+  def candidate_retriever
+    Classification::CandidateRetriever.new(tariff_tree: tariff_tree, tariff_service: tariff_service)
+  end
 
-    suggestion
+  def tree_walker
+    Classification::TreeWalker.new(tariff_tree: tariff_tree, tariff_service: tariff_service)
   end
 end

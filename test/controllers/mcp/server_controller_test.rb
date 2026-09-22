@@ -143,11 +143,10 @@ class Mcp::ServerControllerTest < ActionDispatch::IntegrationTest
     User::FREE_MONTHLY_LOOKUP_LIMIT.times do |i|
       @user.product_lookups.create!(url: "https://example.com/paid#{i}", lookup_type: :url)
     end
-    stub_tariff_api_search([ { code: "6109100010", description: "T-shirts, cotton", score: 95 } ])
-    stub_tariff_api_commodity("6109100010", { code: "6109100010", description: "T-shirts, of cotton", duty_rate: "12%", notes: nil })
-    stub_commodity_suggestion(code: "6109100010", confidence: 0.9, reasoning: "Knitted cotton t-shirt")
 
-    mcp_post tool_call("lookup_from_description", { "description" => "Cotton t-shirt" }), token: @token
+    stub_suggester do
+      mcp_post tool_call("lookup_from_description", { "description" => "Cotton t-shirt" }), token: @token
+    end
 
     assert_equal false, json_response[:result][:isError]
   end
@@ -266,14 +265,10 @@ class Mcp::ServerControllerTest < ActionDispatch::IntegrationTest
   # Tools act on the token's own user
 
   test "lookup_from_description saves to the token owners account" do
-    stub_tariff_api_search([ { code: "6109100010", description: "T-shirts, cotton", score: 95 } ])
-    stub_tariff_api_commodity("6109100010", {
-      code: "6109100010", description: "T-shirts, of cotton", duty_rate: "12%", notes: nil
-    })
-    stub_commodity_suggestion(code: "6109100010", confidence: 0.9, reasoning: "Knitted cotton t-shirt")
-
     assert_difference -> { @user.product_lookups.count }, 1 do
-      mcp_post tool_call("lookup_from_description", { "description" => "Cotton t-shirt" }), token: @token
+      stub_suggester do
+        mcp_post tool_call("lookup_from_description", { "description" => "Cotton t-shirt" }), token: @token
+      end
     end
   end
 
@@ -281,14 +276,10 @@ class Mcp::ServerControllerTest < ActionDispatch::IntegrationTest
     # ProductLookup is what lookups_this_month counts, so a save opt-out would
     # be an allowance opt-out. The argument is gone, and a caller passing it
     # anyway is still recorded.
-    stub_tariff_api_search([ { code: "6109100010", description: "T-shirts, cotton", score: 95 } ])
-    stub_tariff_api_commodity("6109100010", {
-      code: "6109100010", description: "T-shirts, of cotton", duty_rate: "12%", notes: nil
-    })
-    stub_commodity_suggestion(code: "6109100010", confidence: 0.9, reasoning: "Knitted cotton t-shirt")
-
     assert_difference -> { @user.product_lookups.count }, 1 do
-      mcp_post tool_call("lookup_from_description", { "description" => "Cotton t-shirt", "save" => false }), token: @token
+      stub_suggester do
+        mcp_post tool_call("lookup_from_description", { "description" => "Cotton t-shirt", "save" => false }), token: @token
+      end
     end
 
     assert_equal true, tool_payload(json_response[:result])[:saved_to_account]

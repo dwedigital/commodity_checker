@@ -1,0 +1,2895 @@
+[
+  {
+    "ruling": "600014216",
+    "truth": "6109902000",
+    "truth_desc": "Football tops to wear whilst playing football matches. The t-shirts come in a variety of colours and designs. The shirts can be personalized",
+    "predicted": "6109902000",
+    "confidence": 0.0546,
+    "validated": true,
+    "reasoning": "Knitted polyester football shirt worn for playing football, customizable with name and number Classified as 6109 90 2000 via Articles of apparel and clothing accessories, knitted or crocheted › T-shirts, singlets and other vests, knitted or crocheted › Of other textile materials › Of wool or fine an",
+    "depth": 10,
+    "ms": 6408,
+    "tokens": {
+      "input": 1355,
+      "output": 180,
+      "calls": 1
+    },
+    "steps": [
+      {
+        "level": "heading",
+        "options_count": 17,
+        "chosen_key": "6109",
+        "confidence": 0.78,
+        "probabilities": {
+          "6103": 0.0,
+          "6117": 0.0,
+          "6104": 0.0,
+          "6105": 0.12,
+          "6113": 0.01,
+          "6109": 0.79,
+          "6112": 0.03,
+          "6101": 0.0,
+          "6102": 0.0,
+          "6110": 0.01,
+          "6116": 0.0,
+          "6107": 0.0,
+          "6108": 0.0,
+          "6106": 0.0,
+          "6114": 0.04,
+          "6111": 0.0,
+          "6115": 0.0
+        },
+        "reasoning": "jev p=0.78"
+      },
+      {
+        "level": "node",
+        "options_count": 2,
+        "chosen_key": "6109900000/80",
+        "confidence": 1.0,
+        "probabilities": {
+          "6109100000/80": 0.0,
+          "6109900000/80": 1.0
+        },
+        "reasoning": "jev p=1.0"
+      },
+      {
+        "level": "node",
+        "options_count": 2,
+        "chosen_key": "6109902000/80",
+        "confidence": 0.07,
+        "probabilities": {
+          "6109909000/80": 0.46,
+          "6109902000/80": 0.54
+        },
+        "reasoning": "jev p=0.07"
+      }
+    ]
+  },
+  {
+    "ruling": "600016119",
+    "truth": "6211329000",
+    "truth_desc": "A mans woven garment, predominantly made from woven cotton. The item consists of a shirt with a button closure, pockets and buttoned cuffs. ",
+    "predicted": "6205200090",
+    "confidence": 0.8919,
+    "validated": true,
+    "reasoning": "A men's woven cotton shirt permanently combined with a hooded sweatshirt-style hood as one garment. Classified as 6205 20 0090 via Articles of apparel and clothing accessories, not knitted or crocheted › Men's or boys' shirts › Of cotton › Other.",
+    "depth": 2,
+    "ms": 6438,
+    "tokens": {
+      "input": 1325,
+      "output": 192,
+      "calls": 1
+    },
+    "steps": [
+      {
+        "level": "heading",
+        "options_count": 34,
+        "chosen_key": "6205",
+        "confidence": 0.91,
+        "probabilities": {
+          "6210": 0.0,
+          "6115": 0.0,
+          "6117": 0.0,
+          "6212": 0.0,
+          "6205": 0.92,
+          "6216": 0.0,
+          "6104": 0.0,
+          "6213": 0.0,
+          "6101": 0.0,
+          "6215": 0.0,
+          "6201": 0.02,
+          "6106": 0.0,
+          "6202": 0.0,
+          "6208": 0.0,
+          "6108": 0.0,
+          "6103": 0.0,
+          "6113": 0.0,
+          "6105": 0.0,
+          "6107": 0.0,
+          "6206": 0.0,
+          "6214": 0.0,
+          "6203": 0.03,
+          "6102": 0.0,
+          "6109": 0.0,
+          "6112": 0.0,
+          "6110": 0.01,
+          "6207": 0.0,
+          "6209": 0.0,
+          "6211": 0.01,
+          "6116": 0.0,
+          "6111": 0.0,
+          "6217": 0.0,
+          "6204": 0.0,
+          "6114": 0.01
+        },
+        "reasoning": "jev p=0.91"
+      },
+      {
+        "level": "node",
+        "options_count": 3,
+        "chosen_key": "6205200000/80",
+        "confidence": 0.99,
+        "probabilities": {
+          "6205200000/80": 1.0,
+          "6205900000/80": 0.0,
+          "6205300000/80": 0.0
+        },
+        "reasoning": "jev p=0.99"
+      },
+      {
+        "level": "node",
+        "options_count": 2,
+        "chosen_key": "6205200090/80",
+        "confidence": 0.99,
+        "probabilities": {
+          "6205200090/80": 1.0,
+          "6205200010/80": 0.0
+        },
+        "reasoning": "jev p=0.99"
+      }
+    ]
+  },
+  {
+    "ruling": "600012589",
+    "truth": "6205300000",
+    "truth_desc": "A mans short sleeved polo shirt made from woven polyester. It is available in two colour combinations, yellow/navy and orange/navy. It has 5",
+    "predicted": "6205300000",
+    "confidence": 0.8514,
+    "validated": true,
+    "reasoning": "A men's short-sleeved woven polyester polo shirt with reflective bands and a three-button collar. Classified as 6205 30 0000 via Articles of apparel and clothing accessories, not knitted or crocheted › Men's or boys' shirts › Of man-made fibres.",
+    "depth": 10,
+    "ms": 5186,
+    "tokens": {
+      "input": 1307,
+      "output": 205,
+      "calls": 1
+    },
+    "steps": [
+      {
+        "level": "heading",
+        "options_count": 34,
+        "chosen_key": "6205",
+        "confidence": 0.86,
+        "probabilities": {
+          "6212": 0.0,
+          "6217": 0.0,
+          "6211": 0.0,
+          "6111": 0.0,
+          "6104": 0.0,
+          "6103": 0.0,
+          "6207": 0.0,
+          "6116": 0.0,
+          "6204": 0.0,
+          "6110": 0.0,
+          "6210": 0.09,
+          "6113": 0.0,
+          "6202": 0.0,
+          "6213": 0.0,
+          "6205": 0.88,
+          "6106": 0.0,
+          "6102": 0.0,
+          "6206": 0.0,
+          "6201": 0.0,
+          "6114": 0.0,
+          "6112": 0.0,
+          "6107": 0.0,
+          "6105": 0.02,
+          "6209": 0.0,
+          "6108": 0.0,
+          "6115": 0.0,
+          "6203": 0.01,
+          "6109": 0.0,
+          "6208": 0.0,
+          "6117": 0.0,
+          "6101": 0.0,
+          "6216": 0.0,
+          "6215": 0.0,
+          "6214": 0.0
+        },
+        "reasoning": "jev p=0.86"
+      },
+      {
+        "level": "node",
+        "options_count": 3,
+        "chosen_key": "6205300000/80",
+        "confidence": 0.99,
+        "probabilities": {
+          "6205300000/80": 1.0,
+          "6205900000/80": 0.0,
+          "6205200000/80": 0.0
+        },
+        "reasoning": "jev p=0.99"
+      }
+    ]
+  },
+  {
+    "ruling": "600013043",
+    "truth": "6105201000",
+    "truth_desc": "A high visibility polo shirt designed for men. Made from a 100% polyester knitted fabric. Designed to cover the upper part of the body from ",
+    "predicted": "6105201000",
+    "confidence": 0.8555,
+    "validated": true,
+    "reasoning": "Men's high visibility knitted polyester polo shirt with reflective strips Classified as 6105 20 1000 via Articles of apparel and clothing accessories, knitted or crocheted › Men's or boys' shirts, knitted or crocheted › Of man-made fibres › Of synthetic fibres.",
+    "depth": 10,
+    "ms": 5274,
+    "tokens": {
+      "input": 1383,
+      "output": 218,
+      "calls": 1
+    },
+    "steps": [
+      {
+        "level": "heading",
+        "options_count": 34,
+        "chosen_key": "6105",
+        "confidence": 0.9,
+        "probabilities": {
+          "6203": 0.0,
+          "6201": 0.0,
+          "6108": 0.0,
+          "6204": 0.0,
+          "6205": 0.05,
+          "6208": 0.0,
+          "6115": 0.0,
+          "6107": 0.0,
+          "6104": 0.0,
+          "6206": 0.0,
+          "6114": 0.0,
+          "6217": 0.0,
+          "6111": 0.0,
+          "6212": 0.0,
+          "6202": 0.0,
+          "6211": 0.0,
+          "6216": 0.0,
+          "6207": 0.0,
+          "6209": 0.0,
+          "6112": 0.0,
+          "6117": 0.0,
+          "6110": 0.0,
+          "6105": 0.92,
+          "6116": 0.0,
+          "6210": 0.01,
+          "6101": 0.0,
+          "6213": 0.0,
+          "6102": 0.0,
+          "6109": 0.0,
+          "6214": 0.0,
+          "6215": 0.0,
+          "6103": 0.0,
+          "6113": 0.02,
+          "6106": 0.0
+        },
+        "reasoning": "jev p=0.9"
+      },
+      {
+        "level": "node",
+        "options_count": 3,
+        "chosen_key": "6105200000/80",
+        "confidence": 0.98,
+        "probabilities": {
+          "6105100000/80": 0.0,
+          "6105900000/80": 0.01,
+          "6105200000/80": 0.99
+        },
+        "reasoning": "jev p=0.98"
+      },
+      {
+        "level": "node",
+        "options_count": 2,
+        "chosen_key": "6105201000/80",
+        "confidence": 0.97,
+        "probabilities": {
+          "6105209000/80": 0.01,
+          "6105201000/80": 0.99
+        },
+        "reasoning": "jev p=0.97"
+      }
+    ]
+  },
+  {
+    "ruling": "600012819",
+    "truth": "6912002310",
+    "truth_desc": "Stoneware mug. With subliminal print designs, dependent on the customers requirements. A dye-sublimation printer prints a custom design onto",
+    "predicted": "6912002310",
+    "confidence": 0.3966,
+    "validated": true,
+    "reasoning": "A stoneware mug with a custom sublimation-printed design applied via heat transfer to a poly coating on its surface. Classified as 6912 00 2310 via Ceramic products › Ceramic tableware, kitchenware, other household articles and toilet articles, other than of porcelain or china › Tableware and kitche",
+    "depth": 10,
+    "ms": 9443,
+    "tokens": {
+      "input": 5299,
+      "output": 295,
+      "calls": 2
+    },
+    "steps": [
+      {
+        "level": "heading",
+        "options_count": 34,
+        "chosen_key": "6912",
+        "confidence": 0.9,
+        "probabilities": {
+          "6901": 0.0,
+          "6902": 0.0,
+          "6903": 0.0,
+          "6904": 0.0,
+          "6905": 0.0,
+          "6906": 0.0,
+          "6907": 0.0,
+          "6909": 0.0,
+          "6910": 0.0,
+          "6911": 0.0,
+          "6912": 0.9,
+          "6913": 0.0,
+          "6914": 0.0,
+          "4401": 0.0,
+          "4402": 0.0,
+          "4403": 0.0,
+          "4404": 0.0,
+          "4405": 0.0,
+          "4406": 0.0,
+          "4407": 0.0,
+          "4408": 0.0,
+          "4409": 0.0,
+          "4410": 0.0,
+          "4411": 0.0,
+          "4412": 0.0,
+          "4413": 0.0,
+          "4414": 0.0,
+          "4415": 0.0,
+          "4416": 0.0,
+          "4417": 0.0,
+          "4418": 0.0,
+          "4419": 0.0,
+          "4420": 0.0,
+          "4421": 0.0
+        },
+        "reasoning": "Stoneware mug is ceramic tableware not of porcelain/china, so it falls under heading 6912.4"
+      },
+      {
+        "level": "node",
+        "options_count": 2,
+        "chosen_key": "6912002100/10",
+        "confidence": 0.9,
+        "probabilities": {
+          "6912002100/10": 0.95,
+          "6912008100/10": 0.05
+        },
+        "reasoning": "jev p=0.9"
+      },
+      {
+        "level": "node",
+        "options_count": 4,
+        "chosen_key": "6912002300/80",
+        "confidence": 0.96,
+        "probabilities": {
+          "6912002300/80": 0.97,
+          "6912002500/80": 0.0,
+          "6912002100/80": 0.02,
+          "6912002900/80": 0.01
+        },
+        "reasoning": "jev p=0.96"
+      },
+      {
+        "level": "node",
+        "options_count": 2,
+        "chosen_key": "6912002310/80",
+        "confidence": 0.51,
+        "probabilities": {
+          "6912002310/80": 0.75,
+          "6912002390/80": 0.25
+        },
+        "reasoning": "jev p=0.51"
+      }
+    ]
+  },
+  {
+    "ruling": "600013467",
+    "truth": "6211339000",
+    "truth_desc": "A fancy-dress police costume designed for children to dress up in. The costume has a black shirt with short sleeves, with a fastening that g",
+    "predicted": "9505900000",
+    "confidence": 0.7623,
+    "validated": true,
+    "reasoning": "A children's police fancy-dress costume set comprising shirt, trousers, and hat made of woven polyester with a PVC-peaked hat, packaged for retail sale. Classified as 9505 90 0000 via Toys, games and sports requisites; parts and accessories thereof › Festive, carnival or other entertainment articles",
+    "depth": 0,
+    "ms": 6296,
+    "tokens": {
+      "input": 1533,
+      "output": 254,
+      "calls": 1
+    },
+    "steps": [
+      {
+        "level": "heading",
+        "options_count": 40,
+        "chosen_key": "9505",
+        "confidence": 0.77,
+        "probabilities": {
+          "6204": 0.0,
+          "6205": 0.01,
+          "6207": 0.0,
+          "6105": 0.0,
+          "6216": 0.0,
+          "6117": 0.0,
+          "6102": 0.0,
+          "6110": 0.0,
+          "9505": 0.79,
+          "6108": 0.0,
+          "6107": 0.0,
+          "6106": 0.0,
+          "6114": 0.0,
+          "6209": 0.01,
+          "6111": 0.0,
+          "6210": 0.01,
+          "6103": 0.0,
+          "6206": 0.0,
+          "9506": 0.0,
+          "9507": 0.0,
+          "6104": 0.0,
+          "6214": 0.0,
+          "6201": 0.0,
+          "6113": 0.01,
+          "6109": 0.0,
+          "6112": 0.0,
+          "6212": 0.0,
+          "9508": 0.01,
+          "6101": 0.0,
+          "6203": 0.05,
+          "9504": 0.0,
+          "6211": 0.11,
+          "6116": 0.0,
+          "9503": 0.0,
+          "6208": 0.0,
+          "6213": 0.0,
+          "6215": 0.0,
+          "6217": 0.0,
+          "6202": 0.0,
+          "6115": 0.0
+        },
+        "reasoning": "jev p=0.77"
+      },
+      {
+        "level": "node",
+        "options_count": 2,
+        "chosen_key": "9505900000/80",
+        "confidence": 0.99,
+        "probabilities": {
+          "9505100000/80": 0.01,
+          "9505900000/80": 0.99
+        },
+        "reasoning": "jev p=0.99"
+      }
+    ]
+  },
+  {
+    "ruling": "600011159",
+    "truth": "6307109090",
+    "truth_desc": "Window scrubber. A 35cm T-bar sleeve made for window cleaning and used in conjunction with a T-Bar window squeegee. A highly absorbent woven",
+    "predicted": "6307109090",
+    "confidence": 0.3572,
+    "validated": true,
+    "reasoning": "A woven textile sleeve cover for a T-bar window squeegee, used for washing windows Classified as 6307 10 9090 via Other made-up textile articles; sets; worn clothing and worn textile articles; rags › Other made-up articles, including dress patterns › Floorcloths, dishcloths, dusters and similar clea",
+    "depth": 10,
+    "ms": 10517,
+    "tokens": {
+      "input": 4955,
+      "output": 428,
+      "calls": 2
+    },
+    "steps": [
+      {
+        "level": "heading",
+        "options_count": 40,
+        "chosen_key": "6307",
+        "confidence": 0.75,
+        "probabilities": {
+          "6301": 0.0,
+          "6302": 0.0,
+          "6303": 0.0,
+          "6304": 0.0,
+          "6305": 0.0,
+          "6306": 0.0,
+          "6307": 0.75,
+          "6308": 0.0,
+          "6309": 0.0,
+          "6310": 0.0,
+          "5801": 0.0,
+          "5802": 0.0,
+          "5803": 0.0,
+          "5804": 0.0,
+          "5805": 0.0,
+          "5806": 0.0,
+          "5807": 0.0,
+          "5808": 0.0,
+          "5809": 0.0,
+          "5810": 0.0,
+          "5811": 0.0,
+          "3901": 0.0,
+          "3902": 0.0,
+          "3903": 0.0,
+          "3904": 0.0,
+          "3905": 0.0,
+          "3906": 0.0,
+          "3907": 0.0,
+          "3908": 0.0,
+          "3909": 0.0,
+          "3910": 0.0,
+          "3911": 0.0,
+          "3912": 0.0,
+          "3913": 0.0,
+          "3914": 0.0,
+          "3915": 0.0,
+          "3916": 0.0,
+          "3917": 0.0,
+          "3918": 0.0,
+          "3919": 0.0
+        },
+        "reasoning": "This is a made-up textile article (woven fabric sewn into shape with Velcro closure) used as a window-cleaning accessory. It's not clothing, bed/table/kitchen linen, curtains, sacks, or tarpaulins, so it falls into the residual 'other made-up articles' heading 6307 under Chapter 63.'"
+      },
+      {
+        "level": "node",
+        "options_count": 3,
+        "chosen_key": "6307100000/80",
+        "confidence": 0.54,
+        "probabilities": {
+          "6307100000/80": 0.7,
+          "6307900000/80": 0.3,
+          "6307200000/80": 0.0
+        },
+        "reasoning": "jev p=0.54"
+      },
+      {
+        "level": "node",
+        "options_count": 3,
+        "chosen_key": "6307109000/80",
+        "confidence": 0.9,
+        "probabilities": {
+          "6307101000/80": 0.01,
+          "6307103000/80": 0.05,
+          "6307109000/80": 0.94
+        },
+        "reasoning": "jev p=0.9"
+      },
+      {
+        "level": "node",
+        "options_count": 2,
+        "chosen_key": "6307109090/80",
+        "confidence": 0.98,
+        "probabilities": {
+          "6307109090/80": 0.99,
+          "6307109010/80": 0.01
+        },
+        "reasoning": "jev p=0.98"
+      }
+    ]
+  },
+  {
+    "ruling": "600009534",
+    "truth": "6404199000",
+    "truth_desc": "A leisure trainer not covering the ankle. The trainer has an outer sole of rubber, with an upper outer of mesh and synthetic material, with ",
+    "predicted": "6404110000",
+    "confidence": 0.13,
+    "validated": true,
+    "reasoning": "A low-cut leisure trainer with a rubber outer sole and a textile (mesh) upper with removable insoles. Classified as 6404 11 0000 via Footwear, gaiters and the like; parts of such articles › Footwear with outer soles of rubber, plastics, leather or composition leather and uppers of textile materials ",
+    "depth": 4,
+    "ms": 5831,
+    "tokens": {
+      "input": 1330,
+      "output": 219,
+      "calls": 1
+    },
+    "steps": [
+      {
+        "level": "heading",
+        "options_count": 6,
+        "chosen_key": "6404",
+        "confidence": 1.0,
+        "probabilities": {
+          "6402": 0.0,
+          "6406": 0.0,
+          "6404": 1.0,
+          "6405": 0.0,
+          "6403": 0.0,
+          "6401": 0.0
+        },
+        "reasoning": "jev p=1.0"
+      },
+      {
+        "level": "node",
+        "options_count": 2,
+        "chosen_key": "6404110000/10",
+        "confidence": 1.0,
+        "probabilities": {
+          "6404110000/10": 1.0,
+          "6404200000/80": 0.0
+        },
+        "reasoning": "jev p=1.0"
+      },
+      {
+        "level": "node",
+        "options_count": 2,
+        "chosen_key": "6404110000/80",
+        "confidence": 0.13,
+        "probabilities": {
+          "6404190000/80": 0.44,
+          "6404110000/80": 0.56
+        },
+        "reasoning": "jev p=0.13"
+      }
+    ]
+  },
+  {
+    "ruling": "600014545",
+    "truth": "6404110000",
+    "truth_desc": "A running trainer. The item has a textile upper and a plastic outer sole. The trainer is black in colour. There is a company brand logo on t",
+    "predicted": "6404110000",
+    "confidence": 0.92,
+    "validated": true,
+    "reasoning": "A textile-upper running trainer with a plastic outer sole Classified as 6404 11 0000 via Footwear, gaiters and the like; parts of such articles › Footwear with outer soles of rubber, plastics, leather or composition leather and uppers of textile materials › Footwear with outer soles of rubber or pla",
+    "depth": 10,
+    "ms": 6183,
+    "tokens": {
+      "input": 1293,
+      "output": 178,
+      "calls": 1
+    },
+    "steps": [
+      {
+        "level": "heading",
+        "options_count": 6,
+        "chosen_key": "6404",
+        "confidence": 1.0,
+        "probabilities": {
+          "6404": 1.0,
+          "6402": 0.0,
+          "6401": 0.0,
+          "6406": 0.0,
+          "6403": 0.0,
+          "6405": 0.0
+        },
+        "reasoning": "jev p=1.0"
+      },
+      {
+        "level": "node",
+        "options_count": 2,
+        "chosen_key": "6404110000/10",
+        "confidence": 1.0,
+        "probabilities": {
+          "6404110000/10": 1.0,
+          "6404200000/80": 0.0
+        },
+        "reasoning": "jev p=1.0"
+      },
+      {
+        "level": "node",
+        "options_count": 2,
+        "chosen_key": "6404110000/80",
+        "confidence": 0.92,
+        "probabilities": {
+          "6404190000/80": 0.04,
+          "6404110000/80": 0.96
+        },
+        "reasoning": "jev p=0.92"
+      }
+    ]
+  },
+  {
+    "ruling": "600015590",
+    "truth": "4002700000",
+    "truth_desc": "A mixture of rubber granules from different sources: - Mechanically ground trainer soles - Recycled EPDM (ethylene propylene diene monomer) ",
+    "predicted": "4004000000",
+    "confidence": 0.98,
+    "validated": true,
+    "reasoning": "A blended mixture of ground rubber granules (recycled trainer sole rubber and EPDM rubber) intended for mixing with polyurethane to form sports and playground surfacing Classified as 4004 00 0000 via Rubber and articles thereof › Waste, parings and scrap of rubber (other than hard rubber) and powder",
+    "depth": 2,
+    "ms": 7298,
+    "tokens": {
+      "input": 1355,
+      "output": 279,
+      "calls": 1
+    },
+    "steps": [
+      {
+        "level": "heading",
+        "options_count": 18,
+        "chosen_key": "4004",
+        "confidence": 0.98,
+        "probabilities": {
+          "4004": 0.99,
+          "4013": 0.0,
+          "4006": 0.0,
+          "4001": 0.0,
+          "4015": 0.0,
+          "4017": 0.0,
+          "4016": 0.0,
+          "4003": 0.01,
+          "4010": 0.0,
+          "4002": 0.0,
+          "4012": 0.0,
+          "4011": 0.0,
+          "4009": 0.0,
+          "3812": 0.0,
+          "4014": 0.0,
+          "4007": 0.0,
+          "4008": 0.0,
+          "4005": 0.0
+        },
+        "reasoning": "jev p=0.98"
+      }
+    ]
+  },
+  {
+    "ruling": "600015051",
+    "truth": "85371091",
+    "truth_desc": "The product is a 24-inch full HD LCD touch screen console used for the operation of fitness equipment. The console can be used to connect to",
+    "predicted": "8528590090",
+    "confidence": 0.4366,
+    "validated": true,
+    "reasoning": "A 24-inch full HD LCD touch screen console for controlling and interfacing with fitness cardio equipment Classified as 8528 59 0090 via Electrical machinery and equipment and parts thereof; sound recorders and reproducers, television image and sound recorders and reproducers, and parts and accessori",
+    "depth": 2,
+    "ms": 13170,
+    "tokens": {
+      "input": 7549,
+      "output": 480,
+      "calls": 3
+    },
+    "steps": [
+      {
+        "level": "heading",
+        "options_count": 40,
+        "chosen_key": "8528",
+        "confidence": 0.7,
+        "probabilities": {
+          "8528": 0.7,
+          "8501": 0.0,
+          "8502": 0.0,
+          "8503": 0.0,
+          "8504": 0.0,
+          "8505": 0.0,
+          "8506": 0.0,
+          "8507": 0.0,
+          "8508": 0.0,
+          "8509": 0.0,
+          "8510": 0.0,
+          "8511": 0.0,
+          "8512": 0.0,
+          "8513": 0.0,
+          "8514": 0.0,
+          "8515": 0.0,
+          "8516": 0.0,
+          "8517": 0.0,
+          "8518": 0.0,
+          "8519": 0.0,
+          "8521": 0.0,
+          "8522": 0.0,
+          "8523": 0.0,
+          "8524": 0.0,
+          "8525": 0.0,
+          "8526": 0.0,
+          "8527": 0.0,
+          "8529": 0.0,
+          "8530": 0.0,
+          "8531": 0.0,
+          "8532": 0.0,
+          "8533": 0.0,
+          "8534": 0.0,
+          "8535": 0.0,
+          "8536": 0.0,
+          "8537": 0.0,
+          "8538": 0.0,
+          "8539": 0.0,
+          "8540": 0.0,
+          "8541": 0.0
+        },
+        "reasoning": "The console is essentially an LCD touch screen monitor used to control and display data for fitness equipment, functioning as a monitor with connectivity features. It is not a telephone or transmission apparatus, and it's a complete assembled console rather than just a flat panel display module, so heading 8528 (monitors) best fits as GRI 1 classification by its physical nature as a display/monitor device."
+      },
+      {
+        "level": "node",
+        "options_count": 4,
+        "chosen_key": "8528520000/10",
+        "confidence": 0.99,
+        "probabilities": {
+          "8528520000/10": 1.0,
+          "8528420000/10": 0.0,
+          "8528620000/10": 0.0,
+          "8528710000/10": 0.0
+        },
+        "reasoning": "jev p=0.99"
+      },
+      {
+        "level": "node",
+        "options_count": 2,
+        "chosen_key": "8528590000/80",
+        "confidence": 0.7,
+        "probabilities": {
+          "8528590000/80": 0.85,
+          "8528520000/80": 0.15
+        },
+        "reasoning": "jev p=0.7"
+      },
+      {
+        "level": "node",
+        "options_count": 3,
+        "chosen_key": "8528590090/80",
+        "confidence": 0.9,
+        "probabilities": {
+          "8528590020/80": 0.0,
+          "8528590030/80": 0.0,
+          "8528590090/80": 0.9
+        },
+        "reasoning": "The console is a fitness equipment control display, not a vehicle infotainment assembly or automotive manufacturing component, so it falls under the residual 'Other' subheading."
+      }
+    ]
+  },
+  {
+    "ruling": "600015895",
+    "truth": "9401100000",
+    "truth_desc": "A training seat used in egress/post-egress training. This is a course where pilots learn the decision process for ejecting, post-ejection pr",
+    "predicted": "8805290000",
+    "confidence": 0.5069,
+    "validated": true,
+    "reasoning": "A non-functional training replica of an aircraft ejection seat, used for pilot instruction on ejection procedures, with metal frame construction and no pyrotechnic capability. Classified as 8805 29 0000 via Aircraft, spacecraft, and parts thereof › Aircraft launching gear; deck-arrestor or similar g",
+    "depth": 0,
+    "ms": 10348,
+    "tokens": {
+      "input": 6281,
+      "output": 392,
+      "calls": 2
+    },
+    "steps": [
+      {
+        "level": "heading",
+        "options_count": 40,
+        "chosen_key": "8805",
+        "confidence": 0.85,
+        "probabilities": {
+          "9401": 0.0,
+          "9402": 0.0,
+          "9403": 0.0,
+          "9404": 0.0,
+          "9405": 0.0,
+          "9406": 0.0,
+          "8801": 0.0,
+          "8802": 0.0,
+          "8804": 0.0,
+          "8805": 0.85,
+          "8806": 0.0,
+          "8807": 0.0,
+          "9001": 0.0,
+          "9002": 0.0,
+          "9003": 0.0,
+          "9004": 0.0,
+          "9005": 0.0,
+          "9006": 0.0,
+          "9007": 0.0,
+          "9008": 0.0,
+          "9010": 0.0,
+          "9011": 0.0,
+          "9012": 0.0,
+          "9013": 0.0,
+          "9014": 0.0,
+          "9015": 0.0,
+          "9016": 0.0,
+          "9017": 0.0,
+          "9018": 0.0,
+          "9019": 0.0,
+          "9020": 0.0,
+          "9021": 0.0,
+          "9022": 0.0,
+          "9023": 0.0,
+          "9024": 0.0,
+          "9025": 0.0,
+          "9026": 0.0,
+          "9027": 0.0,
+          "9028": 0.0,
+          "9029": 0.0
+        },
+        "reasoning": "The item is a non-functional training replica used for pilot instruction in ejection procedures - this is a ground-based training device for aircrew, which falls under 'ground flying trainers' explicitly named in heading 8805, rather than being classified as furniture (seats) since its essential function is aviation training equipment, not seating furniture per se."
+      },
+      {
+        "level": "node",
+        "options_count": 2,
+        "chosen_key": "8805210000/10",
+        "confidence": 0.71,
+        "probabilities": {
+          "8805210000/10": 0.86,
+          "8805100000/80": 0.14
+        },
+        "reasoning": "jev p=0.71"
+      },
+      {
+        "level": "node",
+        "options_count": 2,
+        "chosen_key": "8805290000/80",
+        "confidence": 0.84,
+        "probabilities": {
+          "8805210000/80": 0.08,
+          "8805290000/80": 0.92
+        },
+        "reasoning": "jev p=0.84"
+      }
+    ]
+  },
+  {
+    "ruling": "600014857",
+    "truth": "9503004990",
+    "truth_desc": "The product is a light‑up plastic toy in the shape of a capybara. It features a solid plastic head and a TPR (thermoplastic rubber) body fil",
+    "predicted": "9503004990",
+    "confidence": 0.7307,
+    "validated": true,
+    "reasoning": "A light-up plastic capybara-shaped children's toy with a TPR bead-filled squishy body and battery-powered LED head that activates in water Classified as 9503 00 4990 via Toys, games and sports requisites; parts and accessories thereof › Tricycles, scooters, pedal cars and similar wheeled toys; dolls",
+    "depth": 10,
+    "ms": 10263,
+    "tokens": {
+      "input": 5393,
+      "output": 329,
+      "calls": 2
+    },
+    "steps": [
+      {
+        "level": "heading",
+        "options_count": 32,
+        "chosen_key": "9503",
+        "confidence": 0.97,
+        "probabilities": {
+          "9503": 0.97,
+          "9504": 0.0,
+          "9505": 0.0,
+          "9506": 0.0,
+          "9507": 0.0,
+          "9508": 0.0,
+          "3901": 0.0,
+          "3902": 0.0,
+          "3903": 0.0,
+          "3904": 0.0,
+          "3905": 0.0,
+          "3906": 0.0,
+          "3907": 0.0,
+          "3908": 0.0,
+          "3909": 0.0,
+          "3910": 0.0,
+          "3911": 0.0,
+          "3912": 0.0,
+          "3913": 0.0,
+          "3914": 0.0,
+          "3915": 0.0,
+          "3916": 0.0,
+          "3917": 0.0,
+          "3918": 0.0,
+          "3919": 0.0,
+          "3920": 0.0,
+          "3921": 0.0,
+          "3922": 0.0,
+          "3923": 0.0,
+          "3924": 0.0,
+          "3925": 0.0,
+          "3926": 0.0
+        },
+        "reasoning": "This is a children's toy (light-up capybara-shaped squishy floating toy) intended for play, falling under 'other toys' of heading 9503, regardless of its plastic construction."
+      },
+      {
+        "level": "node",
+        "options_count": 10,
+        "chosen_key": "9503004100/10",
+        "confidence": 0.93,
+        "probabilities": {
+          "9503003000/80": 0.0,
+          "9503007500/10": 0.01,
+          "9503001000/80": 0.0,
+          "9503007000/80": 0.0,
+          "9503005500/80": 0.0,
+          "9503006100/10": 0.0,
+          "9503003500/10": 0.0,
+          "9503004100/10": 0.94,
+          "9503002100/10": 0.0,
+          "9503008100/10": 0.05
+        },
+        "reasoning": "jev p=0.93"
+      },
+      {
+        "level": "node",
+        "options_count": 2,
+        "chosen_key": "9503004900/80",
+        "confidence": 0.81,
+        "probabilities": {
+          "9503004100/80": 0.1,
+          "9503004900/80": 0.9
+        },
+        "reasoning": "jev p=0.81"
+      },
+      {
+        "level": "node",
+        "options_count": 2,
+        "chosen_key": "9503004990/80",
+        "confidence": 1.0,
+        "probabilities": {
+          "9503004990/80": 1.0,
+          "9503004910/80": 0.0
+        },
+        "reasoning": "jev p=1.0"
+      }
+    ]
+  },
+  {
+    "ruling": "600014116",
+    "truth": "9503007000",
+    "truth_desc": "A wooden fold out fire station comprising of nine wooden pieces. This is a toy set made from wood, comprising of a garage and a fire engine ",
+    "predicted": "9503007000",
+    "confidence": 0.88,
+    "validated": true,
+    "reasoning": "A wooden toy fire station playset with nine pieces including a fold-out garage and fire engine, for children aged three and over. Classified as 9503 00 7000 via Toys, games and sports requisites; parts and accessories thereof › Tricycles, scooters, pedal cars and similar wheeled toys; dolls' carriag",
+    "depth": 10,
+    "ms": 5072,
+    "tokens": {
+      "input": 1301,
+      "output": 209,
+      "calls": 1
+    },
+    "steps": [
+      {
+        "level": "heading",
+        "options_count": 6,
+        "chosen_key": "9503",
+        "confidence": 1.0,
+        "probabilities": {
+          "9503": 1.0,
+          "9508": 0.0,
+          "9507": 0.0,
+          "9505": 0.0,
+          "9506": 0.0,
+          "9504": 0.0
+        },
+        "reasoning": "jev p=1.0"
+      },
+      {
+        "level": "node",
+        "options_count": 10,
+        "chosen_key": "9503007000/80",
+        "confidence": 0.88,
+        "probabilities": {
+          "9503006100/10": 0.0,
+          "9503003000/80": 0.01,
+          "9503004100/10": 0.0,
+          "9503002100/10": 0.0,
+          "9503007000/80": 0.9,
+          "9503005500/80": 0.0,
+          "9503001000/80": 0.0,
+          "9503008100/10": 0.04,
+          "9503003500/10": 0.05,
+          "9503007500/10": 0.0
+        },
+        "reasoning": "jev p=0.88"
+      }
+    ]
+  },
+  {
+    "ruling": "600011941",
+    "truth": "9503003000",
+    "truth_desc": "A model kit containing parts used to permanently assemble a scale model aircraft. Made from a variety of materials including predominantly P",
+    "predicted": "9503003000",
+    "confidence": 0.603,
+    "validated": true,
+    "reasoning": "A scale model aircraft assembly kit made mainly of PU resin and metal parts for static display, not for play. Classified as 9503 00 3000 via Toys, games and sports requisites; parts and accessories thereof › Tricycles, scooters, pedal cars and similar wheeled toys; dolls' carriages; dolls; other toy",
+    "depth": 10,
+    "ms": 9348,
+    "tokens": {
+      "input": 5564,
+      "output": 315,
+      "calls": 2
+    },
+    "steps": [
+      {
+        "level": "heading",
+        "options_count": 40,
+        "chosen_key": "9503",
+        "confidence": 0.9,
+        "probabilities": {
+          "9503": 0.9,
+          "9601": 0.0,
+          "9602": 0.0,
+          "9603": 0.0,
+          "9604": 0.0,
+          "9605": 0.0,
+          "9606": 0.0,
+          "9607": 0.0,
+          "9608": 0.0,
+          "9609": 0.0,
+          "9610": 0.0,
+          "9611": 0.0,
+          "9612": 0.0,
+          "9613": 0.0,
+          "9614": 0.0,
+          "9615": 0.0,
+          "9616": 0.0,
+          "9617": 0.0,
+          "9618": 0.0,
+          "9619": 0.0,
+          "9620": 0.0,
+          "3901": 0.0,
+          "3902": 0.0,
+          "3903": 0.0,
+          "3904": 0.0,
+          "3905": 0.0,
+          "3906": 0.0,
+          "3907": 0.0,
+          "3908": 0.0,
+          "3909": 0.0,
+          "3910": 0.0,
+          "3911": 0.0,
+          "3912": 0.0,
+          "3913": 0.0,
+          "3914": 0.0,
+          "3915": 0.0,
+          "3916": 0.0,
+          "3917": 0.0,
+          "3918": 0.0,
+          "3919": 0.0
+        },
+        "reasoning": "Scale model aircraft kits fall under heading 9503 as 'reduced-size scale models', regardless of material, as they are recreational/display models not toys for play but scale models are explicitly covered by this heading's text.'"
+      },
+      {
+        "level": "node",
+        "options_count": 10,
+        "chosen_key": "9503003000/80",
+        "confidence": 0.67,
+        "probabilities": {
+          "9503003000/80": 0.72,
+          "9503003500/10": 0.05,
+          "9503008100/10": 0.19,
+          "9503007500/10": 0.0,
+          "9503005500/80": 0.0,
+          "9503002100/10": 0.0,
+          "9503001000/80": 0.0,
+          "9503007000/80": 0.04,
+          "9503006100/10": 0.0,
+          "9503004100/10": 0.0
+        },
+        "reasoning": "jev p=0.67"
+      }
+    ]
+  },
+  {
+    "ruling": "600015403",
+    "truth": "3926909790",
+    "truth_desc": "Chicken leg shaped squeaky dog toy. Made from vinyl plastic. Suitable for all types of dogs. Measuring approx. 16cm.",
+    "predicted": "9503004990",
+    "confidence": 0.7091,
+    "validated": true,
+    "reasoning": "A vinyl plastic squeaky dog toy shaped like a chicken leg Classified as 9503 00 4990 via Toys, games and sports requisites; parts and accessories thereof › Tricycles, scooters, pedal cars and similar wheeled toys; dolls' carriages; dolls; other toys; reduced-size ('scale') models and similar recreat",
+    "depth": 0,
+    "ms": 8937,
+    "tokens": {
+      "input": 5078,
+      "output": 313,
+      "calls": 2
+    },
+    "steps": [
+      {
+        "level": "heading",
+        "options_count": 32,
+        "chosen_key": "9503",
+        "confidence": 0.85,
+        "probabilities": {
+          "3901": 0.0,
+          "3902": 0.0,
+          "3903": 0.0,
+          "3904": 0.0,
+          "3905": 0.0,
+          "3906": 0.0,
+          "3907": 0.0,
+          "3908": 0.0,
+          "3909": 0.0,
+          "3910": 0.0,
+          "3911": 0.0,
+          "3912": 0.0,
+          "3913": 0.0,
+          "3914": 0.0,
+          "3915": 0.0,
+          "3916": 0.0,
+          "3917": 0.0,
+          "3918": 0.0,
+          "3919": 0.0,
+          "3920": 0.0,
+          "3921": 0.0,
+          "3922": 0.0,
+          "3923": 0.0,
+          "3924": 0.0,
+          "3925": 0.0,
+          "3926": 0.0,
+          "9503": 0.85,
+          "9504": 0.0,
+          "9505": 0.0,
+          "9506": 0.0,
+          "9507": 0.0,
+          "9508": 0.0
+        },
+        "reasoning": "Chapter 39 Note 2(y) excludes toys from Chapter 39; pet toys are classified similarly to other toys under heading 9503 as 'other toys' - though technically pet toys are for animals not humans, they are commonly classified as toys of plastic material shaped as recognizable objects, falling under heading 9503 as other toys."
+      },
+      {
+        "level": "node",
+        "options_count": 10,
+        "chosen_key": "9503004100/10",
+        "confidence": 0.86,
+        "probabilities": {
+          "9503007500/10": 0.0,
+          "9503002100/10": 0.0,
+          "9503003000/80": 0.0,
+          "9503007000/80": 0.0,
+          "9503008100/10": 0.12,
+          "9503005500/80": 0.0,
+          "9503004100/10": 0.88,
+          "9503001000/80": 0.0,
+          "9503006100/10": 0.0,
+          "9503003500/10": 0.0
+        },
+        "reasoning": "jev p=0.86"
+      },
+      {
+        "level": "node",
+        "options_count": 2,
+        "chosen_key": "9503004900/80",
+        "confidence": 0.97,
+        "probabilities": {
+          "9503004900/80": 0.98,
+          "9503004100/80": 0.02
+        },
+        "reasoning": "jev p=0.97"
+      },
+      {
+        "level": "node",
+        "options_count": 2,
+        "chosen_key": "9503004990/80",
+        "confidence": 1.0,
+        "probabilities": {
+          "9503004990/80": 1.0,
+          "9503004910/80": 0.0
+        },
+        "reasoning": "jev p=1.0"
+      }
+    ]
+  },
+  {
+    "ruling": "600010577",
+    "truth": "6307901000",
+    "truth_desc": "A dog toy in the shape of a rabbit, with an outer of knitted faux fur made from 100% polyester and woven cotton fabric, and the product is s",
+    "predicted": "6307909899",
+    "confidence": 0.071,
+    "validated": true,
+    "reasoning": "A stuffed dog toy shaped like a rabbit, made of knitted polyester faux fur and woven cotton fabric, stuffed with recycled PET plastic and containing a squeaker Classified as 6307 90 9899 via Other made-up textile articles; sets; worn clothing and worn textile articles; rags › Other made-up articles,",
+    "depth": 6,
+    "ms": 14009,
+    "tokens": {
+      "input": 4689,
+      "output": 584,
+      "calls": 2
+    },
+    "steps": [
+      {
+        "level": "heading",
+        "options_count": 40,
+        "chosen_key": "6307",
+        "confidence": 0.7,
+        "probabilities": {
+          "6301": 0.0,
+          "6302": 0.0,
+          "6303": 0.0,
+          "6304": 0.0,
+          "6305": 0.0,
+          "6306": 0.0,
+          "6307": 0.7,
+          "6308": 0.0,
+          "6309": 0.0,
+          "6310": 0.0,
+          "3901": 0.0,
+          "3902": 0.0,
+          "3903": 0.0,
+          "3904": 0.0,
+          "3905": 0.0,
+          "3906": 0.0,
+          "3907": 0.0,
+          "3908": 0.0,
+          "3909": 0.0,
+          "3910": 0.0,
+          "3911": 0.0,
+          "3912": 0.0,
+          "3913": 0.0,
+          "3914": 0.0,
+          "3915": 0.0,
+          "3916": 0.0,
+          "3917": 0.0,
+          "3918": 0.0,
+          "3919": 0.0,
+          "3920": 0.0,
+          "3921": 0.0,
+          "3922": 0.0,
+          "3923": 0.0,
+          "3924": 0.0,
+          "3925": 0.0,
+          "3926": 0.0,
+          "9503": 0.0,
+          "9504": 0.0,
+          "9505": 0.0,
+          "9506": 0.0
+        },
+        "reasoning": "This is a stuffed textile pet toy (dog toy), not a toy for human amusement, so it falls outside Chapter 95 (which covers toys for persons). As a made-up textile article not covered by more specific headings 6301-6306 or 6308-6310, it is classified under heading 6307 as 'other made-up articles' of textile materials."
+      },
+      {
+        "level": "node",
+        "options_count": 3,
+        "chosen_key": "6307900000/80",
+        "confidence": 1.0,
+        "probabilities": {
+          "6307200000/80": 0.0,
+          "6307900000/80": 1.0,
+          "6307100000/80": 0.0
+        },
+        "reasoning": "jev p=1.0"
+      },
+      {
+        "level": "node",
+        "options_count": 2,
+        "chosen_key": "6307909100/10",
+        "confidence": 0.16,
+        "probabilities": {
+          "6307901000/80": 0.42,
+          "6307909100/10": 0.58
+        },
+        "reasoning": "jev p=0.16"
+      },
+      {
+        "level": "node",
+        "options_count": 2,
+        "chosen_key": "6307909200/10",
+        "confidence": 0.98,
+        "probabilities": {
+          "6307909100/80": 0.01,
+          "6307909200/10": 0.99
+        },
+        "reasoning": "jev p=0.98"
+      },
+      {
+        "level": "node",
+        "options_count": 3,
+        "chosen_key": "6307909800/80",
+        "confidence": 1.0,
+        "probabilities": {
+          "6307909300/10": 0.0,
+          "6307909800/80": 1.0,
+          "6307909200/80": 0.0
+        },
+        "reasoning": "jev p=1.0"
+      },
+      {
+        "level": "node",
+        "options_count": 2,
+        "chosen_key": "6307909891/10",
+        "confidence": 0.98,
+        "probabilities": {
+          "6307909820/80": 0.01,
+          "6307909891/10": 0.99
+        },
+        "reasoning": "jev p=0.98"
+      },
+      {
+        "level": "node",
+        "options_count": 2,
+        "chosen_key": "6307909899/80",
+        "confidence": 0.66,
+        "probabilities": {
+          "6307909891/80": 0.17,
+          "6307909899/80": 0.83
+        },
+        "reasoning": "jev p=0.66"
+      }
+    ]
+  },
+  {
+    "ruling": "600014138",
+    "truth": "9503004100",
+    "truth_desc": "A 100% Polyester fabric skin. The fabric has been sewn together to represent a shrimp in the form of a plush toy. Sample received is pink in",
+    "predicted": "9503004990",
+    "confidence": 0.4334,
+    "validated": true,
+    "reasoning": "A polyester fabric plush toy skin shaped like a shrimp, intended to be stuffed and sewn closed by the buyer. Classified as 9503 00 4990 via Toys, games and sports requisites; parts and accessories thereof › Tricycles, scooters, pedal cars and similar wheeled toys; dolls' carriages; dolls; other toys",
+    "depth": 6,
+    "ms": 6398,
+    "tokens": {
+      "input": 1386,
+      "output": 252,
+      "calls": 1
+    },
+    "steps": [
+      {
+        "level": "heading",
+        "options_count": 16,
+        "chosen_key": "9503",
+        "confidence": 0.87,
+        "probabilities": {
+          "6302": 0.0,
+          "9504": 0.0,
+          "6303": 0.0,
+          "6307": 0.07,
+          "9503": 0.89,
+          "9508": 0.0,
+          "9506": 0.0,
+          "6309": 0.0,
+          "9505": 0.0,
+          "6306": 0.0,
+          "6304": 0.04,
+          "6310": 0.0,
+          "6308": 0.0,
+          "9507": 0.0,
+          "6305": 0.0,
+          "6301": 0.0
+        },
+        "reasoning": "jev p=0.87"
+      },
+      {
+        "level": "node",
+        "options_count": 10,
+        "chosen_key": "9503004100/10",
+        "confidence": 0.94,
+        "probabilities": {
+          "9503005500/80": 0.0,
+          "9503007000/80": 0.0,
+          "9503003500/10": 0.0,
+          "9503001000/80": 0.0,
+          "9503007500/10": 0.0,
+          "9503006100/10": 0.0,
+          "9503002100/10": 0.03,
+          "9503003000/80": 0.0,
+          "9503008100/10": 0.02,
+          "9503004100/10": 0.95
+        },
+        "reasoning": "jev p=0.94"
+      },
+      {
+        "level": "node",
+        "options_count": 2,
+        "chosen_key": "9503004900/80",
+        "confidence": 0.53,
+        "probabilities": {
+          "9503004900/80": 0.76,
+          "9503004100/80": 0.24
+        },
+        "reasoning": "jev p=0.53"
+      },
+      {
+        "level": "node",
+        "options_count": 2,
+        "chosen_key": "9503004990/80",
+        "confidence": 1.0,
+        "probabilities": {
+          "9503004990/80": 1.0,
+          "9503004910/80": 0.0
+        },
+        "reasoning": "jev p=1.0"
+      }
+    ]
+  },
+  {
+    "ruling": "600016075",
+    "truth": "9503009590",
+    "truth_desc": "A fidget spinning toy. The fidget toy is shaped as a sphere with an integrated mini spinning top within, the mini spinning top has LED light",
+    "predicted": "9503009990",
+    "confidence": 0.0503,
+    "validated": true,
+    "reasoning": "A plastic spherical fidget spinning toy with an internal LED spinning top and display stand, for children aged 6+ Classified as 9503 00 9990 via Toys, games and sports requisites; parts and accessories thereof › Tricycles, scooters, pedal cars and similar wheeled toys; dolls' carriages; dolls; other",
+    "depth": 6,
+    "ms": 8679,
+    "tokens": {
+      "input": 1455,
+      "output": 254,
+      "calls": 1
+    },
+    "steps": [
+      {
+        "level": "heading",
+        "options_count": 6,
+        "chosen_key": "9503",
+        "confidence": 0.93,
+        "probabilities": {
+          "9504": 0.01,
+          "9505": 0.05,
+          "9506": 0.0,
+          "9508": 0.0,
+          "9507": 0.0,
+          "9503": 0.94
+        },
+        "reasoning": "jev p=0.93"
+      },
+      {
+        "level": "node",
+        "options_count": 10,
+        "chosen_key": "9503008100/10",
+        "confidence": 0.39,
+        "probabilities": {
+          "9503003000/80": 0.0,
+          "9503002100/10": 0.0,
+          "9503003500/10": 0.0,
+          "9503001000/80": 0.0,
+          "9503008100/10": 0.46,
+          "9503007000/80": 0.38,
+          "9503006100/10": 0.0,
+          "9503004100/10": 0.0,
+          "9503007500/10": 0.16,
+          "9503005500/80": 0.0
+        },
+        "reasoning": "jev p=0.39"
+      },
+      {
+        "level": "node",
+        "options_count": 4,
+        "chosen_key": "9503009500/10",
+        "confidence": 0.99,
+        "probabilities": {
+          "9503009500/10": 0.99,
+          "9503008500/80": 0.0,
+          "9503008100/80": 0.0,
+          "9503008700/80": 0.01
+        },
+        "reasoning": "jev p=0.99"
+      },
+      {
+        "level": "node",
+        "options_count": 2,
+        "chosen_key": "9503009900/80",
+        "confidence": 0.14,
+        "probabilities": {
+          "9503009900/80": 0.57,
+          "9503009500/80": 0.43
+        },
+        "reasoning": "jev p=0.14"
+      },
+      {
+        "level": "node",
+        "options_count": 2,
+        "chosen_key": "9503009990/80",
+        "confidence": 1.0,
+        "probabilities": {
+          "9503009990/80": 1.0,
+          "9503009910/80": 0.0
+        },
+        "reasoning": "jev p=1.0"
+      }
+    ]
+  },
+  {
+    "ruling": "600008883",
+    "truth": "8516797090",
+    "truth_desc": "A cordless kettle that holds 1.7 litre kettle that is quick to boil and has a detachable powered base. The cordless kettle features large wa",
+    "predicted": "8516108090",
+    "confidence": 0.2682,
+    "validated": true,
+    "reasoning": "Electric cordless kettle with 1.7 litre capacity and detachable power base Classified as 8516 10 8090 via Electrical machinery and equipment and parts thereof; sound recorders and reproducers, television image and sound recorders and reproducers, and parts and accessories of such articles › Electric",
+    "depth": 4,
+    "ms": 10018,
+    "tokens": {
+      "input": 7343,
+      "output": 344,
+      "calls": 3
+    },
+    "steps": [
+      {
+        "level": "heading",
+        "options_count": 40,
+        "chosen_key": "8516",
+        "confidence": 0.98,
+        "probabilities": {
+          "8501": 0.0,
+          "8502": 0.0,
+          "8503": 0.0,
+          "8504": 0.0,
+          "8505": 0.0,
+          "8506": 0.0,
+          "8507": 0.0,
+          "8508": 0.0,
+          "8509": 0.0,
+          "8510": 0.0,
+          "8511": 0.0,
+          "8512": 0.0,
+          "8513": 0.0,
+          "8514": 0.0,
+          "8515": 0.0,
+          "8516": 0.98,
+          "8517": 0.0,
+          "8518": 0.0,
+          "8519": 0.0,
+          "8521": 0.0,
+          "8522": 0.0,
+          "8523": 0.0,
+          "8524": 0.0,
+          "8525": 0.0,
+          "8526": 0.0,
+          "8527": 0.0,
+          "8528": 0.0,
+          "8529": 0.0,
+          "8530": 0.0,
+          "8531": 0.0,
+          "8532": 0.0,
+          "8533": 0.0,
+          "8534": 0.0,
+          "8535": 0.0,
+          "8536": 0.0,
+          "8537": 0.0,
+          "8538": 0.0,
+          "8539": 0.0,
+          "8540": 0.0,
+          "8541": 0.0
+        },
+        "reasoning": "An electric kettle is a domestic electrothermic appliance for heating water, classified under heading 8516 which covers electric instantaneous or storage water heaters and other electrothermic appliances used for domestic purposes."
+      },
+      {
+        "level": "node",
+        "options_count": 9,
+        "chosen_key": "8516100000/80",
+        "confidence": 0.57,
+        "probabilities": {
+          "8516900000/80": 0.0,
+          "8516310000/10": 0.0,
+          "8516800000/80": 0.0,
+          "8516600000/80": 0.02,
+          "8516210000/10": 0.0,
+          "8516710000/10": 0.35,
+          "8516400000/80": 0.0,
+          "8516100000/80": 0.63,
+          "8516500000/80": 0.0
+        },
+        "reasoning": "jev p=0.57"
+      },
+      {
+        "level": "node",
+        "options_count": 2,
+        "chosen_key": "8516108000/80",
+        "confidence": 0.49,
+        "probabilities": {
+          "8516101100/80": 0.26,
+          "8516108000/80": 0.74
+        },
+        "reasoning": "jev p=0.49"
+      },
+      {
+        "level": "node",
+        "options_count": 2,
+        "chosen_key": "8516108090/80",
+        "confidence": 0.98,
+        "probabilities": {
+          "8516108010/80": 0.0,
+          "8516108090/80": 0.98
+        },
+        "reasoning": "The product is a cordless electric kettle, not a tubular heating element for washing machines, so it falls under the residual 'Other' subheading."
+      }
+    ]
+  },
+  {
+    "ruling": "600008622",
+    "truth": "1905907000",
+    "truth_desc": "Product is a tin of milk - solid ball dumplings in sugar syrup. The dumplings make up 43% of the tin and are made from Whole Milk Powder EU ",
+    "predicted": "1901909990",
+    "confidence": 0.2544,
+    "validated": true,
+    "reasoning": "Canned milk-based dumplings (milk powder, vegetable oil, sugar) preserved in sugar and rose water syrup, ready to eat Classified as 1901 90 9990 via Preparations of cereals, flour, starch or milk; pastrycooks' products › Malt extract; food preparations of flour, groats, meal, starch or malt extract,",
+    "depth": 2,
+    "ms": 14295,
+    "tokens": {
+      "input": 7085,
+      "output": 588,
+      "calls": 4
+    },
+    "steps": [
+      {
+        "level": "heading",
+        "options_count": 21,
+        "chosen_key": "1901",
+        "confidence": 0.62,
+        "probabilities": {
+          "1901": 0.62,
+          "1902": 0.0,
+          "1903": 0.0,
+          "1904": 0.0,
+          "1905": 0.0,
+          "0401": 0.0,
+          "0402": 0.0,
+          "0403": 0.0,
+          "0404": 0.0,
+          "0405": 0.0,
+          "0406": 0.0,
+          "0407": 0.0,
+          "0408": 0.0,
+          "0409": 0.0,
+          "0410": 0.0,
+          "2101": 0.0,
+          "2102": 0.0,
+          "2103": 0.0,
+          "2104": 0.0,
+          "2105": 0.0,
+          "2106": 0.0
+        },
+        "reasoning": "The product is a food preparation based on goods of heading 0401-0404 (whole milk powder) combined with vegetable oil and sugar, cooked and canned, not containing cocoa, and not elsewhere specified. Heading 1901 covers food preparations of goods of headings 0401 to 0404 not elsewhere specified, which fits this milk powder-based dumpling preparation better than the residual 2106 category."
+      },
+      {
+        "level": "node",
+        "options_count": 3,
+        "chosen_key": "1901900000/80",
+        "confidence": 0.97,
+        "probabilities": {
+          "1901200000/80": 0.01,
+          "1901100000/80": 0.01,
+          "1901900000/80": 0.98
+        },
+        "reasoning": "jev p=0.97"
+      },
+      {
+        "level": "node",
+        "options_count": 2,
+        "chosen_key": "1901909100/10",
+        "confidence": 0.94,
+        "probabilities": {
+          "1901901100/10": 0.03,
+          "1901909100/10": 0.97
+        },
+        "reasoning": "jev p=0.94"
+      },
+      {
+        "level": "node",
+        "options_count": 3,
+        "chosen_key": "1901909900/80",
+        "confidence": 0.75,
+        "probabilities": {
+          "1901909100/80": 0.0,
+          "1901909500/80": 0.0,
+          "1901909900/80": 0.75
+        },
+        "reasoning": "Product contains over 5% sucrose and is not a powder, so it exceeds the thresholds in 1901909100 and is not a powder blend as in 1901909500, leaving the residual 'Other' category."
+      },
+      {
+        "level": "node",
+        "options_count": 2,
+        "chosen_key": "1901909990/80",
+        "confidence": 0.6,
+        "probabilities": {
+          "1901909933/10": 0.0,
+          "1901909990/80": 0.6
+        },
+        "reasoning": "Product contains only 'over 5%' sucrose, not stated to be 60% or more, so falls under 'Other' rather than the high-sucrose category."
+      }
+    ]
+  },
+  {
+    "ruling": "600013362",
+    "truth": "3926909790",
+    "truth_desc": "Used as a functional sink to provide running water for anglers or campers with the convenience of a mobile sink. It can be used for personal",
+    "predicted": "3922100000",
+    "confidence": 0.833,
+    "validated": true,
+    "reasoning": "A portable moulded-plastic camping sink unit with removable basin, mirror, storage rail, and water containers, used for washing while camping Classified as 3922 10 0000 via Plastics and articles thereof › Baths, shower-baths, sinks, washbasins, bidets, lavatory pans, seats and covers, flushing ciste",
+    "depth": 2,
+    "ms": 8538,
+    "tokens": {
+      "input": 6351,
+      "output": 366,
+      "calls": 2
+    },
+    "steps": [
+      {
+        "level": "heading",
+        "options_count": 40,
+        "chosen_key": "3922",
+        "confidence": 0.85,
+        "probabilities": {
+          "3901": 0.0,
+          "3902": 0.0,
+          "3903": 0.0,
+          "3904": 0.0,
+          "3905": 0.0,
+          "3906": 0.0,
+          "3907": 0.0,
+          "3908": 0.0,
+          "3909": 0.0,
+          "3910": 0.0,
+          "3911": 0.0,
+          "3912": 0.0,
+          "3913": 0.0,
+          "3914": 0.0,
+          "3915": 0.0,
+          "3916": 0.0,
+          "3917": 0.0,
+          "3918": 0.0,
+          "3919": 0.0,
+          "3920": 0.0,
+          "3921": 0.0,
+          "3922": 0.85,
+          "3923": 0.0,
+          "3924": 0.0,
+          "3925": 0.0,
+          "3926": 0.0,
+          "9401": 0.0,
+          "9402": 0.0,
+          "9403": 0.0,
+          "9404": 0.0,
+          "9405": 0.0,
+          "9406": 0.0,
+          "7301": 0.0,
+          "7302": 0.0,
+          "7303": 0.0,
+          "7304": 0.0,
+          "7305": 0.0,
+          "7306": 0.0,
+          "7307": 0.0,
+          "7308": 0.0
+        },
+        "reasoning": "The product is a portable plastic sink/washbasin unit for washing, with a removable basin - essentially a sink of plastics used for washing/hygiene purposes, fitting heading 3922 which covers sinks, washbasins and similar sanitary ware of plastics."
+      },
+      {
+        "level": "node",
+        "options_count": 3,
+        "chosen_key": "3922100000/80",
+        "confidence": 0.98,
+        "probabilities": {
+          "3922200000/80": 0.0,
+          "3922900000/80": 0.01,
+          "3922100000/80": 0.99
+        },
+        "reasoning": "jev p=0.98"
+      }
+    ]
+  },
+  {
+    "ruling": "600015358",
+    "truth": "4202921900",
+    "truth_desc": "A reusable bag. The blue and white striped bag with red handles is made from non-woven recycled polypropylene. On the outside of the bag the",
+    "predicted": "4202921900",
+    "confidence": 0.0741,
+    "validated": true,
+    "reasoning": "A reusable shopping bag made from non-woven recycled polypropylene with an OPP film laminate and PCR handles. Classified as 4202 92 1900 via Articles of leather; saddlery and harness; travel goods, handbags and similar containers; articles of animal gut (other than silkworm gut) › Trunks, suitcases,",
+    "depth": 10,
+    "ms": 11490,
+    "tokens": {
+      "input": 4712,
+      "output": 381,
+      "calls": 2
+    },
+    "steps": [
+      {
+        "level": "heading",
+        "options_count": 40,
+        "chosen_key": "4202",
+        "confidence": 0.85,
+        "probabilities": {
+          "6301": 0.0,
+          "6302": 0.0,
+          "6303": 0.0,
+          "6304": 0.0,
+          "6305": 0.0,
+          "6306": 0.0,
+          "6307": 0.0,
+          "6308": 0.0,
+          "6309": 0.0,
+          "6310": 0.0,
+          "3901": 0.0,
+          "3902": 0.0,
+          "3903": 0.0,
+          "3904": 0.0,
+          "3905": 0.0,
+          "3906": 0.0,
+          "3907": 0.0,
+          "3908": 0.0,
+          "3909": 0.0,
+          "3910": 0.0,
+          "3911": 0.0,
+          "3912": 0.0,
+          "3913": 0.0,
+          "3914": 0.0,
+          "3915": 0.0,
+          "3916": 0.0,
+          "3917": 0.0,
+          "3918": 0.0,
+          "3919": 0.0,
+          "3920": 0.0,
+          "3921": 0.0,
+          "3922": 0.0,
+          "3923": 0.0,
+          "3924": 0.0,
+          "3925": 0.0,
+          "3926": 0.0,
+          "4201": 0.0,
+          "4202": 0.85,
+          "4203": 0.0,
+          "4205": 0.0
+        },
+        "reasoning": "The product is a shopping bag made of non-woven textile material (polypropylene) with plastic film lamination, explicitly named 'shopping-bags' in heading 4202, which covers containers of textile materials, sheeting of plastics, etc. This is the most specific heading for shopping bags regardless of composite plastic/textile construction."
+      },
+      {
+        "level": "node",
+        "options_count": 4,
+        "chosen_key": "4202910000/10",
+        "confidence": 0.55,
+        "probabilities": {
+          "4202910000/10": 0.66,
+          "4202310000/10": 0.02,
+          "4202210000/10": 0.14,
+          "4202110000/10": 0.18
+        },
+        "reasoning": "jev p=0.55"
+      },
+      {
+        "level": "node",
+        "options_count": 3,
+        "chosen_key": "4202920000/80",
+        "confidence": 0.88,
+        "probabilities": {
+          "4202990000/80": 0.08,
+          "4202910000/80": 0.0,
+          "4202920000/80": 0.92
+        },
+        "reasoning": "jev p=0.88"
+      },
+      {
+        "level": "node",
+        "options_count": 2,
+        "chosen_key": "4202921100/10",
+        "confidence": 0.24,
+        "probabilities": {
+          "4202929100/10": 0.38,
+          "4202921100/10": 0.62
+        },
+        "reasoning": "jev p=0.24"
+      },
+      {
+        "level": "node",
+        "options_count": 3,
+        "chosen_key": "4202921900/80",
+        "confidence": 0.75,
+        "probabilities": {
+          "4202921500/80": 0.01,
+          "4202921900/80": 0.83,
+          "4202921100/80": 0.16
+        },
+        "reasoning": "jev p=0.75"
+      }
+    ]
+  },
+  {
+    "ruling": "600011152",
+    "truth": "4202929890",
+    "truth_desc": "Durable tote/shopping bag. The product is a durable shopping bag designed for prolonged use. The bag is designed to be folded neatly and sto",
+    "predicted": "4202929890",
+    "confidence": 0.3717,
+    "validated": true,
+    "reasoning": "A woven polyester foldable shopping/tote bag with an attached small storage pouch closed by Velcro Classified as 4202 92 9890 via Articles of leather; saddlery and harness; travel goods, handbags and similar containers; articles of animal gut (other than silkworm gut) › Trunks, suitcases, vanity cas",
+    "depth": 10,
+    "ms": 8336,
+    "tokens": {
+      "input": 1584,
+      "output": 243,
+      "calls": 1
+    },
+    "steps": [
+      {
+        "level": "heading",
+        "options_count": 15,
+        "chosen_key": "4202",
+        "confidence": 0.94,
+        "probabilities": {
+          "4203": 0.0,
+          "6301": 0.0,
+          "4202": 0.94,
+          "4205": 0.0,
+          "6309": 0.0,
+          "6305": 0.05,
+          "6306": 0.0,
+          "4201": 0.0,
+          "6308": 0.0,
+          "6307": 0.01,
+          "6304": 0.0,
+          "6310": 0.0,
+          "6303": 0.0,
+          "4206": 0.0,
+          "6302": 0.0
+        },
+        "reasoning": "jev p=0.94"
+      },
+      {
+        "level": "node",
+        "options_count": 4,
+        "chosen_key": "4202910000/10",
+        "confidence": 0.51,
+        "probabilities": {
+          "4202210000/10": 0.25,
+          "4202110000/10": 0.09,
+          "4202910000/10": 0.64,
+          "4202310000/10": 0.02
+        },
+        "reasoning": "jev p=0.51"
+      },
+      {
+        "level": "node",
+        "options_count": 3,
+        "chosen_key": "4202920000/80",
+        "confidence": 0.89,
+        "probabilities": {
+          "4202920000/80": 0.93,
+          "4202990000/80": 0.07,
+          "4202910000/80": 0.0
+        },
+        "reasoning": "jev p=0.89"
+      },
+      {
+        "level": "node",
+        "options_count": 2,
+        "chosen_key": "4202929100/10",
+        "confidence": 1.0,
+        "probabilities": {
+          "4202921100/10": 0.0,
+          "4202929100/10": 1.0
+        },
+        "reasoning": "jev p=1.0"
+      },
+      {
+        "level": "node",
+        "options_count": 2,
+        "chosen_key": "4202929800/80",
+        "confidence": 0.88,
+        "probabilities": {
+          "4202929100/80": 0.06,
+          "4202929800/80": 0.94
+        },
+        "reasoning": "jev p=0.88"
+      },
+      {
+        "level": "node",
+        "options_count": 2,
+        "chosen_key": "4202929890/80",
+        "confidence": 0.99,
+        "probabilities": {
+          "4202929890/80": 0.99,
+          "4202929810/80": 0.01
+        },
+        "reasoning": "jev p=0.99"
+      }
+    ]
+  },
+  {
+    "ruling": "600012245",
+    "truth": "4202921100",
+    "truth_desc": "Dry bag light weight waterproof PVC Tarpaulin fabric • Stitch-free, High frequency welded seams • 5 Litre Capacity • Roll-down closure with ",
+    "predicted": "4202921100",
+    "confidence": 0.1512,
+    "validated": true,
+    "reasoning": "A waterproof PVC tarpaulin fabric dry bag with roll-down closure, used for storing items in wet environments. Classified as 4202 92 1100 via Articles of leather; saddlery and harness; travel goods, handbags and similar containers; articles of animal gut (other than silkworm gut) › Trunks, suitcases,",
+    "depth": 10,
+    "ms": 10947,
+    "tokens": {
+      "input": 5172,
+      "output": 393,
+      "calls": 2
+    },
+    "steps": [
+      {
+        "level": "heading",
+        "options_count": 32,
+        "chosen_key": "4202",
+        "confidence": 0.9,
+        "probabilities": {
+          "8422": 0.0,
+          "4201": 0.0,
+          "4202": 0.9,
+          "4203": 0.0,
+          "4205": 0.0,
+          "4206": 0.0,
+          "3901": 0.0,
+          "3902": 0.0,
+          "3903": 0.0,
+          "3904": 0.0,
+          "3905": 0.0,
+          "3906": 0.0,
+          "3907": 0.0,
+          "3908": 0.0,
+          "3909": 0.0,
+          "3910": 0.0,
+          "3911": 0.0,
+          "3912": 0.0,
+          "3913": 0.0,
+          "3914": 0.0,
+          "3915": 0.0,
+          "3916": 0.0,
+          "3917": 0.0,
+          "3918": 0.0,
+          "3919": 0.0,
+          "3920": 0.0,
+          "3921": 0.0,
+          "3922": 0.0,
+          "3923": 0.0,
+          "3924": 0.0,
+          "3925": 0.0,
+          "3926": 0.0
+        },
+        "reasoning": "A dry bag with roll-down closure made of PVC tarpaulin fabric (sheeting of plastics) is a travelling-bag/similar container of heading 4202, designed for prolonged use (durable construction, D-rings, stiffened base), distinguishing it from disposable 3923 bags."
+      },
+      {
+        "level": "node",
+        "options_count": 4,
+        "chosen_key": "4202910000/10",
+        "confidence": 0.51,
+        "probabilities": {
+          "4202310000/10": 0.01,
+          "4202110000/10": 0.33,
+          "4202910000/10": 0.63,
+          "4202210000/10": 0.03
+        },
+        "reasoning": "jev p=0.51"
+      },
+      {
+        "level": "node",
+        "options_count": 3,
+        "chosen_key": "4202920000/80",
+        "confidence": 0.88,
+        "probabilities": {
+          "4202910000/80": 0.0,
+          "4202920000/80": 0.92,
+          "4202990000/80": 0.08
+        },
+        "reasoning": "jev p=0.88"
+      },
+      {
+        "level": "node",
+        "options_count": 2,
+        "chosen_key": "4202921100/10",
+        "confidence": 0.78,
+        "probabilities": {
+          "4202921100/10": 0.89,
+          "4202929100/10": 0.11
+        },
+        "reasoning": "jev p=0.78"
+      },
+      {
+        "level": "node",
+        "options_count": 3,
+        "chosen_key": "4202921100/80",
+        "confidence": 0.48,
+        "probabilities": {
+          "4202921900/80": 0.34,
+          "4202921500/80": 0.01,
+          "4202921100/80": 0.65
+        },
+        "reasoning": "jev p=0.48"
+      }
+    ]
+  },
+  {
+    "ruling": "600015377",
+    "truth": "6307909899",
+    "truth_desc": "Potato grow plant bag with durable handles. The planter bag is made from woven polyethylene and is designed for growing potatoes. It feature",
+    "predicted": "6305339000",
+    "confidence": 0.4914,
+    "validated": true,
+    "reasoning": "A woven polyethylene fabric bag used as a planter for growing potatoes, with carrying handles. Classified as 6305 33 9000 via Other made-up textile articles; sets; worn clothing and worn textile articles; rags › Sacks and bags, of a kind used for the packing of goods › Of man-made textile materials ",
+    "depth": 2,
+    "ms": 10993,
+    "tokens": {
+      "input": 4473,
+      "output": 361,
+      "calls": 2
+    },
+    "steps": [
+      {
+        "level": "heading",
+        "options_count": 38,
+        "chosen_key": "6305",
+        "confidence": 0.65,
+        "probabilities": {
+          "6301": 0.0,
+          "6302": 0.0,
+          "6303": 0.0,
+          "6304": 0.0,
+          "6305": 0.65,
+          "6306": 0.0,
+          "6307": 0.0,
+          "6308": 0.0,
+          "6309": 0.0,
+          "6310": 0.0,
+          "3901": 0.0,
+          "3902": 0.0,
+          "3903": 0.0,
+          "3904": 0.0,
+          "3905": 0.0,
+          "3906": 0.0,
+          "3907": 0.0,
+          "3908": 0.0,
+          "3909": 0.0,
+          "3910": 0.0,
+          "3911": 0.0,
+          "3912": 0.0,
+          "3913": 0.0,
+          "3914": 0.0,
+          "3915": 0.0,
+          "3916": 0.0,
+          "3917": 0.0,
+          "3918": 0.0,
+          "3919": 0.0,
+          "3920": 0.0,
+          "3921": 0.0,
+          "3922": 0.0,
+          "3923": 0.0,
+          "3924": 0.0,
+          "3925": 0.0,
+          "3926": 0.0,
+          "4601": 0.0,
+          "4602": 0.0
+        },
+        "reasoning": "Woven polyethylene fabric (textile material per Chapter 54 note treating polyethylene strip as textile) made into a bag with handles is classified as a made-up textile sack/bag under heading 6305, which covers bags of woven plastic strip textile material used for various purposes including gardening bags, similar to the classic 'poly bag' sacks classification."
+      },
+      {
+        "level": "node",
+        "options_count": 4,
+        "chosen_key": "6305320000/10",
+        "confidence": 0.83,
+        "probabilities": {
+          "6305100000/80": 0.01,
+          "6305320000/10": 0.87,
+          "6305900000/80": 0.12,
+          "6305200000/80": 0.0
+        },
+        "reasoning": "jev p=0.83"
+      },
+      {
+        "level": "node",
+        "options_count": 3,
+        "chosen_key": "6305330000/80",
+        "confidence": 0.92,
+        "probabilities": {
+          "6305320000/80": 0.01,
+          "6305330000/80": 0.95,
+          "6305390000/80": 0.04
+        },
+        "reasoning": "jev p=0.92"
+      },
+      {
+        "level": "node",
+        "options_count": 2,
+        "chosen_key": "6305339000/80",
+        "confidence": 0.99,
+        "probabilities": {
+          "6305339000/80": 0.99,
+          "6305331000/80": 0.01
+        },
+        "reasoning": "jev p=0.99"
+      }
+    ]
+  },
+  {
+    "ruling": "600012834",
+    "truth": "8518300090",
+    "truth_desc": "The product is a wireless headphones with adjustable headband that covers the ears. These are designed to work with mobile phones or any oth",
+    "predicted": "8518300090",
+    "confidence": 0.9,
+    "validated": true,
+    "reasoning": "Wireless over-ear Bluetooth headphones with built-in microphone and call control, foldable and rechargeable Classified as 8518 30 0090 via Electrical machinery and equipment and parts thereof; sound recorders and reproducers, television image and sound recorders and reproducers, and parts and access",
+    "depth": 10,
+    "ms": 8331,
+    "tokens": {
+      "input": 6239,
+      "output": 329,
+      "calls": 2
+    },
+    "steps": [
+      {
+        "level": "heading",
+        "options_count": 40,
+        "chosen_key": "8518",
+        "confidence": 0.9,
+        "probabilities": {
+          "8517": 0.0,
+          "8501": 0.0,
+          "8502": 0.0,
+          "8503": 0.0,
+          "8504": 0.0,
+          "8505": 0.0,
+          "8506": 0.0,
+          "8507": 0.0,
+          "8508": 0.0,
+          "8509": 0.0,
+          "8510": 0.0,
+          "8511": 0.0,
+          "8512": 0.0,
+          "8513": 0.0,
+          "8514": 0.0,
+          "8515": 0.0,
+          "8516": 0.0,
+          "8518": 0.9,
+          "8519": 0.0,
+          "8521": 0.0,
+          "8522": 0.0,
+          "8523": 0.0,
+          "8524": 0.0,
+          "8525": 0.0,
+          "8526": 0.0,
+          "8527": 0.0,
+          "8528": 0.0,
+          "8529": 0.0,
+          "8530": 0.0,
+          "8531": 0.0,
+          "8532": 0.0,
+          "8533": 0.0,
+          "8534": 0.0,
+          "8535": 0.0,
+          "8536": 0.0,
+          "8537": 0.0,
+          "8538": 0.0,
+          "8539": 0.0,
+          "8540": 0.0,
+          "8541": 0.0
+        },
+        "reasoning": "Headphones with built-in microphone are specifically covered by heading 8518, which explicitly includes 'headphones and earphones, whether or not combined with a microphone.' The Bluetooth wireless function is incidental to the core product being headphones with mic."
+      },
+      {
+        "level": "node",
+        "options_count": 6,
+        "chosen_key": "8518300000/80",
+        "confidence": 1.0,
+        "probabilities": {
+          "8518500000/80": 0.0,
+          "8518210000/10": 0.0,
+          "8518900000/80": 0.0,
+          "8518100000/80": 0.0,
+          "8518400000/80": 0.0,
+          "8518300000/80": 1.0
+        },
+        "reasoning": "jev p=1.0"
+      },
+      {
+        "level": "node",
+        "options_count": 2,
+        "chosen_key": "8518300090/80",
+        "confidence": 1.0,
+        "probabilities": {
+          "8518300010/80": 0.0,
+          "8518300090/80": 1.0
+        },
+        "reasoning": "jev p=1.0"
+      }
+    ]
+  },
+  {
+    "ruling": "600009925",
+    "truth": "7326909890",
+    "truth_desc": "A headset stand made from steel. This is black in colour. It is for gaming headsets. It is made from a sheet of metal which has been cut, sh",
+    "predicted": "7326909890",
+    "confidence": 0.4919,
+    "validated": true,
+    "reasoning": "A steel headset stand used to hold and display gaming headsets Classified as 7326 90 9890 via Articles of iron or steel › Other articles of iron or steel › Other › Other articles of iron or steel › Other › Other.",
+    "depth": 10,
+    "ms": 12274,
+    "tokens": {
+      "input": 6021,
+      "output": 355,
+      "calls": 3
+    },
+    "steps": [
+      {
+        "level": "heading",
+        "options_count": 37,
+        "chosen_key": "7326",
+        "confidence": 0.65,
+        "probabilities": {
+          "7301": 0.0,
+          "7302": 0.0,
+          "7303": 0.0,
+          "7304": 0.0,
+          "7305": 0.0,
+          "7306": 0.0,
+          "7307": 0.0,
+          "7308": 0.0,
+          "7309": 0.0,
+          "7310": 0.0,
+          "7311": 0.0,
+          "7312": 0.0,
+          "7313": 0.0,
+          "7314": 0.0,
+          "7315": 0.0,
+          "7316": 0.0,
+          "7317": 0.0,
+          "7318": 0.0,
+          "7319": 0.0,
+          "7320": 0.0,
+          "7321": 0.0,
+          "7322": 0.0,
+          "7323": 0.0,
+          "7324": 0.0,
+          "7325": 0.0,
+          "7326": 0.65,
+          "8301": 0.0,
+          "8302": 0.0,
+          "8303": 0.0,
+          "8304": 0.0,
+          "8305": 0.0,
+          "8306": 0.0,
+          "8307": 0.0,
+          "8308": 0.0,
+          "8309": 0.0,
+          "8310": 0.0,
+          "8311": 0.0
+        },
+        "reasoning": "A steel headset stand is a fabricated article of steel not covered by more specific headings; it functions as a display/holder stand rather than furniture fitting, closest fit is the residual 'other articles of iron or steel' heading 7326."
+      },
+      {
+        "level": "node",
+        "options_count": 3,
+        "chosen_key": "7326900000/80",
+        "confidence": 0.83,
+        "probabilities": {
+          "7326900000/80": 0.89,
+          "7326200000/80": 0.0,
+          "7326110000/10": 0.11
+        },
+        "reasoning": "jev p=0.83"
+      },
+      {
+        "level": "node",
+        "options_count": 5,
+        "chosen_key": "7326909200/10",
+        "confidence": 0.94,
+        "probabilities": {
+          "7326905000/80": 0.02,
+          "7326906000/80": 0.03,
+          "7326909200/10": 0.95,
+          "7326903000/80": 0.0,
+          "7326904000/80": 0.0
+        },
+        "reasoning": "jev p=0.94"
+      },
+      {
+        "level": "node",
+        "options_count": 4,
+        "chosen_key": "7326909800/80",
+        "confidence": 1.0,
+        "probabilities": {
+          "7326909800/80": 1.0,
+          "7326909200/80": 0.0,
+          "7326909600/80": 0.0,
+          "7326909400/80": 0.0
+        },
+        "reasoning": "jev p=1.0"
+      },
+      {
+        "level": "node",
+        "options_count": 7,
+        "chosen_key": "7326909890/80",
+        "confidence": 0.97,
+        "probabilities": {
+          "7326909810/80": 0.0,
+          "7326909820/80": 0.0,
+          "7326909830/80": 0.0,
+          "7326909840/80": 0.0,
+          "7326909860/80": 0.0,
+          "7326909870/80": 0.0,
+          "7326909890/80": 0.97
+        },
+        "reasoning": "A generic steel headset stand doesn't match any specific residual codes for aircraft, weights, or turbocharger parts; it falls under the general 'Other' catch-all."
+      }
+    ]
+  },
+  {
+    "ruling": "600010126",
+    "truth": "8527190000",
+    "truth_desc": "A radio alarm clock. The item has an OLED display with adjustable brightness, DAB and FM radio with USB Preset stations. Also includes Bluet",
+    "predicted": "8527190000",
+    "confidence": 0.4752,
+    "validated": true,
+    "reasoning": "An electric radio alarm clock with DAB/FM radio, OLED display, Bluetooth and USB-C charging, powered by an in-built rechargeable battery. Classified as 8527 19 0000 via Electrical machinery and equipment and parts thereof; sound recorders and reproducers, television image and sound recorders and rep",
+    "depth": 10,
+    "ms": 9475,
+    "tokens": {
+      "input": 6014,
+      "output": 363,
+      "calls": 2
+    },
+    "steps": [
+      {
+        "level": "heading",
+        "options_count": 40,
+        "chosen_key": "8527",
+        "confidence": 0.9,
+        "probabilities": {
+          "9105": 0.0,
+          "8501": 0.0,
+          "8502": 0.0,
+          "8503": 0.0,
+          "8504": 0.0,
+          "8505": 0.0,
+          "8506": 0.0,
+          "8507": 0.0,
+          "8508": 0.0,
+          "8509": 0.0,
+          "8510": 0.0,
+          "8511": 0.0,
+          "8512": 0.0,
+          "8513": 0.0,
+          "8514": 0.0,
+          "8515": 0.0,
+          "8516": 0.0,
+          "8517": 0.0,
+          "8518": 0.0,
+          "8519": 0.0,
+          "8521": 0.0,
+          "8522": 0.0,
+          "8523": 0.0,
+          "8524": 0.0,
+          "8525": 0.0,
+          "8526": 0.0,
+          "8527": 0.9,
+          "8528": 0.0,
+          "8529": 0.0,
+          "8530": 0.0,
+          "8531": 0.0,
+          "8532": 0.0,
+          "8533": 0.0,
+          "8534": 0.0,
+          "8535": 0.0,
+          "8536": 0.0,
+          "8537": 0.0,
+          "8538": 0.0,
+          "8539": 0.0,
+          "8540": 0.0
+        },
+        "reasoning": "Heading 8527 explicitly covers reception apparatus for radio-broadcasting whether or not combined with a clock; the item is fundamentally a DAB/FM radio combined with an alarm clock and Bluetooth, fitting this heading exactly per GRI 1 and the heading text.'"
+      },
+      {
+        "level": "node",
+        "options_count": 3,
+        "chosen_key": "8527120000/10",
+        "confidence": 0.8,
+        "probabilities": {
+          "8527120000/10": 0.87,
+          "8527910000/10": 0.13,
+          "8527210000/10": 0.0
+        },
+        "reasoning": "jev p=0.8"
+      },
+      {
+        "level": "node",
+        "options_count": 3,
+        "chosen_key": "8527190000/80",
+        "confidence": 0.66,
+        "probabilities": {
+          "8527130000/80": 0.22,
+          "8527120000/80": 0.01,
+          "8527190000/80": 0.77
+        },
+        "reasoning": "jev p=0.66"
+      }
+    ]
+  },
+  {
+    "ruling": "600011077",
+    "truth": "8471800000",
+    "truth_desc": "An external sound card used to connect various external audio equipment to a computer. Re-engineered Air mode with presence and harmonic dri",
+    "predicted": "8519890000",
+    "confidence": 0.576,
+    "validated": true,
+    "reasoning": "An external USB audio interface (sound card) for connecting audio equipment to a computer, supplied with a microphone, headphones, USB cable and software Classified as 8519 89 0000 via Electrical machinery and equipment and parts thereof; sound recorders and reproducers, television image and sound r",
+    "depth": 0,
+    "ms": 9314,
+    "tokens": {
+      "input": 6107,
+      "output": 347,
+      "calls": 2
+    },
+    "steps": [
+      {
+        "level": "heading",
+        "options_count": 40,
+        "chosen_key": "8519",
+        "confidence": 0.6,
+        "probabilities": {
+          "8501": 0.0,
+          "8502": 0.0,
+          "8503": 0.0,
+          "8504": 0.0,
+          "8505": 0.0,
+          "8506": 0.0,
+          "8507": 0.0,
+          "8508": 0.0,
+          "8509": 0.0,
+          "8510": 0.0,
+          "8511": 0.0,
+          "8512": 0.0,
+          "8513": 0.0,
+          "8514": 0.0,
+          "8515": 0.0,
+          "8516": 0.0,
+          "8517": 0.0,
+          "8518": 0.0,
+          "8519": 0.6,
+          "8521": 0.0,
+          "8522": 0.0,
+          "8523": 0.0,
+          "8524": 0.0,
+          "8525": 0.0,
+          "8526": 0.0,
+          "8527": 0.0,
+          "8528": 0.0,
+          "8529": 0.0,
+          "8530": 0.0,
+          "8531": 0.0,
+          "8532": 0.0,
+          "8533": 0.0,
+          "8534": 0.0,
+          "8535": 0.0,
+          "8536": 0.0,
+          "8537": 0.0,
+          "8538": 0.0,
+          "8539": 0.0,
+          "8540": 0.0,
+          "8541": 0.0
+        },
+        "reasoning": "The USB audio interface converts analog audio for recording/playback with a computer, essentially functioning as sound recording/reproducing apparatus. As the essential character item of the set (with microphone, headphones, cable), it falls under 8519 which covers sound recording or reproducing apparatus, encompassing audio interfaces/sound cards used for recording purposes."
+      },
+      {
+        "level": "node",
+        "options_count": 3,
+        "chosen_key": "8519810000/10",
+        "confidence": 1.0,
+        "probabilities": {
+          "8519200000/80": 0.0,
+          "8519810000/10": 1.0,
+          "8519300000/80": 0.0
+        },
+        "reasoning": "jev p=1.0"
+      },
+      {
+        "level": "node",
+        "options_count": 2,
+        "chosen_key": "8519890000/80",
+        "confidence": 0.96,
+        "probabilities": {
+          "8519810000/80": 0.02,
+          "8519890000/80": 0.98
+        },
+        "reasoning": "jev p=0.96"
+      }
+    ]
+  },
+  {
+    "ruling": "600014382",
+    "truth": "8528724000",
+    "truth_desc": "The product is a 55 inch smart TV with 4K Ultra HD LCD display. Screen resolution is 3840 x 2160 pixels. Sound technology for the TV is Dolb",
+    "predicted": "8528724000",
+    "confidence": 0.8031,
+    "validated": true,
+    "reasoning": "A 55 inch 4K Ultra HD LCD smart television with built-in Wi-Fi and smart TV operating system Classified as 8528 72 4000 via Electrical machinery and equipment and parts thereof; sound recorders and reproducers, television image and sound recorders and reproducers, and parts and accessories of such a",
+    "depth": 10,
+    "ms": 9135,
+    "tokens": {
+      "input": 6514,
+      "output": 359,
+      "calls": 2
+    },
+    "steps": [
+      {
+        "level": "heading",
+        "options_count": 40,
+        "chosen_key": "8528",
+        "confidence": 0.97,
+        "probabilities": {
+          "8501": 0.0,
+          "8502": 0.0,
+          "8503": 0.0,
+          "8504": 0.0,
+          "8505": 0.0,
+          "8506": 0.0,
+          "8507": 0.0,
+          "8508": 0.0,
+          "8509": 0.0,
+          "8510": 0.0,
+          "8511": 0.0,
+          "8512": 0.0,
+          "8513": 0.0,
+          "8514": 0.0,
+          "8515": 0.0,
+          "8516": 0.0,
+          "8517": 0.0,
+          "8518": 0.0,
+          "8519": 0.0,
+          "8521": 0.0,
+          "8522": 0.0,
+          "8523": 0.0,
+          "8524": 0.0,
+          "8525": 0.0,
+          "8526": 0.0,
+          "8527": 0.0,
+          "8528": 0.97,
+          "8529": 0.0,
+          "8530": 0.0,
+          "8531": 0.0,
+          "8532": 0.0,
+          "8533": 0.0,
+          "8534": 0.0,
+          "8535": 0.0,
+          "8536": 0.0,
+          "8537": 0.0,
+          "8538": 0.0,
+          "8539": 0.0,
+          "8540": 0.0,
+          "8541": 0.0
+        },
+        "reasoning": "A complete television set with LCD screen incorporating television broadcast reception apparatus falls under heading 8528, which covers reception apparatus for television whether or not incorporating radio-broadcast receivers or sound/video reproducing apparatus."
+      },
+      {
+        "level": "node",
+        "options_count": 4,
+        "chosen_key": "8528710000/10",
+        "confidence": 1.0,
+        "probabilities": {
+          "8528520000/10": 0.0,
+          "8528420000/10": 0.0,
+          "8528710000/10": 1.0,
+          "8528620000/10": 0.0
+        },
+        "reasoning": "jev p=1.0"
+      },
+      {
+        "level": "node",
+        "options_count": 3,
+        "chosen_key": "8528720000/80",
+        "confidence": 0.98,
+        "probabilities": {
+          "8528730000/80": 0.0,
+          "8528720000/80": 0.99,
+          "8528710000/80": 0.01
+        },
+        "reasoning": "jev p=0.98"
+      },
+      {
+        "level": "node",
+        "options_count": 3,
+        "chosen_key": "8528723000/10",
+        "confidence": 0.88,
+        "probabilities": {
+          "8528723000/10": 0.91,
+          "8528721000/80": 0.01,
+          "8528722000/80": 0.08
+        },
+        "reasoning": "jev p=0.88"
+      },
+      {
+        "level": "node",
+        "options_count": 4,
+        "chosen_key": "8528724000/80",
+        "confidence": 0.96,
+        "probabilities": {
+          "8528724000/80": 0.97,
+          "8528726000/80": 0.0,
+          "8528728000/80": 0.03,
+          "8528723000/80": 0.0
+        },
+        "reasoning": "jev p=0.96"
+      }
+    ]
+  },
+  {
+    "ruling": "600014380",
+    "truth": "85371091",
+    "truth_desc": "The product is a 16-inch treadmill LCD touchscreen console used for the operation of fitness equipment. The console can be used to connect t",
+    "predicted": "9506999000",
+    "confidence": 0.3638,
+    "validated": true,
+    "reasoning": "A 16-inch LCD touchscreen console for controlling and monitoring fitness equipment such as treadmills, bikes, and cross trainers Classified as 9506 99 9000 via Toys, games and sports requisites; parts and accessories thereof › Articles and equipment for general physical exercise, gymnastics, athleti",
+    "depth": 0,
+    "ms": 13682,
+    "tokens": {
+      "input": 6524,
+      "output": 499,
+      "calls": 2
+    },
+    "steps": [
+      {
+        "level": "heading",
+        "options_count": 40,
+        "chosen_key": "9506",
+        "confidence": 0.75,
+        "probabilities": {
+          "9503": 0.0,
+          "9504": 0.0,
+          "9505": 0.0,
+          "9506": 0.75,
+          "9507": 0.0,
+          "9508": 0.0,
+          "8501": 0.0,
+          "8502": 0.0,
+          "8503": 0.0,
+          "8504": 0.0,
+          "8505": 0.0,
+          "8506": 0.0,
+          "8507": 0.0,
+          "8508": 0.0,
+          "8509": 0.0,
+          "8510": 0.0,
+          "8511": 0.0,
+          "8512": 0.0,
+          "8513": 0.0,
+          "8514": 0.0,
+          "8515": 0.0,
+          "8516": 0.0,
+          "8517": 0.0,
+          "8518": 0.0,
+          "8519": 0.0,
+          "8521": 0.0,
+          "8522": 0.0,
+          "8523": 0.0,
+          "8524": 0.0,
+          "8525": 0.0,
+          "8526": 0.0,
+          "8527": 0.0,
+          "8528": 0.0,
+          "8529": 0.0,
+          "8530": 0.0,
+          "8531": 0.0,
+          "8532": 0.0,
+          "8533": 0.0,
+          "8534": 0.0,
+          "8535": 0.0
+        },
+        "reasoning": "The console is an accessory designed solely for use with fitness equipment (treadmills, bikes, cross trainers) under heading 9506. Chapter 95 Note 3 states parts and accessories suitable for use solely or principally with articles of the chapter are classified with those articles, so despite containing electronic display/TV components, its principal use ties it to 9506 fitness equipment classification."
+      },
+      {
+        "level": "node",
+        "options_count": 8,
+        "chosen_key": "9506910000/10",
+        "confidence": 0.99,
+        "probabilities": {
+          "9506510000/10": 0.0,
+          "9506210000/10": 0.0,
+          "9506910000/10": 1.0,
+          "9506110000/10": 0.0,
+          "9506400000/80": 0.0,
+          "9506610000/10": 0.0,
+          "9506310000/10": 0.0,
+          "9506700000/80": 0.0
+        },
+        "reasoning": "jev p=0.99"
+      },
+      {
+        "level": "node",
+        "options_count": 2,
+        "chosen_key": "9506990000/80",
+        "confidence": 0.49,
+        "probabilities": {
+          "9506990000/80": 0.74,
+          "9506910000/80": 0.26
+        },
+        "reasoning": "jev p=0.49"
+      },
+      {
+        "level": "node",
+        "options_count": 2,
+        "chosen_key": "9506999000/80",
+        "confidence": 1.0,
+        "probabilities": {
+          "9506991000/80": 0.0,
+          "9506999000/80": 1.0
+        },
+        "reasoning": "jev p=1.0"
+      }
+    ]
+  }
+]
