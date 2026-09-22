@@ -5,7 +5,7 @@
 
   <% if @posts.empty? %>
     <section class="tf-panel">
-      <div class="tf-empty-state"><span aria-hidden="true">≡</span><h3>The first guide is on its way.</h3><p>In the meantime, try a lookup and see the reasoning behind a code.</p><%= link_to "Find my code ↗", root_path(anchor: "lookup"), class: "tf-button tf-button-outline" %></div>
+      <div class="tf-empty-state"><span aria-hidden="true">≡</span><h3>The first guide is on its way.</h3><p>In the meantime, try a lookup and see the reasoning behind a code.</p><%= link_to safe_join([ "Find my code ", tf_arrow ]), root_path(anchor: "lookup"), class: "tf-button tf-button-outline" %></div>
     </section>
   <% else %>
     <ul class="tf-post-list">

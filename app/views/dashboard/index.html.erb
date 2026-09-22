@@ -1,4 +1,4 @@
-<%= render "shared/page_header", eyebrow: "YOUR WORKSPACE", title: "Your import desk.", description: "Products, parcels, and their paperwork. All in one place.", actions: link_to("New lookup ↗", new_product_lookup_path, class: "tf-button tf-button-primary") %>
+<%= render "shared/page_header", eyebrow: "YOUR WORKSPACE", title: "Your import desk.", description: "Products, parcels, and their paperwork. All in one place.", actions: link_to(safe_join([ "New lookup ", tf_arrow ]), new_product_lookup_path, class: "tf-button tf-button-primary") %>
 
 <dl class="tf-workspace-stats">
   <div><dt>Orders</dt><dd><%= @total_orders %></dd><span>In your workspace</span></div>
@@ -12,7 +12,7 @@
     <p class="tf-eyebrow">01 — FIND A CODE</p>
     <h2>What’s coming your way?</h2>
     <p>Start with a product link or a photo. We’ll help you find its commodity code.</p>
-    <div class="tf-desk-links"><%= link_to "Paste a product link ↗", new_product_lookup_path, class: "tf-button tf-button-dark" %><%= link_to "Use a photo →", new_product_lookup_path(tab: "photo"), class: "tf-text-link" %></div>
+    <div class="tf-desk-links"><%= link_to safe_join([ "Paste a product link ", tf_arrow ]), new_product_lookup_path, class: "tf-button tf-button-dark" %><%= link_to "Use a photo →", new_product_lookup_path(tab: "photo"), class: "tf-text-link" %></div>
     <% if current_user.free? %><p class="tf-allowance"><strong><%= current_user.lookups_remaining %> of <%= User::FREE_MONTHLY_LOOKUP_LIMIT %></strong> free lookups left this month</p><% else %><p class="tf-allowance">Your <%= current_user.subscription_tier.titleize %> workspace</p><% end %>
   </section>
   <section class="tf-desk-forward">
@@ -20,7 +20,7 @@
     <h2>Forward it. Find it here.</h2>
     <p>Send order confirmations and tracking emails to your personal forwarding address.</p>
     <div data-controller="clipboard" class="tf-forward-copy">
-      <button type="button" data-action="clipboard#copy" aria-label="Copy your forwarding email address"><code data-clipboard-target="source" aria-live="polite"><%= current_user.inbound_email_address %></code><span aria-hidden="true">Copy ↗</span></button>
+      <button type="button" data-action="clipboard#copy" aria-label="Copy your forwarding email address"><code data-clipboard-target="source" aria-live="polite"><%= current_user.inbound_email_address %></code><span aria-hidden="true">Copy&nbsp;<%= tf_arrow %></span></button>
     </div>
     <%= link_to "Or add an order manually →", new_order_path, class: "tf-text-link" %>
   </section>
@@ -61,11 +61,11 @@
     <% if @orders.any? %>
       <ul class="tf-record-list">
         <% @orders.each do |order| %>
-          <li><%= link_to order_path(order) do %><span class="tf-record-icon" aria-hidden="true">↗</span><div class="tf-record-copy"><strong><%= order.retailer_name.presence || "Unknown retailer" %></strong><span><%= order.order_reference.presence || "No reference" %> · <%= pluralize(order.order_items.size, "item") %></span></div><%= order_status_badge(order) %><% end %></li>
+          <li><%= link_to order_path(order) do %><%= tf_arrow(classes: "tf-record-icon") %><div class="tf-record-copy"><strong><%= order.retailer_name.presence || "Unknown retailer" %></strong><span><%= order.order_reference.presence || "No reference" %> · <%= pluralize(order.order_items.size, "item") %></span></div><%= order_status_badge(order) %><% end %></li>
         <% end %>
       </ul>
     <% else %>
-      <div class="tf-empty-state"><span aria-hidden="true">↳</span><h3>Your first order starts here.</h3><p>Forward an order email or add the details yourself.</p><%= link_to "Add an order ↗", new_order_path, class: "tf-button tf-button-outline" %></div>
+      <div class="tf-empty-state"><span aria-hidden="true">↳</span><h3>Your first order starts here.</h3><p>Forward an order email or add the details yourself.</p><%= link_to safe_join([ "Add an order ", tf_arrow ]), new_order_path, class: "tf-button tf-button-outline" %></div>
     <% end %>
   </section>
   <section class="tf-panel">
@@ -77,7 +77,7 @@
         <% end %>
       </ul>
     <% else %>
-      <div class="tf-empty-state"><span aria-hidden="true">#</span><h3>A home for your codes.</h3><p>Your saved product lookups will appear here.</p><%= link_to "Find your first code ↗", new_product_lookup_path, class: "tf-button tf-button-outline" %></div>
+      <div class="tf-empty-state"><span aria-hidden="true">#</span><h3>A home for your codes.</h3><p>Your saved product lookups will appear here.</p><%= link_to safe_join([ "Find your first code ", tf_arrow ]), new_product_lookup_path, class: "tf-button tf-button-outline" %></div>
     <% end %>
   </section>
 </div>

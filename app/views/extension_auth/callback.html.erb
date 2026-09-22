@@ -2,7 +2,7 @@
 
 <div class="tf-consent">
   <header class="tf-consent-header">
-    <div class="tf-consent-mark" aria-hidden="true"><span class="tf-logo-mark">↗</span> ✓ <span>⧉</span></div>
+    <div class="tf-consent-mark" aria-hidden="true"><span class="tf-logo-mark"></span> ✓ <span>⧉</span></div>
     <h1>Extension connected</h1>
     <p>The Tariffik extension can now use your account.</p>
   </header>
@@ -13,7 +13,7 @@
         <p class="tf-eyebrow">ONE MORE STEP</p>
         <p class="tf-code-empty">If the extension didn’t pick this up automatically, copy this code and paste it into the extension.</p>
         <div data-controller="clipboard" class="tf-forward-copy">
-          <button type="button" data-action="clipboard#copy" aria-label="Copy your connection code"><code data-clipboard-target="source" aria-live="polite"><%= @auth_code %></code><span aria-hidden="true">Copy ↗</span></button>
+          <button type="button" data-action="clipboard#copy" aria-label="Copy your connection code"><code data-clipboard-target="source" aria-live="polite"><%= @auth_code %></code><span aria-hidden="true">Copy&nbsp;<%= tf_arrow %></span></button>
         </div>
       <% elsif @code.present? %>
         <p class="tf-eyebrow">ALL SET</p>
@@ -24,7 +24,7 @@
       <% end %>
 
       <div class="tf-consent-actions">
-        <%= link_to "Return to Tariffik ↗", user_signed_in? ? dashboard_path : root_path, class: "tf-button tf-button-dark" %>
+        <%= link_to safe_join([ "Return to Tariffik ", tf_arrow ]), user_signed_in? ? dashboard_path : root_path, class: "tf-button tf-button-dark" %>
       </div>
     </div>
   </section>

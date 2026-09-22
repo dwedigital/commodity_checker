@@ -5,6 +5,6 @@
     You’ve used all <%= User::FREE_MONTHLY_LOOKUP_LIMIT %> free lookups. Your limit resets on
     <strong><%= Time.current.next_month.beginning_of_month.strftime("%-d %B") %></strong>.
   </p>
-  <%= link_to "Upgrade for unlimited ↗", root_path(anchor: "pricing"), class: "tf-button tf-button-primary" %>
+  <%= link_to safe_join([ "Upgrade for unlimited ", tf_arrow ]), root_path(anchor: "pricing"), class: "tf-button tf-button-primary" %>
   <%= link_to "View history", product_lookups_path, class: "tf-text-link" %>
 </div>

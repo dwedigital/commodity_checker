@@ -27,7 +27,7 @@
                     <p>Quantity: <%= item.quantity %></p>
                   <% end %>
                   <% if item.product_url.present? %>
-                    <a href="<%= item.product_url %>" target="_blank" rel="noopener" class="tf-text-link">View product page ↗</a>
+                    <a href="<%= item.product_url %>" target="_blank" rel="noopener" class="tf-text-link">View product page&nbsp;<%= tf_arrow %></a>
                   <% end %>
                 </div>
               </div>
@@ -66,7 +66,7 @@
           <% end %>
         </ul>
       <% else %>
-        <div class="tf-empty-state"><span aria-hidden="true">#</span><h3>No items yet.</h3><p>Look up a product, then add it to this order from its lookup page.</p><%= link_to "Find a code ↗", new_product_lookup_path, class: "tf-button tf-button-outline" %></div>
+        <div class="tf-empty-state"><span aria-hidden="true">#</span><h3>No items yet.</h3><p>Look up a product, then add it to this order from its lookup page.</p><%= link_to safe_join([ "Find a code ", tf_arrow ]), new_product_lookup_path, class: "tf-button tf-button-outline" %></div>
       <% end %>
     </section>
   </div>
@@ -106,7 +106,7 @@
               <strong><%= event.status %></strong>
               <% if event.location.present? %><p><%= event.location %></p><% end %>
               <% if event.tracking_url.present? %>
-                <a href="<%= event.tracking_url %>" target="_blank" rel="noopener" class="tf-text-link">Track on carrier site ↗</a>
+                <a href="<%= event.tracking_url %>" target="_blank" rel="noopener" class="tf-text-link">Track on carrier site&nbsp;<%= tf_arrow %></a>
               <% end %>
             </li>
           <% end %>

@@ -1,6 +1,6 @@
 <% actions = capture do %>
   <%= link_to "Export CSV ↓", export_orders_path(format: :csv), class: "tf-button tf-button-outline" %>
-  <%= link_to "Add order ↗", new_order_path, class: "tf-button tf-button-primary" %>
+  <%= link_to safe_join([ "Add order ", tf_arrow ]), new_order_path, class: "tf-button tf-button-primary" %>
 <% end %>
 <%= render "shared/page_header", eyebrow: "YOUR PARCELS", title: "Orders", description: "Keep an eye on deliveries and review the codes for every item.", actions: actions %>
 <% if @orders.any? %>
@@ -65,9 +65,9 @@
       <h3>Your first order starts here.</h3>
       <p>Forward an order confirmation or tracking email to your personal address and it’ll appear here.</p>
       <div data-controller="clipboard" class="tf-forward-copy">
-        <button type="button" data-action="clipboard#copy" aria-label="Copy your forwarding email address"><code data-clipboard-target="source" aria-live="polite"><%= current_user.inbound_email_address %></code><span aria-hidden="true">Copy ↗</span></button>
+        <button type="button" data-action="clipboard#copy" aria-label="Copy your forwarding email address"><code data-clipboard-target="source" aria-live="polite"><%= current_user.inbound_email_address %></code><span aria-hidden="true">Copy&nbsp;<%= tf_arrow %></span></button>
       </div>
-      <%= link_to "Or add an order manually ↗", new_order_path, class: "tf-button tf-button-outline" %>
+      <%= link_to safe_join([ "Or add an order manually ", tf_arrow ]), new_order_path, class: "tf-button tf-button-outline" %>
     </div>
   </section>
 <% end %>

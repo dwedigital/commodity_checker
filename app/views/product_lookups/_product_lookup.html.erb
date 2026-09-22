@@ -92,7 +92,7 @@
             </div>
             <% if product_lookup.url? && product_lookup.url.present? %>
               <div class="tf-panel-footer">
-                <a href="<%= product_lookup.url %>" target="_blank" rel="noopener" class="tf-text-link">View original product page ↗</a>
+                <a href="<%= product_lookup.url %>" target="_blank" rel="noopener" class="tf-text-link">View original product page&nbsp;<%= tf_arrow %></a>
               </div>
             <% end %>
           </div>
@@ -110,7 +110,7 @@
           <% if product_lookup.order_item.present? %>
             <% order = product_lookup.order_item.order %>
             <ul class="tf-record-list">
-              <li><%= link_to order_path(order) do %><span class="tf-record-icon" aria-hidden="true">↗</span><div class="tf-record-copy"><strong><%= order.retailer_name.presence || "Order" %></strong><span><%= order.order_reference.presence || "No reference" %></span></div><span class="tf-badge tf-badge-success">Added</span><% end %></li>
+              <li><%= link_to order_path(order) do %><%= tf_arrow(classes: "tf-record-icon") %><div class="tf-record-copy"><strong><%= order.retailer_name.presence || "Order" %></strong><span><%= order.order_reference.presence || "No reference" %></span></div><span class="tf-badge tf-badge-success">Added</span><% end %></li>
             </ul>
           <% else %>
             <% orders = product_lookup.user.orders.order(created_at: :desc).limit(10) %>
@@ -127,7 +127,7 @@
                 <% end %>
               </ul>
             <% else %>
-              <div class="tf-empty-state"><span aria-hidden="true">↳</span><h3>No orders yet.</h3><p>Create an order first, then add this product to it.</p><%= link_to "Add an order ↗", new_order_path, class: "tf-button tf-button-outline" %></div>
+              <div class="tf-empty-state"><span aria-hidden="true">↳</span><h3>No orders yet.</h3><p>Create an order first, then add this product to it.</p><%= link_to safe_join([ "Add an order ", tf_arrow ]), new_order_path, class: "tf-button tf-button-outline" %></div>
             <% end %>
           <% end %>
         </section>

@@ -64,7 +64,7 @@
     <aside class="tf-note tf-article-cta">
       <p class="tf-eyebrow">TRY IT ON YOUR OWN PRODUCT</p>
       <h2>Got a product link? Find its code.</h2>
-      <%= link_to "Find my code ↗", root_path(anchor: "lookup"), class: "tf-button tf-button-primary" %>
+      <%= link_to safe_join([ "Find my code ", tf_arrow ]), root_path(anchor: "lookup"), class: "tf-button tf-button-primary" %>
     </aside>
 
     <footer class="tf-article-footer">
