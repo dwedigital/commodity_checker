@@ -24,7 +24,16 @@ See `test/CLAUDE.md` for detailed testing guidelines.
 | `product_url_finder_service.rb` | Find product pages on retailer sites | Scrape.do (optional) | Pending |
 | `order_matcher_service.rb` | Match emails to existing orders | None | ✅ 18 tests |
 | `tariff_lookup_service.rb` | Query UK Trade Tariff API | UK Gov API | ✅ 7 tests |
-| `llm_commodity_suggester.rb` | AI commodity code suggestions | Anthropic Claude | ✅ 16 tests |
+| `llm_commodity_suggester.rb` | Commodity-code entry point: retrieve-then-walk pipeline (`classification/`), legacy fallback via `TARIFFIK_PIPELINE=legacy` | Classification services | ✅ 7 tests |
+| `legacy_commodity_suggester.rb` | The old single-shot suggester (search + one Claude call), kept for comparison | Anthropic Claude, UK Gov API | Covered via suggester tests |
+| `classification/tariff_tree.rb` | Chapters, headings and the commodity tree from the UK Trade Tariff API, cached 24h | UK Gov API | ✅ 9 tests |
+| `classification/product_analyzer.rb` | One structured-output Claude call: summary, search phrases, attributes, candidate chapters | Anthropic Claude (Sonnet) | Covered via suggester tests |
+| `classification/candidate_retriever.rb` | Short-phrase searches + candidate chapters → shortlist of real headings | UK Gov API | ✅ 3 tests |
+| `classification/tree_walker.rb` | Walks heading → declarable leaf via a chooser, validates and enriches | UK Gov API | ✅ 4 tests |
+| `classification/claude_chooser.rb` | Chooser backed by one Claude call per fork (keys enforced by schema enum) | Anthropic Claude (Sonnet) | ✅ 5 tests |
+| `classification/jev_chooser.rb` | Default chooser when `TYPESAFE_API_KEY` is set; numeric levels fall back to Claude | TypeSafe AI Jev | ✅ 12 tests |
+| `classification/choosers.rb` | Selects Jev (with Claude fallback) or Claude; `TARIFFIK_CHOOSER=claude` forces Claude | None | ✅ 3 tests |
+| `jev_client.rb` | HTTP client for TypeSafe AI Jev (`POST /v1/systemone`), fail-soft, one retry | TypeSafe AI | ✅ 12 tests |
 | `tracking_scraper_service.rb` | Scrape carrier tracking pages | Carrier websites | Pending |
 | `api_commodity_service.rb` | Wraps services for API use | LlmCommoditySuggester, ProductScraperService | Pending |
 | `webhook_signer.rb` | HMAC-SHA256 webhook signing | None | ✅ 14 tests |
@@ -233,26 +242,42 @@ Client for UK Trade Tariff API (`https://www.trade-tariff.service.gov.uk/api/v2/
 
 ## LlmCommoditySuggester
 
-Combines tariff API with Claude AI for intelligent code suggestions.
+Entry point for commodity-code suggestions. Since September 2026 it runs the
+retrieve-then-walk pipeline in `classification/`; the old single-shot version is
+`LegacyCommoditySuggester` (`TARIFFIK_PIPELINE=legacy`).
 
 **Flow:**
-1. Search tariff API for initial suggestions
-2. Build context with product description + API results
-3. Query Claude with system prompt for classification expertise
-4. Parse JSON response
-5. Validate suggested code exists in tariff database
+1. `ProductAnalyzer` (one Claude call, structured output): product summary,
+   2-4 short search phrases, attributes, numeric facts, candidate chapters
+2. `CandidateRetriever`: tariff search on each short phrase (no word-by-word
+   fallback) unioned with the candidate chapters' headings → heading shortlist
+3. `TreeWalker`: pick a heading (chapter fallback if unsure), then descend the
+   real commodity tree one fork at a time until a declarable leaf, asking the
+   chooser at each fork; validate the code and fetch its official description
+4. Chooser: `JevChooser` when `TYPESAFE_API_KEY` is set (Claude handles
+   numeric-threshold levels), otherwise `ClaudeChooser`
 
-**System prompt** defines Claude's role as customs classification expert.
+Codes always come from the tree, so an invented or non-declarable code is
+impossible. Confidence is the product of the per-fork confidences.
 
-**Response format:**
+**Measure before and after any change:** `bin/rails "eval:rulings"` scores the
+classifier against labelled UK Advance Tariff Rulings in `test/eval/` (run it
+sequentially; parallel runs rate-limit the tariff API and silently zero the
+results). Quote the 88-item set, not the 32-item one, which the prompts were
+tuned on.
+
+**Response format (unchanged public contract):**
 ```ruby
 {
-  commodity_code: "6405100000",
-  confidence: 0.85,
-  reasoning: "...",
-  category: "Footwear",
+  commodity_code: "6109902000",
+  confidence: 0.81,
+  reasoning: "Knitted polyester football shirt. Classified as 6109 90 2000 via ...",
+  category: "Articles of apparel and clothing accessories, knitted or crocheted",
   validated: true,
-  official_description: "..."
+  official_description: "...",
+  duty_rate: "12.00 %",
+  path: [...],   # additive
+  steps: [...]   # additive: per-fork options, choice, confidence
 }
 ```
 
